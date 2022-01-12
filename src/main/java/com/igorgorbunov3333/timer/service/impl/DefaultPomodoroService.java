@@ -3,6 +3,7 @@ package com.igorgorbunov3333.timer.service.impl;
 import com.igorgorbunov3333.timer.model.PomodoroState;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
+import com.igorgorbunov3333.timer.service.AudioPlayerService;
 import com.igorgorbunov3333.timer.service.PomodoroService;
 import com.igorgorbunov3333.timer.service.SecondsFormatterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class DefaultPomodoroService implements PomodoroService {
     private static final LocalDateTime END_DAY_TIMESTAMP = LocalDate.now().atTime(LocalTime.MAX);
 
     @Autowired
-    private DefaultAudioPlayerService player;
+    private AudioPlayerService player;
     @Autowired
     private PomodoroState pomodoroState;
     @Autowired

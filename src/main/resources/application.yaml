@@ -2,7 +2,7 @@ spring:
   main.web-application-type: NONE
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://postgres:5432/pomodoro_database
+    url: jdbc:postgresql://localhost:5432/pomodoro_database
     username: postgres
     password: root
   jpa.show-sql: false

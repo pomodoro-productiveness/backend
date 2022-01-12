@@ -1,7 +1,6 @@
 package com.igorgorbunov3333.timer.service;
 
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
-import com.igorgorbunov3333.timer.service.impl.DefaultPomodoroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +14,7 @@ import java.util.Scanner;
 public class CommandLineService {
 
     @Autowired
-    private DefaultPomodoroService defaultPomodoroService;
+    private PomodoroService pomodoroService;
     @Autowired
     private SecondsFormatterService secondsFormatterService;
 
@@ -41,26 +40,26 @@ public class CommandLineService {
     private void gotoChoice(int c) {
         switch (c) {
             case 1:
-                defaultPomodoroService.starPomodoro();
+                pomodoroService.starPomodoro();
                 break;
             case 2:
-                defaultPomodoroService.stopPomodoro();
+                pomodoroService.stopPomodoro();
                 break;
             case 3:
-                int seconds = defaultPomodoroService.getPomodoroTime();
+                int seconds = pomodoroService.getPomodoroTime();
                 String formattedTime = secondsFormatterService.format(seconds);
                 System.out.println(formattedTime);
                 break;
             case 4:
-                System.out.println(defaultPomodoroService.getPomodorosInDay());
+                System.out.println(pomodoroService.getPomodorosInDay());
                 break;
             case 5:
-                defaultPomodoroService.getPomodorosInDayExtended().stream()
+                pomodoroService.getPomodorosInDayExtended().stream()
                         .map(this::mapTimestamp)
                         .forEach(System.out::println);
                 break;
             case 6:
-                Map<LocalDate, List<Pomodoro>> datesToPomadoros = defaultPomodoroService.getPomodorosInMonthExtended();
+                Map<LocalDate, List<Pomodoro>> datesToPomadoros = pomodoroService.getPomodorosInMonthExtended();
                 for (Map.Entry<LocalDate, List<Pomodoro>> entry : datesToPomadoros.entrySet()) {
                     System.out.println();
                     System.out.println(entry.getKey());

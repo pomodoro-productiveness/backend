@@ -12,7 +12,7 @@ import java.io.File;
 @Service
 public class DefaultAudioPlayerService implements AudioPlayerService {
 
-    private static final String PATH = "/home/ihor/Downloads/timer.snd";
+    private static final String PATH = "C:\\timer.snd";
 
     private final Clip clip = AudioSystem.getClip();
 
