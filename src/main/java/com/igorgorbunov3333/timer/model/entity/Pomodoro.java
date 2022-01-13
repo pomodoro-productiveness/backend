@@ -29,6 +29,10 @@ public class Pomodoro {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
+    public Long getId() {
+        return id;
+    }
+
     public long startEndTimeDifferenceInSeconds() {
         return ChronoUnit.SECONDS.between(startTime, endTime);
     }

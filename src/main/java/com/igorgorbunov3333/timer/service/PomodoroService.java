@@ -20,4 +20,6 @@ public interface PomodoroService {
     List<Pomodoro> getPomodorosInDayExtended();
 
     Map<LocalDate, List<Pomodoro>> getPomodorosInMonthExtended();
+
+    void removePomodoro(Long id);
 }

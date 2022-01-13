@@ -21,56 +21,69 @@ public class CommandLineService {
     public void start() {
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("1. start");
-        System.out.println("2. stop");
-        System.out.println("3. current time");
-        System.out.println("4. pomadoros today");
-        System.out.println("5. pomadoros today extended");
-        System.out.println("6. pomadoros for the last month");
-
         while (true) {
-            int c = sc.nextInt();
-            gotoChoice(c);
-            if (c == 7)
+            String text = sc.nextLine();
+            gotoChoice(text);
+            if (text.equals("exit"))
                 break;
         }
         sc.close();
     }
 
-    private void gotoChoice(int c) {
-        switch (c) {
-            case 1:
-                pomodoroService.starPomodoro();
-                break;
-            case 2:
-                pomodoroService.stopPomodoro();
-                break;
-            case 3:
-                int seconds = pomodoroService.getPomodoroTime();
-                String formattedTime = secondsFormatterService.format(seconds);
-                System.out.println(formattedTime);
-                break;
-            case 4:
-                System.out.println(pomodoroService.getPomodorosInDay());
-                break;
-            case 5:
-                pomodoroService.getPomodorosInDayExtended().stream()
-                        .map(this::mapTimestamp)
-                        .forEach(System.out::println);
-                break;
-            case 6:
-                Map<LocalDate, List<Pomodoro>> datesToPomadoros = pomodoroService.getPomodorosInMonthExtended();
-                for (Map.Entry<LocalDate, List<Pomodoro>> entry : datesToPomadoros.entrySet()) {
-                    System.out.println();
-                    System.out.println(entry.getKey());
-                    System.out.println("pomodoros in day - " + entry.getValue().size());
-                    for (Pomodoro pomodoro : entry.getValue()) {
-                        String pomodoroRow = mapTimestamp(pomodoro);
-                        String pomodoroDuration = secondsFormatterService.format(pomodoro.startEndTimeDifferenceInSeconds());
-                        System.out.println(pomodoroRow + " - " + pomodoroDuration);
-                    }
+    private void gotoChoice(String input) {
+        if (input.equals("1")) {
+            pomodoroService.starPomodoro();
+        } else if (input.equals("2")) {
+            pomodoroService.stopPomodoro();
+        } else if (input.equals("3")) {
+            int seconds = pomodoroService.getPomodoroTime();
+            String formattedTime = secondsFormatterService.format(seconds);
+            System.out.println(formattedTime);
+        } else if (input.equals("4")) {
+            System.out.println(pomodoroService.getPomodorosInDay());
+        } else if (input.equals("5")) {
+            List<Pomodoro> pomodoros = pomodoroService.getPomodorosInDayExtended();
+            for (Pomodoro pomodoro : pomodoros) {
+                String pomodoroId = pomodoro.getId().toString();
+                String pomodoroRow = mapTimestamp(pomodoro);
+                String pomodoroDuration = secondsFormatterService.format(pomodoro.startEndTimeDifferenceInSeconds());
+                System.out.println("id - ".concat(pomodoroId)
+                        .concat(" | ")
+                        .concat("time - ")
+                        .concat(pomodoroRow)
+                        .concat(" | ")
+                        .concat("duration - ")
+                        .concat(pomodoroDuration));
+            }
+        } else if (input.equals("6")) {
+            Map<LocalDate, List<Pomodoro>> datesToPomadoros = pomodoroService.getPomodorosInMonthExtended();
+            for (Map.Entry<LocalDate, List<Pomodoro>> entry : datesToPomadoros.entrySet()) {
+                System.out.println();
+                System.out.println(entry.getKey());
+                System.out.println("pomodoros in day - " + entry.getValue().size());
+                for (Pomodoro pomodoro : entry.getValue()) {
+                    String pomodoroRow = mapTimestamp(pomodoro);
+                    String pomodoroDuration = secondsFormatterService.format(pomodoro.startEndTimeDifferenceInSeconds());
+                    System.out.println(pomodoroRow + " - " + pomodoroDuration);
                 }
-                break;
+            }
+        } else if (input.equals("help")) {
+            System.out.println("1. start");
+            System.out.println("2. stop");
+            System.out.println("3. current time");
+            System.out.println("4. pomadoros today");
+            System.out.println("5. pomadoros today extended");
+            System.out.println("6. pomadoros for the last month");
+            System.out.println("7. remove pomodoro by id. For example \"remove 10\"");
+        } else if (input.startsWith("remove")) {
+            char[] inputChars = input.toCharArray();
+            int index = "remove ".length();
+            char[] pomodoroIdInString = new char[input.length() - index];
+            for (int i = index, j = 0; i < inputChars.length; i++, j++) {
+                pomodoroIdInString[j] = inputChars[i];
+            }
+            Long pomodoroId = Long.valueOf(new String(pomodoroIdInString));
+            pomodoroService.removePomodoro(pomodoroId);
         }
     }
 

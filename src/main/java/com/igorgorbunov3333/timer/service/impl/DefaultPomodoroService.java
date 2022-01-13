@@ -42,20 +42,17 @@ public class DefaultPomodoroService implements PomodoroService {
         }
         pomodoroState.isRunning(true);
         pomodoroState.setSeconds(0);
-        for (int i = 0; i < SECONDS_IN_20_MINUTES; i++) {
-            if (!pomodoroState.isCurrentlyRunning()) {
-                break;
-            }
+        do {
             try {
                 Thread.sleep(1000);
             } catch (Exception ignored) {
 
             }
             pomodoroState.setSeconds(pomodoroState.getSeconds() + 1);
-        }
-        if (pomodoroState.isCurrentlyRunning()) {
-            player.play();
-        }
+            if (pomodoroState.getSeconds() >= SECONDS_IN_20_MINUTES) {
+                player.play();
+            }
+        } while (pomodoroState.isCurrentlyRunning());
     }
 
     @Override
@@ -93,6 +90,11 @@ public class DefaultPomodoroService implements PomodoroService {
         Map<LocalDate, List<Pomodoro>> pomodorosByDates = pomodoros.stream()
                 .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().toLocalDate()));
         return new TreeMap<>(pomodorosByDates);
+    }
+
+    @Override
+    public void removePomodoro(Long id) {
+        pomodoroRepository.deleteById(id);
     }
 
 }
