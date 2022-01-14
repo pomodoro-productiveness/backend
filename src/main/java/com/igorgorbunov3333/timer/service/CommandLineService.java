@@ -39,24 +39,20 @@ public class CommandLineService {
             pomodoroService.stopPomodoro();
         } else if (input.equals("3")) {
             int seconds = pomodoroService.getPomodoroTime();
-            String formattedTime = secondsFormatterService.format(seconds);
+            String formattedTime = secondsFormatterService.formatInMinutes(seconds);
             System.out.println(formattedTime);
         } else if (input.equals("4")) {
             System.out.println(pomodoroService.getPomodorosInDay());
         } else if (input.equals("5")) {
             List<Pomodoro> pomodoros = pomodoroService.getPomodorosInDayExtended();
-            for (Pomodoro pomodoro : pomodoros) {
-                printPomodoro(pomodoro, true);
-            }
+            printDailyPomodoros(pomodoros, true);
         } else if (input.equals("6")) {
             Map<LocalDate, List<Pomodoro>> datesToPomadoros = pomodoroService.getPomodorosInMonthExtended();
             for (Map.Entry<LocalDate, List<Pomodoro>> entry : datesToPomadoros.entrySet()) {
                 System.out.println();
                 System.out.println(entry.getKey());
                 System.out.println("pomodoros in day - " + entry.getValue().size());
-                for (Pomodoro pomodoro : entry.getValue()) {
-                    printPomodoro(pomodoro, false);
-                }
+                printDailyPomodoros(entry.getValue(), false);
             }
         } else if (input.equals("help")) {
             printFeaturesList();
@@ -82,9 +78,18 @@ public class CommandLineService {
         System.out.println("7. remove pomodoro by id. For example \"remove 10\"");
     }
 
+    private void printDailyPomodoros(List<Pomodoro> pomodoros, boolean withId) {
+        long pomodoroDurationInSeconds = 0;
+        for (Pomodoro pomodoro : pomodoros) {
+            printPomodoro(pomodoro, withId);
+            pomodoroDurationInSeconds += pomodoro.getStartEndTimeDifferenceInSeconds();
+        }
+        System.out.println("Total time - " + secondsFormatterService.formatInHours(pomodoroDurationInSeconds));
+    }
+
     private void printPomodoro(Pomodoro pomodoro, boolean withId) {
         String pomodoroPeriod = mapTimestamp(pomodoro);
-        String pomodoroDuration = secondsFormatterService.format(pomodoro.startEndTimeDifferenceInSeconds());
+        String pomodoroDuration = secondsFormatterService.formatInMinutes(pomodoro.getStartEndTimeDifferenceInSeconds());
         String formattedPomodoroPeriodAndDuration = "time - "
                 .concat(pomodoroPeriod)
                 .concat(" | ")
