@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -94,7 +95,19 @@ public class DefaultPomodoroService implements PomodoroService {
 
     @Override
     public void removePomodoro(Long id) {
+        Optional<Pomodoro> pomodoroOptional = pomodoroRepository.findById(id);
+        if (pomodoroOptional.isEmpty()) {
+            System.out.println("No such pomodoro with id [" + id + "]");
+            return;
+        }
+        Pomodoro pomodoro = pomodoroOptional.get();
+        LocalDate pomodoroLocalDate = pomodoro.getStartTime().toLocalDate();
+        if (pomodoroLocalDate.isBefore(LocalDate.now())) {
+            System.out.println("Pomodoro with id [" + id + "] cannot be deleted because pomodoro not from todays day");
+            return;
+        }
         pomodoroRepository.deleteById(id);
+        System.out.println("Pomodoro with id [" + id + "] removed");
     }
 
 }

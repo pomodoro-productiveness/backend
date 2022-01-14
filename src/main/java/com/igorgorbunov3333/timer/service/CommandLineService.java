@@ -59,6 +59,10 @@ public class CommandLineService {
         } else if (input.startsWith("remove")) {
             char[] inputChars = input.toCharArray();
             int index = "remove ".length();
+            if (inputChars[index - 1] != ' ') {
+                System.out.println("Incorrect input \"" + input + "\". \"remove\" and id should be splitted with \" \"");
+                return;
+            }
             char[] pomodoroIdInString = new char[input.length() - index];
             for (int i = index, j = 0; i < inputChars.length; i++, j++) {
                 pomodoroIdInString[j] = inputChars[i];
