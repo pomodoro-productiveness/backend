@@ -1,8 +1,13 @@
 spring:
-  main.web-application-type: NONE
+  main:
+    web-application-type: NONE
+    banner-mode: OFF
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/pomodoro_database
     username: postgres
     password: root
   jpa.show-sql: false
+logging.level:
+  root: OFF
+  org.springframework.boot: OFF

@@ -20,7 +20,9 @@ public class CommandLineService {
 
     public void start() {
         Scanner sc = new Scanner(System.in);
-
+        System.out.println("Pomodoro application started");
+        System.out.println();
+        printFeaturesList();
         while (true) {
             String text = sc.nextLine();
             gotoChoice(text);
@@ -68,13 +70,7 @@ public class CommandLineService {
                 }
             }
         } else if (input.equals("help")) {
-            System.out.println("1. start");
-            System.out.println("2. stop");
-            System.out.println("3. current time");
-            System.out.println("4. pomadoros today");
-            System.out.println("5. pomadoros today extended");
-            System.out.println("6. pomadoros for the last month");
-            System.out.println("7. remove pomodoro by id. For example \"remove 10\"");
+            printFeaturesList();
         } else if (input.startsWith("remove")) {
             char[] inputChars = input.toCharArray();
             int index = "remove ".length();
@@ -85,6 +81,16 @@ public class CommandLineService {
             Long pomodoroId = Long.valueOf(new String(pomodoroIdInString));
             pomodoroService.removePomodoro(pomodoroId);
         }
+    }
+
+    private void printFeaturesList() {
+        System.out.println("1. start");
+        System.out.println("2. stop");
+        System.out.println("3. current time");
+        System.out.println("4. pomadoros today");
+        System.out.println("5. pomadoros today extended");
+        System.out.println("6. pomadoros for the last month");
+        System.out.println("7. remove pomodoro by id. For example \"remove 10\"");
     }
 
     private String mapTimestamp(Pomodoro pomodoro) {
