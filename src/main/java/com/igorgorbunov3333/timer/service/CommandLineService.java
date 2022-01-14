@@ -46,16 +46,7 @@ public class CommandLineService {
         } else if (input.equals("5")) {
             List<Pomodoro> pomodoros = pomodoroService.getPomodorosInDayExtended();
             for (Pomodoro pomodoro : pomodoros) {
-                String pomodoroId = pomodoro.getId().toString();
-                String pomodoroRow = mapTimestamp(pomodoro);
-                String pomodoroDuration = secondsFormatterService.format(pomodoro.startEndTimeDifferenceInSeconds());
-                System.out.println("id - ".concat(pomodoroId)
-                        .concat(" | ")
-                        .concat("time - ")
-                        .concat(pomodoroRow)
-                        .concat(" | ")
-                        .concat("duration - ")
-                        .concat(pomodoroDuration));
+                printPomodoro(pomodoro, true);
             }
         } else if (input.equals("6")) {
             Map<LocalDate, List<Pomodoro>> datesToPomadoros = pomodoroService.getPomodorosInMonthExtended();
@@ -64,9 +55,7 @@ public class CommandLineService {
                 System.out.println(entry.getKey());
                 System.out.println("pomodoros in day - " + entry.getValue().size());
                 for (Pomodoro pomodoro : entry.getValue()) {
-                    String pomodoroRow = mapTimestamp(pomodoro);
-                    String pomodoroDuration = secondsFormatterService.format(pomodoro.startEndTimeDifferenceInSeconds());
-                    System.out.println(pomodoroRow + " - " + pomodoroDuration);
+                    printPomodoro(pomodoro, false);
                 }
             }
         } else if (input.equals("help")) {
@@ -91,6 +80,26 @@ public class CommandLineService {
         System.out.println("5. pomadoros today extended");
         System.out.println("6. pomadoros for the last month");
         System.out.println("7. remove pomodoro by id. For example \"remove 10\"");
+    }
+
+    private void printPomodoro(Pomodoro pomodoro, boolean withId) {
+        String pomodoroPeriod = mapTimestamp(pomodoro);
+        String pomodoroDuration = secondsFormatterService.format(pomodoro.startEndTimeDifferenceInSeconds());
+        String formattedPomodoroPeriodAndDuration = "time - "
+                .concat(pomodoroPeriod)
+                .concat(" | ")
+                .concat("duration - ")
+                .concat(pomodoroDuration);
+        String pomodoroRow;
+        if (withId) {
+            String pomodoroId = pomodoro.getId().toString();
+            pomodoroRow = "id - ".concat(pomodoroId)
+                    .concat(" | ")
+                    .concat(formattedPomodoroPeriodAndDuration);
+        } else {
+            pomodoroRow = formattedPomodoroPeriodAndDuration;
+        }
+        System.out.println(pomodoroRow);
     }
 
     private String mapTimestamp(Pomodoro pomodoro) {
