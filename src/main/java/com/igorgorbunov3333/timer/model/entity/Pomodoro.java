@@ -33,7 +33,7 @@ public class Pomodoro {
         return id;
     }
 
-    public long getStartEndTimeDifferenceInSeconds() {
+    public Long getStartEndTimeDifferenceInSeconds() {
         return ChronoUnit.SECONDS.between(startTime, endTime);
     }
 

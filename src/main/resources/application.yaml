@@ -11,3 +11,4 @@ spring:
 logging.level:
   root: OFF
   org.springframework.boot: OFF
+pomodoro.minimum-lifetime: ${POMODORO_MIN_LIFETIME:}
