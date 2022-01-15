@@ -1,5 +1,11 @@
 package com.igorgorbunov3333.timer.model.entity;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,15 +15,11 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Entity
+@Getter
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class Pomodoro {
-
-    public Pomodoro(LocalDateTime startTime, LocalDateTime endTime) {
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
-
-    public Pomodoro() {
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,28 +31,8 @@ public class Pomodoro {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
-    public Long getId() {
-        return id;
-    }
-
     public Long getStartEndTimeDifferenceInSeconds() {
         return ChronoUnit.SECONDS.between(startTime, endTime);
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
     }
 
 }

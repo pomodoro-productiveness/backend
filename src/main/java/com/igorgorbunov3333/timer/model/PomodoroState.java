@@ -1,26 +1,15 @@
 package com.igorgorbunov3333.timer.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+@Getter
+@Setter
 @Component
 public class PomodoroState {
 
     private int seconds;
-    private boolean currentlyRunning;
+    private boolean running;
 
-    public int getSeconds() {
-        return seconds;
-    }
-
-    public void setSeconds(int seconds) {
-        this.seconds = seconds;
-    }
-
-    public boolean isCurrentlyRunning() {
-        return currentlyRunning;
-    }
-
-    public void isRunning(boolean currentlyRunning) {
-        this.currentlyRunning = currentlyRunning;
-    }
 }

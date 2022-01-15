@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.service;
 
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -11,12 +11,11 @@ import java.util.Map;
 import java.util.Scanner;
 
 @Component
+@AllArgsConstructor
 public class CommandLineService {
 
-    @Autowired
-    private PomodoroService pomodoroService;
-    @Autowired
-    private SecondsFormatterService secondsFormatterService;
+    private final PomodoroService pomodoroService;
+    private final SecondsFormatterService secondsFormatterService;
 
     public void start() {
         Scanner sc = new Scanner(System.in);

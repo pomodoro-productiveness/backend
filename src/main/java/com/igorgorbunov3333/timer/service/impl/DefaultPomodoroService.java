@@ -6,8 +6,7 @@ import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.AudioPlayerService;
 import com.igorgorbunov3333.timer.service.PomodoroService;
-import com.igorgorbunov3333.timer.service.SecondsFormatterService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -21,30 +20,25 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class DefaultPomodoroService implements PomodoroService {
 
     private static final int SECONDS_IN_20_MINUTES = 1200;
     private static final LocalDateTime START_DAY_TIMESTAMP = LocalDate.now().atStartOfDay();
     private static final LocalDateTime END_DAY_TIMESTAMP = LocalDate.now().atTime(LocalTime.MAX);
 
-    @Autowired
-    private AudioPlayerService player;
-    @Autowired
-    private PomodoroState pomodoroState;
-    @Autowired
-    private PomodoroRepository pomodoroRepository;
-    @Autowired
-    private SecondsFormatterService secondsFormatterService;
-    @Autowired
-    private PomodoroProperties pomodoroProperties;
+    private final AudioPlayerService player;
+    private final PomodoroState pomodoroState;
+    private final PomodoroRepository pomodoroRepository;
+    private final PomodoroProperties pomodoroProperties;
 
     @Async
     @Override
     public void starPomodoro() {
-        if (pomodoroState.isCurrentlyRunning()) {
+        if (pomodoroState.isRunning()) {
             return;
         }
-        pomodoroState.isRunning(true);
+        pomodoroState.setRunning(true);
         pomodoroState.setSeconds(0);
         do {
             try {
@@ -56,18 +50,18 @@ public class DefaultPomodoroService implements PomodoroService {
             if (pomodoroState.getSeconds() >= SECONDS_IN_20_MINUTES) {
                 player.play();
             }
-        } while (pomodoroState.isCurrentlyRunning());
+        } while (pomodoroState.isRunning());
     }
 
     @Override
     public void stopPomodoro() {
-        pomodoroState.isRunning(false);
+        pomodoroState.setRunning(false);
         player.stop();
 
         LocalDateTime endTime = LocalDateTime.now();
         int secondsPassed = pomodoroState.getSeconds();
         LocalDateTime startTime = endTime.minusSeconds(secondsPassed);
-        Pomodoro pomodoro = new Pomodoro(startTime, endTime);
+        Pomodoro pomodoro = new Pomodoro(null, startTime, endTime);
         Long pomodoroActualLifetime = pomodoro.getStartEndTimeDifferenceInSeconds();
         Long pomodoroMinimumLifetime = pomodoroProperties.getMinimumLifetime();
         if (pomodoroActualLifetime < pomodoroMinimumLifetime) {
