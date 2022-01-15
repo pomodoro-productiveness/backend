@@ -1,7 +1,6 @@
-package com.igorgorbunov3333.timer.service;
+package com.igorgorbunov3333.timer.service.pomodoro;
 
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
-import org.springframework.scheduling.annotation.Async;
 
 import java.time.LocalDate;
 import java.util.List;

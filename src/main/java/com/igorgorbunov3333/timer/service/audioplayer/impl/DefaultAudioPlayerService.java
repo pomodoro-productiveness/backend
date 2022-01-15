@@ -1,6 +1,6 @@
-package com.igorgorbunov3333.timer.service.impl;
+package com.igorgorbunov3333.timer.service.audioplayer.impl;
 
-import com.igorgorbunov3333.timer.service.AudioPlayerService;
+import com.igorgorbunov3333.timer.service.audioplayer.AudioPlayerService;
 import org.springframework.stereotype.Service;
 
 import javax.sound.sampled.AudioInputStream;

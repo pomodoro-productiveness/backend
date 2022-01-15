@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +13,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class PomodoroDto {
 
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime startTime;
+
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime endTime;
 
 }

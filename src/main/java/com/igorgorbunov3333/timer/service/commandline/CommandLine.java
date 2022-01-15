@@ -1,6 +1,8 @@
-package com.igorgorbunov3333.timer.service;
+package com.igorgorbunov3333.timer.service.commandline;
 
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
+import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
+import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +14,10 @@ import java.util.Scanner;
 
 @Component
 @AllArgsConstructor
-public class CommandLineService {
+public class CommandLine {
 
     private final PomodoroService pomodoroService;
-    private final SecondsFormatterService secondsFormatterService;
+    private final SecondsFormatter secondsFormatter;
 
     public void start() {
         Scanner sc = new Scanner(System.in);
@@ -38,7 +40,7 @@ public class CommandLineService {
             pomodoroService.stopPomodoro();
         } else if (input.equals("3")) {
             int seconds = pomodoroService.getPomodoroTime();
-            String formattedTime = secondsFormatterService.formatInMinutes(seconds);
+            String formattedTime = secondsFormatter.formatInMinutes(seconds);
             System.out.println(formattedTime);
         } else if (input.equals("4")) {
             System.out.println(pomodoroService.getPomodorosInDay());
@@ -87,12 +89,12 @@ public class CommandLineService {
             printPomodoro(pomodoro, withId);
             pomodoroDurationInSeconds += pomodoro.getStartEndTimeDifferenceInSeconds();
         }
-        System.out.println("Total time - " + secondsFormatterService.formatInHours(pomodoroDurationInSeconds));
+        System.out.println("Total time - " + secondsFormatter.formatInHours(pomodoroDurationInSeconds));
     }
 
     private void printPomodoro(Pomodoro pomodoro, boolean withId) {
         String pomodoroPeriod = mapTimestamp(pomodoro);
-        String pomodoroDuration = secondsFormatterService.formatInMinutes(pomodoro.getStartEndTimeDifferenceInSeconds());
+        String pomodoroDuration = secondsFormatter.formatInMinutes(pomodoro.getStartEndTimeDifferenceInSeconds());
         String formattedPomodoroPeriodAndDuration = "time - "
                 .concat(pomodoroPeriod)
                 .concat(" | ")

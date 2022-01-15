@@ -1,9 +1,9 @@
-package com.igorgorbunov3333.timer.service;
+package com.igorgorbunov3333.timer.service.util;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class SecondsFormatterService {
+public class SecondsFormatter {
 
     public String formatInMinutes(long seconds) {
         long minutes = seconds / 60;

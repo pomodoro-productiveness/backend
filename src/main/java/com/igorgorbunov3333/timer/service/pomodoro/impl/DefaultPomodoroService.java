@@ -1,11 +1,11 @@
-package com.igorgorbunov3333.timer.service.impl;
+package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.PomodoroState;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
-import com.igorgorbunov3333.timer.service.AudioPlayerService;
-import com.igorgorbunov3333.timer.service.PomodoroService;
+import com.igorgorbunov3333.timer.service.audioplayer.AudioPlayerService;
+import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
