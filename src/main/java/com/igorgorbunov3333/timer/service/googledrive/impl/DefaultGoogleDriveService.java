@@ -99,7 +99,7 @@ public class DefaultGoogleDriveService implements GoogleDriveService {
             e.printStackTrace();
         }
 
-        File googleDocFile = new File();//service.files().get("1Onqbker3q6KdUnnB_5y4UVAUUXcqM5NA").execute();
+        File googleDocFile = new File();
         File oldFile = null;
         try {
             oldFile = service.files().get("1Onqbker3q6KdUnnB_5y4UVAUUXcqM5NA").execute();

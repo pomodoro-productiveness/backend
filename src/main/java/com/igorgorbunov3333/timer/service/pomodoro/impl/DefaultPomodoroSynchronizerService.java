@@ -11,13 +11,15 @@ import com.igorgorbunov3333.timer.service.pomodoro.PomodoroSynchronizerService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,45 +49,103 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                     .max(Comparator.comparing(PomodoroDto::getStartTime))
                     .orElse(null);
         }
-        LocalDate latestRemotePomodoro = null;
+        LocalDateTime latestRemotePomodoroLocalDate = null;
         if (latestPomodoro != null) {
-            latestRemotePomodoro = latestPomodoro.getStartTime().toLocalDate();
+            latestRemotePomodoroLocalDate = latestPomodoro.getStartTime();
         }
         Map<Integer, Map<Integer, List<Pomodoro>>> yearToMonthPomodorosFromDatabase = pomodorosFromDataBase.stream()
                 .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().getYear(),
                         Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().getMonth().getValue())));
-        if (latestRemotePomodoro != null) {
-            Integer year = latestRemotePomodoro.getYear();
+        List<YearlyPomodoroData> yearlyPomodoroDataToSaveRemotely = new ArrayList<>();
+        if (latestRemotePomodoroLocalDate != null) {
+            Integer latestRemotePomodoroYear = latestRemotePomodoroLocalDate.getYear();
             Map<Integer, Map<Integer, List<Pomodoro>>> filteredYearToMonthPomodorosFromDatabase = yearToMonthPomodorosFromDatabase.entrySet().stream()
-                    .filter(entry -> entry.getKey() >= year)
+                    .filter(entry -> entry.getKey() >= latestRemotePomodoroYear)
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             Map<Integer, Map<Integer, List<Pomodoro>>> sortedYearToMonthPomodorosFromDatabase = new TreeMap<>(filteredYearToMonthPomodorosFromDatabase);
-            Map<Integer, Map<Integer, List<Pomodoro>>> pomodoroDataToSaveRemotely = new HashMap<>();
-            for (Map.Entry<Integer, Map<Integer, List<Pomodoro>>> entry : sortedYearToMonthPomodorosFromDatabase.entrySet()) {
-                if (entry.getKey().equals(year)) {
-                    Integer latestRemotePomodoroMonth = latestRemotePomodoro.getMonthValue();
-                    Map<Integer, List<Pomodoro>> monthlyPomodoroData = entry.getValue();
-                    //TODO: complete this logic
+            for (Map.Entry<Integer, Map<Integer, List<Pomodoro>>> yearlyEntryFromDatabase : sortedYearToMonthPomodorosFromDatabase.entrySet()) {
+                if (yearlyEntryFromDatabase.getKey().equals(latestRemotePomodoroYear)) {
+                    Integer latestRemotePomodoroMonth = latestRemotePomodoroLocalDate.getMonthValue();
+                    Map<Integer, List<Pomodoro>> monthlyPomodoroData = yearlyEntryFromDatabase.getValue();
+                    List<MonthlyPomodoroData> monthlyPomodoroDataToSaveRemotely = new ArrayList<>();
+                    for (Map.Entry<Integer, List<Pomodoro>> monthlyEntry : monthlyPomodoroData.entrySet()) {
+                        if (monthlyEntry.getKey().equals(latestRemotePomodoroMonth)) {
+                            List<PomodoroDto> pomodorosToSaveRemotely = new ArrayList<>();
+                            for (Pomodoro pomodoro : monthlyEntry.getValue()) {
+                                if (pomodoro.getStartTime().isAfter(latestRemotePomodoroLocalDate)) {
+                                    pomodorosToSaveRemotely.add(new PomodoroDto(pomodoro.getStartTime(), pomodoro.getEndTime()));
+                                }
+                            }
+                            monthlyPomodoroDataToSaveRemotely.add(new MonthlyPomodoroData(monthlyEntry.getKey(), pomodorosToSaveRemotely));
+                        } else if (monthlyEntry.getKey() > latestRemotePomodoroMonth) {
+                            List<MonthlyPomodoroData> monthlyDataToSave = mapToMonthlyPomodoroData(Map.of(monthlyEntry.getKey(), monthlyEntry.getValue()));
+                            monthlyPomodoroDataToSaveRemotely.addAll(monthlyDataToSave);
+                        }
+                    }
+                    yearlyPomodoroDataToSaveRemotely.add(new YearlyPomodoroData(yearlyEntryFromDatabase.getKey(), monthlyPomodoroDataToSaveRemotely));
+                }
+                if (!yearlyPomodoroDataToSaveRemotely.stream().map(YearlyPomodoroData::getYear).collect(Collectors.toSet()).contains(yearlyEntryFromDatabase.getKey())) {
+                    List<MonthlyPomodoroData> monthlyPomodoroData = mapToMonthlyPomodoroData(yearlyEntryFromDatabase.getValue());
+                    YearlyPomodoroData yearlyPomodoroData = new YearlyPomodoroData(yearlyEntryFromDatabase.getKey(), monthlyPomodoroData);
+                    yearlyPomodoroDataToSaveRemotely.add(yearlyPomodoroData);
                 }
             }
+            Map<Integer, YearlyPomodoroData> oldYearlyPomodoroRemoteData = remotePomodoroData.getYearlyPomodoroData().stream()
+                    .collect(Collectors.toMap(YearlyPomodoroData::getYear, Function.identity()));
+            Set<YearlyPomodoroData> allYearlyRemotePomodoroDataToSave = new HashSet<>(remotePomodoroData.getYearlyPomodoroData());
+            for (YearlyPomodoroData newYearlyPomodoroData : yearlyPomodoroDataToSaveRemotely) {
+                if (oldYearlyPomodoroRemoteData.get(newYearlyPomodoroData.getYear()) != null) {
+                    YearlyPomodoroData oldYearPomodoroData = oldYearlyPomodoroRemoteData.get(newYearlyPomodoroData.getYear());
+                    List<MonthlyPomodoroData> oldMonthlyPomodoroData = oldYearPomodoroData.getMonthlyPomodoroData();
+                    MonthlyPomodoroData oldestNewMonthlyData = newYearlyPomodoroData.getMonthlyPomodoroData().stream()
+                            .min(Comparator.comparing(MonthlyPomodoroData::getMonth))
+                            .get();
+                    MonthlyPomodoroData latestOldMonthlyData = oldMonthlyPomodoroData.stream()
+                            .max(Comparator.comparing(MonthlyPomodoroData::getMonth))
+                            .get();
+                    if (oldestNewMonthlyData.getMonth().equals(latestOldMonthlyData.getMonth())) {
+                        Set<PomodoroDto> monthlyPomodoros = new HashSet<>(oldestNewMonthlyData.getPomodoros());
+                        monthlyPomodoros.addAll(latestOldMonthlyData.getPomodoros());
+                        MonthlyPomodoroData monthlyPomodoroDataToAdd = new MonthlyPomodoroData(oldestNewMonthlyData.getMonth(), new ArrayList<>(monthlyPomodoros));
+                        List<MonthlyPomodoroData> newMonthlyDataWithoutCommonMonth = newYearlyPomodoroData.getMonthlyPomodoroData().stream()
+                                .filter(month -> !month.getMonth().equals(monthlyPomodoroDataToAdd.getMonth()))
+                                .collect(Collectors.toList());
+                        List<MonthlyPomodoroData> oldMonthlyDataWithoutCommonMonth = oldYearPomodoroData.getMonthlyPomodoroData().stream()
+                                .filter(month -> !month.getMonth().equals(monthlyPomodoroDataToAdd.getMonth()))
+                                .collect(Collectors.toList());
+                        List<MonthlyPomodoroData> monthlyPomodoroDataToSave = new ArrayList<>(newMonthlyDataWithoutCommonMonth);
+                        monthlyPomodoroDataToSave.addAll(oldMonthlyDataWithoutCommonMonth);
+                        monthlyPomodoroDataToSave.add(monthlyPomodoroDataToAdd);
+                        allYearlyRemotePomodoroDataToSave.add(new YearlyPomodoroData(newYearlyPomodoroData.getYear(), monthlyPomodoroDataToSave));
+                    }
+                } else {
+                    allYearlyRemotePomodoroDataToSave.add(newYearlyPomodoroData);
+                }
+            }
+            googleDriveService.updatePomodoroData(new PomodoroDataDto(new ArrayList<>(allYearlyRemotePomodoroDataToSave)));
         } else {
             List<YearlyPomodoroData> yearlyPomodoroData = new ArrayList<>();
             for (Map.Entry<Integer, Map<Integer, List<Pomodoro>>> entry : yearToMonthPomodorosFromDatabase.entrySet()) {
-                List<MonthlyPomodoroData> monthlyPomodoroData = new ArrayList<>();
-                List<PomodoroDto> pomodoroDtos = new ArrayList<>();
-                for (Map.Entry<Integer, List<Pomodoro>> montlyEntry : entry.getValue().entrySet()) {
-                    for (Pomodoro pomodoro : montlyEntry.getValue()) {
-                        pomodoroDtos.add(new PomodoroDto(pomodoro.getStartTime(), pomodoro.getEndTime()));
-                    }
-                    MonthlyPomodoroData monthlyData = new MonthlyPomodoroData(montlyEntry.getKey(), pomodoroDtos);
-                    monthlyPomodoroData.add(monthlyData);
-                }
+                List<MonthlyPomodoroData> monthlyPomodoroData = mapToMonthlyPomodoroData(entry.getValue());
                 YearlyPomodoroData yearlyData = new YearlyPomodoroData(entry.getKey(), monthlyPomodoroData);
                 yearlyPomodoroData.add(yearlyData);
             }
             PomodoroDataDto pomodoroDataDto = new PomodoroDataDto(yearlyPomodoroData);
             googleDriveService.updatePomodoroData(pomodoroDataDto);
         }
+    }
+
+    private List<MonthlyPomodoroData> mapToMonthlyPomodoroData(Map<Integer, List<Pomodoro>> monthToPomodoros) {
+        List<MonthlyPomodoroData> monthlyPomodoroData = new ArrayList<>();
+        List<PomodoroDto> pomodoroDtos = new ArrayList<>();
+        for (Map.Entry<Integer, List<Pomodoro>> montlyEntry : monthToPomodoros.entrySet()) {
+            for (Pomodoro pomodoro : montlyEntry.getValue()) {
+                pomodoroDtos.add(new PomodoroDto(pomodoro.getStartTime(), pomodoro.getEndTime()));
+            }
+            MonthlyPomodoroData monthlyData = new MonthlyPomodoroData(montlyEntry.getKey(), pomodoroDtos);
+            monthlyPomodoroData.add(monthlyData);
+        }
+        return monthlyPomodoroData;
     }
 
 }
