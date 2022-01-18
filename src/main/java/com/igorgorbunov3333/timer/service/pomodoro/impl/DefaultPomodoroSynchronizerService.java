@@ -2,6 +2,7 @@ package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
 import com.igorgorbunov3333.timer.model.dto.PomodoroDataDto;
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroSynchronizerService;
@@ -29,10 +30,27 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                 .collect(Collectors.toList());
         PomodoroDataDto pomodoroDataDto = googleDriveService.getPomodoroData();
         List<PomodoroDto> remotePomodoros = pomodoroDataDto.getPomodoros();
+        if (pomodorosFromDataBase.equals(remotePomodoros)) {
+            System.out.println("Nothing to synchronize between remote and local pomodoros");
+            return;
+        }
+
+        boolean remotePomodorosDoesNotContainAllLocalPomodoros = !remotePomodoros.containsAll(pomodorosFromDataBase);
+        boolean localPomodorosDoesNotContainAllRemotePomodoros = !pomodorosFromDataBase.containsAll(remotePomodoros);
 
         List<PomodoroDto> pomodorosToSaveRemotely = getAllSortedPomodoros(pomodorosFromDataBase, remotePomodoros);
         PomodoroDataDto pomodoroDataToSaveRemotely = new PomodoroDataDto(pomodorosToSaveRemotely);
-        googleDriveService.updatePomodoroData(pomodoroDataToSaveRemotely);
+        if (remotePomodorosDoesNotContainAllLocalPomodoros) {
+            googleDriveService.updatePomodoroData(pomodoroDataToSaveRemotely);
+        }
+
+        if (localPomodorosDoesNotContainAllRemotePomodoros) {
+            List<Pomodoro> pomodorosToSaveLocally = pomodoroDataToSaveRemotely.getPomodoros().stream()
+                    .filter(pomodoroDto -> !pomodorosFromDataBase.contains(pomodoroDto))
+                    .map(pomodoroDto -> new Pomodoro(null, pomodoroDto.getStartTime(), pomodoroDto.getEndTime()))
+                    .collect(Collectors.toList());
+            pomodoroRepository.saveAll(pomodorosToSaveLocally);
+        }
     }
 
     private List<PomodoroDto> getAllSortedPomodoros(List<PomodoroDto> pomodorosFromDataBase,
