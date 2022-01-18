@@ -65,7 +65,7 @@ public class DefaultGoogleDriveService implements GoogleDriveService {
         try {
             pomodoroDataDto = objectMapper.readValue(json, PomodoroDataDto.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            System.out.println("Error while deserialization json from google document: " + e.getMessage());
         }
         return pomodoroDataDto;
     }

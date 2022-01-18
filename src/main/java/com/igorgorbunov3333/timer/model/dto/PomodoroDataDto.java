@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class PomodoroDataDto {
 
-    private List<YearlyPomodoroData> yearlyPomodoroData;
+    private List<PomodoroDto> pomodoros;
 
     public static PomodoroDataDto createEmpty() {
         return new PomodoroDataDto(List.of());
