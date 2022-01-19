@@ -64,7 +64,9 @@ public class DefaultPomodoroService implements PomodoroService {
         Pomodoro pomodoro = new Pomodoro(null, startTime, endTime);
         Long pomodoroActualLifetime = pomodoro.getStartEndTimeDifferenceInSeconds();
         Long pomodoroMinimumLifetime = pomodoroProperties.getMinimumLifetime();
-        if (pomodoroActualLifetime < pomodoroMinimumLifetime) {
+        if (pomodoroMinimumLifetime == null) {
+            System.out.println("Pomodoro lifetime didn't set. Please configure");
+        } else if (pomodoroActualLifetime < pomodoroMinimumLifetime) {
             System.out.println("Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds");
             return;
         }

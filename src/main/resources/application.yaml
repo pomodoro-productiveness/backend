@@ -12,3 +12,7 @@ logging.level:
   root: OFF
   org.springframework.boot: OFF
 pomodoro.minimum-lifetime: ${POMODORO_MIN_LIFETIME:}
+google-drive:
+  document-id: ${DRIVE_DOCUMENT_ID:}
+  credentials-path: ${DRIVE_CREDENTIALS_PATH:}
+  file-name: ${DRIVE_FILE_NAME:}

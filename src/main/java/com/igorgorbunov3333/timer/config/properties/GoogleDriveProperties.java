@@ -10,10 +10,14 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Getter
 @Component
-@ConfigurationProperties(prefix = "pomodoro")
-public class PomodoroProperties {
+@ConfigurationProperties(prefix = "google-drive")
+public class GoogleDriveProperties {
 
     @NotBlank
-    private Long minimumLifetime;
+    private String documentId;
+    @NotBlank
+    private String credentialsPath;
+    @NotBlank
+    private String fileName;
 
 }
