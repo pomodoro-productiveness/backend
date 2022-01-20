@@ -115,4 +115,16 @@ public class DefaultPomodoroService implements PomodoroService {
         System.out.println("Pomodoro with id [" + id + "] removed");
     }
 
+    @Override
+    public void save(Pomodoro pomodoro) {
+        Pomodoro latestPomodoro = pomodoroRepository.findTopByOrderByEndTimeDesc().orElse(null);
+
+        if (latestPomodoro == null || pomodoro.getStartTime().isAfter(latestPomodoro.getEndTime())) {
+            pomodoroRepository.save(pomodoro);
+        } else {
+            System.out.println("Unable to save pomodoro [" + pomodoro + "]. Pomodoro start time is before latest pomodoro end time");
+        }
+
+    }
+
 }
