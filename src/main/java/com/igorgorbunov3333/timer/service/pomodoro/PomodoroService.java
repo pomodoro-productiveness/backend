@@ -22,6 +22,6 @@ public interface PomodoroService {
 
     void removePomodoro(Long id);
 
-    void save(Pomodoro pomodoroToSave);
+    void save();
 
 }

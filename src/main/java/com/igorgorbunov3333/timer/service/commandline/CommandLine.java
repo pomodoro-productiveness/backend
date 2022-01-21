@@ -1,19 +1,16 @@
 package com.igorgorbunov3333.timer.service.commandline;
 
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
-import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
+import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -70,28 +67,8 @@ public class CommandLine {
             String pomodoroIdArgument = getArgumentString(input, inputChars, index);
             Long pomodoroId = Long.valueOf(pomodoroIdArgument);
             pomodoroService.removePomodoro(pomodoroId);
-        } else if (input.startsWith("save ")) {
-            char[] inputChars = input.toCharArray();
-            int index = "save ".length();
-            if (inputChars[index - 1] != ' ') {
-                System.out.println("Incorrect input \"" + input + "\". \"save\" and timestamps should be separated with \" \"");
-                return;
-            }
-            String pomodoroTimestampsArgument = getArgumentString(input, inputChars, index);
-            String[] timestampStrings = pomodoroTimestampsArgument.split("#");
-            List<String> trimmedTimestampStrings = Arrays.stream(timestampStrings)
-                    .map(String::trim)
-                    .collect(Collectors.toList());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-            LocalDateTime firstLocalDateTime = LocalDateTime.parse(trimmedTimestampStrings.get(0), formatter);
-            LocalDateTime secondLocalDateTime = LocalDateTime.parse(trimmedTimestampStrings.get(1), formatter);
-            Pomodoro pomodoroToSave;
-            if (firstLocalDateTime.isBefore(secondLocalDateTime)) {
-                pomodoroToSave = new Pomodoro(null, firstLocalDateTime, secondLocalDateTime);
-            } else {
-                pomodoroToSave = new Pomodoro(null, secondLocalDateTime, firstLocalDateTime);
-            }
-            pomodoroService.save(pomodoroToSave);
+        } else if (input.startsWith("save")) {
+            pomodoroService.save();
         } else {
             System.out.println("Invalid input, please try again");
         }
@@ -104,8 +81,8 @@ public class CommandLine {
         System.out.println("4. pomadoros today");
         System.out.println("5. pomadoros today extended");
         System.out.println("6. pomadoros for the last month");
-        System.out.println("7. remove pomodoro by id. For example \"remove 10\"");
-        System.out.println("8. save pomodoro. For example \"save 2022-01-20T09:00:00#2022-01-20T09:20:00\"");
+        System.out.println("remove pomodoro by id. For example \"remove 10\"");
+        System.out.println("save pomodoro. For example \"save\"");
     }
 
     private void printDailyPomodoros(List<Pomodoro> pomodoros, boolean withId) {

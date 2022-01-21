@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -116,15 +117,32 @@ public class DefaultPomodoroService implements PomodoroService {
     }
 
     @Override
-    public void save(Pomodoro pomodoro) {
-        Pomodoro latestPomodoro = pomodoroRepository.findTopByOrderByEndTimeDesc().orElse(null);
+    public void save() {
+        Optional<Pomodoro> latestPomodoroOptional = pomodoroRepository.findTopByOrderByEndTimeDesc();
+        LocalDateTime latestPomodoroEndTime = latestPomodoroOptional
+                .map(Pomodoro::getEndTime)
+                .orElse(null);
 
-        if (latestPomodoro == null || pomodoro.getStartTime().isAfter(latestPomodoro.getEndTime())) {
-            pomodoroRepository.save(pomodoro);
-        } else {
-            System.out.println("Unable to save pomodoro [" + pomodoro + "]. Pomodoro start time is before latest pomodoro end time");
+        LocalDateTime newPomodoroEndTime = LocalDateTime.now().minusMinutes(1L);
+        if (latestPomodoroEndTime == null) {
+            Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime);
+            pomodoroRepository.save(pomodoroToSave);
+            return;
+        }
+        long newPomodoroEndEpochSeconds = newPomodoroEndTime.toEpochSecond(ZoneOffset.UTC);
+
+        LocalDateTime latestPomodoroEndTimePlusMinute = latestPomodoroEndTime.plusMinutes(1L);
+        long latestPomodoroEndtEpochSeconds = latestPomodoroEndTimePlusMinute.toEpochSecond(ZoneOffset.UTC);
+        long secondsDifference = newPomodoroEndEpochSeconds - latestPomodoroEndtEpochSeconds;
+
+        if (secondsDifference <= 60 * 20) {
+            System.out.println("Cannot save pomodoro automatically due to less than 20 minutes have passed since the end of the previous pomodoro");
+            return;
         }
 
+        Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime);
+        Pomodoro savedPomodoro = pomodoroRepository.save(pomodoroToSave);
+        System.out.println("Pomodoro saved: " + savedPomodoro);
     }
 
 }
