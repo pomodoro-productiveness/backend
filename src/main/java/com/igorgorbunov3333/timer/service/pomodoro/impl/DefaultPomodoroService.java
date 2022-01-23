@@ -41,6 +41,7 @@ public class DefaultPomodoroService implements PomodoroService {
         }
         pomodoroState.setRunning(true);
         pomodoroState.setSeconds(0);
+        boolean playerStarted = false;
         do {
             try {
                 Thread.sleep(1000);
@@ -48,8 +49,9 @@ public class DefaultPomodoroService implements PomodoroService {
 
             }
             pomodoroState.setSeconds(pomodoroState.getSeconds() + 1);
-            if (pomodoroState.getSeconds() >= SECONDS_IN_20_MINUTES) {
+            if (pomodoroState.getSeconds() >= SECONDS_IN_20_MINUTES && !playerStarted) {
                 player.play();
+                playerStarted = true;
             }
         } while (pomodoroState.isRunning());
     }
