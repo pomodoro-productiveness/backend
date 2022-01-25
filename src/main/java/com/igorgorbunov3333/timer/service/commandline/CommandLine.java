@@ -91,6 +91,7 @@ public class CommandLine {
             printPomodoro(pomodoro, withId);
             pomodoroDurationInSeconds += pomodoro.getStartEndTimeDifferenceInSeconds();
         }
+        System.out.println("Pomodoros amount - " + pomodoros.size());
         System.out.println("Total time - " + secondsFormatter.formatInHours(pomodoroDurationInSeconds));
     }
 
