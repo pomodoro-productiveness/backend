@@ -147,4 +147,9 @@ public class DefaultPomodoroService implements PomodoroService {
         System.out.println("Pomodoro saved: " + savedPomodoro);
     }
 
+    @Override
+    public boolean isNotActive() {
+        return !pomodoroState.isRunning();
+    }
+
 }

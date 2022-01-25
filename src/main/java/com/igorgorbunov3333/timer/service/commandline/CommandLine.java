@@ -16,6 +16,9 @@ import java.util.Scanner;
 @AllArgsConstructor
 public class CommandLine {
 
+    private static final String MESSAGE_POMODORO_NOT_STARTED = "Pomodoro did not started!";
+    private static final String MESSAGE_NO_POMODOROS = "No pomodoros to display!";
+
     private final PomodoroService pomodoroService;
     private final SecondsFormatter secondsFormatter;
 
@@ -27,8 +30,9 @@ public class CommandLine {
         while (true) {
             String text = sc.nextLine();
             gotoChoice(text);
-            if (text.equals("exit"))
+            if (text.equals("exit")) {
                 break;
+            }
         }
         sc.close();
     }
@@ -37,8 +41,16 @@ public class CommandLine {
         if (input.equals("1")) {
             pomodoroService.starPomodoro();
         } else if (input.equals("2")) {
+            if (pomodoroService.isNotActive()) {
+                System.out.println(MESSAGE_POMODORO_NOT_STARTED);
+                return;
+            }
             pomodoroService.stopPomodoro();
         } else if (input.equals("3")) {
+            if (pomodoroService.isNotActive()) {
+                System.out.println(MESSAGE_POMODORO_NOT_STARTED);
+                return;
+            }
             int seconds = pomodoroService.getPomodoroTime();
             String formattedTime = secondsFormatter.formatInMinutes(seconds);
             System.out.println(formattedTime);
@@ -46,9 +58,17 @@ public class CommandLine {
             System.out.println(pomodoroService.getPomodorosInDay());
         } else if (input.equals("5")) {
             List<Pomodoro> pomodoros = pomodoroService.getPomodorosInDayExtended();
+            if (pomodoros.isEmpty()) {
+                System.out.println(MESSAGE_NO_POMODOROS);
+                return;
+            }
             printDailyPomodoros(pomodoros, true);
         } else if (input.equals("6")) {
             Map<LocalDate, List<Pomodoro>> datesToPomadoros = pomodoroService.getPomodorosInMonthExtended();
+            if (datesToPomadoros.isEmpty()) {
+                System.out.println(MESSAGE_NO_POMODOROS);
+                return;
+            }
             for (Map.Entry<LocalDate, List<Pomodoro>> entry : datesToPomadoros.entrySet()) {
                 System.out.println();
                 System.out.println(entry.getKey());

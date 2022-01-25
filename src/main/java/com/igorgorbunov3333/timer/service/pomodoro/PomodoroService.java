@@ -24,4 +24,6 @@ public interface PomodoroService {
 
     void save();
 
+    boolean isNotActive();
+
 }
