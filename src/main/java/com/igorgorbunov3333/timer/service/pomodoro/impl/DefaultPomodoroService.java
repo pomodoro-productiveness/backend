@@ -34,15 +34,11 @@ public class DefaultPomodoroService implements PomodoroService {
 
     @Override
     public void stopPomodoro() {
-        LocalDateTime endTime = LocalDateTime.now();
-        int pomodoroDuration = pomodoroEngine.getPomodoroCurrentDuration();
-        LocalDateTime startTime = endTime.minusSeconds(pomodoroDuration);
-        Pomodoro pomodoro = new Pomodoro(null, startTime, endTime);
-        Long pomodoroActualLifetime = pomodoro.getStartEndTimeDifferenceInSeconds();
+        Pomodoro pomodoro = buildPomodoro();
         long pomodoroMinimumLifetime = pomodoroEngine.getPomodoroCurrentDuration();
         if (pomodoroMinimumLifetime == 0) {
             System.out.println("Pomodoro lifetime didn't set. Please configure");
-        } else if (pomodoroActualLifetime < pomodoroMinimumLifetime) {
+        } else if (pomodoro.getStartEndTimeDifferenceInSeconds() < pomodoroMinimumLifetime) {
             System.out.println("Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds");
             return;
         }
@@ -123,6 +119,13 @@ public class DefaultPomodoroService implements PomodoroService {
     @Override
     public boolean isNotActive() {
         return !pomodoroEngine.isPomodoroCurrentlyRunning();
+    }
+
+    private Pomodoro buildPomodoro() {
+        LocalDateTime endTime = LocalDateTime.now();
+        int pomodoroDuration = pomodoroEngine.getPomodoroCurrentDuration();
+        LocalDateTime startTime = endTime.minusSeconds(pomodoroDuration);
+        return new Pomodoro(null, startTime, endTime);
     }
 
 }
