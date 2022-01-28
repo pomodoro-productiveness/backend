@@ -40,6 +40,7 @@ public class CommandLine {
     private void gotoChoice(String input) {
         if (input.equals("1")) {
             pomodoroService.starPomodoro();
+            System.out.println("Pomodoro has started");
         } else if (input.equals("2")) {
             if (pomodoroService.isNotActive()) {
                 System.out.println(MESSAGE_POMODORO_NOT_STARTED);
@@ -51,7 +52,7 @@ public class CommandLine {
                 System.out.println(MESSAGE_POMODORO_NOT_STARTED);
                 return;
             }
-            int seconds = pomodoroService.getPomodoroTime();
+            int seconds = pomodoroService.getPomodoroCurrentDuration();
             String formattedTime = secondsFormatter.formatInMinutes(seconds);
             System.out.println(formattedTime);
         } else if (input.equals("4")) {

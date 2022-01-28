@@ -12,7 +12,7 @@ public interface PomodoroService {
 
     void stopPomodoro();
 
-    int getPomodoroTime();
+    int getPomodoroCurrentDuration();
 
     long getPomodorosInDay();
 
