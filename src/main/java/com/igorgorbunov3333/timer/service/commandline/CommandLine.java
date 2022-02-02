@@ -26,7 +26,6 @@ public class CommandLine {
 
     public void start() {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Pomodoro application started");
         System.out.println();
         printFeaturesList();
         while (true) {

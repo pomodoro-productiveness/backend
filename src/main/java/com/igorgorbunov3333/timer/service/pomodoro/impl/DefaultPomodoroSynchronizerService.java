@@ -43,6 +43,7 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         List<PomodoroDto> pomodorosToSaveRemotely = getAllSortedDistinctPomodoros(pomodorosFromDataBase, remotePomodoros);
         PomodoroDataDto pomodoroDataToSaveRemotely = new PomodoroDataDto(pomodorosToSaveRemotely);
         if (remotePomodorosNotContainAnyLocalOrDifferentSize) {
+            System.out.println("Updating remote pomodoros");
             googleDriveService.updatePomodoroData(pomodoroDataToSaveRemotely);
         }
 
@@ -51,6 +52,7 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                     .filter(pomodoroDto -> !pomodorosFromDataBase.contains(pomodoroDto))
                     .map(pomodoroDto -> new Pomodoro(null, pomodoroDto.getStartTime(), pomodoroDto.getEndTime()))
                     .collect(Collectors.toList());
+            System.out.println("Updating local pomodoros");
             pomodoroRepository.saveAll(pomodorosToSaveLocally);
         }
     }
