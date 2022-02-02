@@ -12,15 +12,13 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.igorgorbunov3333.timer.config.properties.GoogleDriveProperties;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
 
 @Component
 public class GoogleDriveCredentialsProvider {
@@ -34,58 +32,34 @@ public class GoogleDriveCredentialsProvider {
 
     private Drive service;
 
+    @SneakyThrows
     public Drive getAuthorizedGoogleDriveService() {
-        if (service == null) {
-            try {
-                Credential credential = getCredentials();
-                if (credential == null) {
-                    System.out.println("Unable to get credentials");
-                    return null;
-                }
-                service = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
-                        .setApplicationName(APPLICATION_NAME)
-                        .build();
-            } catch (GeneralSecurityException | IOException e) {
-                e.printStackTrace();
-            }
+        if (service != null) {
+            return service;
         }
-        return service;
+        Credential credential = getCredentials();
+        if (credential == null) {
+            System.out.println("Unable to get credentials");
+            return null;
+        }
+        return new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
+                .setApplicationName(APPLICATION_NAME)
+                .build();
     }
 
+    @SneakyThrows
     private Credential getCredentials() {
         final String credetialsFilePath = googleDriveProperties.getCredentialsPath();
-        InputStream in = null;
-        try {
-            in = new FileInputStream(credetialsFilePath);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        GoogleClientSecrets clientSecrets = null;
-        try {
-            clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        InputStream in = new FileInputStream(credetialsFilePath);
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
-        GoogleAuthorizationCodeFlow flow = null;
-        try {
-            flow = new GoogleAuthorizationCodeFlow.Builder(
-                    GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, clientSecrets, DriveScopes.all())
-                    .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-                    .setAccessType("offline")
-                    .build();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, clientSecrets, DriveScopes.all())
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+                .setAccessType("offline")
+                .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        try {
-            return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
 }

@@ -14,7 +14,12 @@ public class WarmUpper {
 
     @EventListener({ContextRefreshedEvent.class})
     void onStartup() {
-        pomodoroSynchronizerService.synchronize();
+        try {
+            pomodoroSynchronizerService.synchronize();
+        } catch (Exception e) {
+            System.out.println("Pomodoro was not synchronized due to the error");
+            e.printStackTrace();
+        }
     }
 
 }

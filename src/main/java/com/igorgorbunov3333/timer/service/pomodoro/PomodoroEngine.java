@@ -1,10 +1,12 @@
 package com.igorgorbunov3333.timer.service.pomodoro;
 
-import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.service.audioplayer.AudioPlayerService;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @AllArgsConstructor
@@ -13,24 +15,20 @@ public class PomodoroEngine {
     private static final int SECONDS_IN_20_MINUTES = 1200;
 
     private final AudioPlayerService player;
-    private final PomodoroProperties pomodoroProperties;
 
     @Async
+    @SneakyThrows
     public void startPomodoro() {
         if (PomodoroState.running) {
             return;
         }
         PomodoroState.running = true;
-        PomodoroState.duration = 0;
+        PomodoroState.duration.set(0);
         boolean playerStarted = false;
         do {
-            try {
-                Thread.sleep(1000);
-            } catch (Exception ignored) {
-
-            }
-            PomodoroState.duration += 1;
-            if (PomodoroState.duration >= SECONDS_IN_20_MINUTES && !playerStarted) {
+            Thread.sleep(1000);
+            int currentValue = PomodoroState.duration.incrementAndGet();
+            if (currentValue >= SECONDS_IN_20_MINUTES && !playerStarted) {
                 player.play();
                 playerStarted = true;
             }
@@ -41,16 +39,11 @@ public class PomodoroEngine {
         PomodoroState.running = false;
         player.stop();
 
-        PomodoroState.duration = 0;
+        PomodoroState.duration.set(0);
     }
 
     public int getPomodoroCurrentDuration() {
-        return PomodoroState.duration;
-    }
-
-    public long getPomodoroMinimumDuration() {
-        Long pomodoroDuration = pomodoroProperties.getMinimumLifetime();
-        return pomodoroDuration == null ? 0 : pomodoroDuration;
+        return PomodoroState.duration.get();
     }
 
     public boolean isPomodoroCurrentlyRunning() {
@@ -59,7 +52,7 @@ public class PomodoroEngine {
 
     private static class PomodoroState {
 
-        private static int duration;
+        private static AtomicInteger duration = new AtomicInteger(0);
         private static boolean running;
 
     }

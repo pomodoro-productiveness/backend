@@ -8,7 +8,7 @@ public class SecondsFormatter {
     public String formatInMinutes(long seconds) {
         long minutes = seconds / 60;
         long remainingSeconds = seconds - (minutes * 60);
-        return String.format("%d:%02d", minutes, remainingSeconds);
+        return String.format("%02d:%02d", minutes, remainingSeconds);
     }
 
     public String formatInHours(long seconds) {

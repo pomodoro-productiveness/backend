@@ -4,6 +4,7 @@ import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -37,10 +38,16 @@ public class CommandLine {
         sc.close();
     }
 
+    @SneakyThrows
     private void gotoChoice(String input) {
         if (input.equals("1")) {
             pomodoroService.starPomodoro();
             System.out.println("Pomodoro has started");
+            for (int i = 0; i < 3; i++) {
+                Thread.sleep(1100);
+                String formattedTime = getPomodoroCurrentDurationInString();
+                System.out.println(formattedTime);
+            }
         } else if (input.equals("2")) {
             if (pomodoroService.isNotActive()) {
                 System.out.println(MESSAGE_POMODORO_NOT_STARTED);
@@ -52,8 +59,7 @@ public class CommandLine {
                 System.out.println(MESSAGE_POMODORO_NOT_STARTED);
                 return;
             }
-            int seconds = pomodoroService.getPomodoroCurrentDuration();
-            String formattedTime = secondsFormatter.formatInMinutes(seconds);
+            String formattedTime = getPomodoroCurrentDurationInString();
             System.out.println(formattedTime);
         } else if (input.equals("4")) {
             System.out.println(pomodoroService.getPomodorosInDay());
@@ -93,6 +99,11 @@ public class CommandLine {
         } else {
             System.out.println("Invalid input, please try again");
         }
+    }
+
+    private String getPomodoroCurrentDurationInString() {
+        int seconds = pomodoroService.getPomodoroCurrentDuration();
+        return secondsFormatter.formatInMinutes(seconds);
     }
 
     private void printFeaturesList() {
