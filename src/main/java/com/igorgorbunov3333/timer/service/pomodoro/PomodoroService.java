@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.pomodoro;
 
-import com.igorgorbunov3333.timer.model.entity.Pomodoro;
+import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,9 +16,9 @@ public interface PomodoroService {
 
     long getPomodorosInDay();
 
-    List<Pomodoro> getPomodorosInDayExtended();
+    List<PomodoroDto> getPomodorosInDayExtended();
 
-    Map<LocalDate, List<Pomodoro>> getPomodorosInMonthExtended();
+    Map<LocalDate, List<PomodoroDto>> getPomodorosInMonthExtended();
 
     void removePomodoro(Long id);
 

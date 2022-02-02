@@ -9,12 +9,10 @@ import com.igorgorbunov3333.timer.service.pomodoro.PomodoroSynchronizerService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -26,21 +24,25 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
     @Override
     public void synchronize() {
         List<PomodoroDto> pomodorosFromDataBase = pomodoroRepository.findAll().stream()
-                .map(pomodoro -> new PomodoroDto(pomodoro.getStartTime(), pomodoro.getEndTime()))
+                .map(pomodoro -> new PomodoroDto(null, pomodoro.getStartTime(), pomodoro.getEndTime()))
+                .sorted(Comparator.comparing(PomodoroDto::getStartTime))
                 .collect(Collectors.toList());
         PomodoroDataDto pomodoroDataDto = googleDriveService.getPomodoroData();
-        List<PomodoroDto> remotePomodoros = pomodoroDataDto.getPomodoros();
+        List<PomodoroDto> remotePomodoros = pomodoroDataDto.getPomodoros().stream()
+                .sorted(Comparator.comparing(PomodoroDto::getStartTime))
+                .collect(Collectors.toList());
         if (pomodorosFromDataBase.equals(remotePomodoros)) {
             System.out.println("Nothing to synchronize between remote and local pomodoros");
             return;
         }
 
-        boolean remotePomodorosDoesNotContainAllLocalPomodoros = !remotePomodoros.containsAll(pomodorosFromDataBase);
         boolean localPomodorosDoesNotContainAllRemotePomodoros = !pomodorosFromDataBase.containsAll(remotePomodoros);
+        boolean remotePomodorosNotContainAnyLocalOrDifferentSize = !remotePomodoros.containsAll(pomodorosFromDataBase)
+                || remotePomodoros.size() != pomodorosFromDataBase.size();
 
-        List<PomodoroDto> pomodorosToSaveRemotely = getAllSortedPomodoros(pomodorosFromDataBase, remotePomodoros);
+        List<PomodoroDto> pomodorosToSaveRemotely = getAllSortedDistinctPomodoros(pomodorosFromDataBase, remotePomodoros);
         PomodoroDataDto pomodoroDataToSaveRemotely = new PomodoroDataDto(pomodorosToSaveRemotely);
-        if (remotePomodorosDoesNotContainAllLocalPomodoros) {
+        if (remotePomodorosNotContainAnyLocalOrDifferentSize) {
             googleDriveService.updatePomodoroData(pomodoroDataToSaveRemotely);
         }
 
@@ -53,13 +55,12 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         }
     }
 
-    private List<PomodoroDto> getAllSortedPomodoros(List<PomodoroDto> pomodorosFromDataBase,
-                                                    List<PomodoroDto> remotePomodoros) {
-        remotePomodoros.addAll(pomodorosFromDataBase);
-        Set<PomodoroDto> pomodoroSetToSaveRemotely = new HashSet<>(remotePomodoros);
-        List<PomodoroDto> pomodorosListToSaveRemotely = new ArrayList<>(pomodoroSetToSaveRemotely);
-        pomodorosListToSaveRemotely.sort(Comparator.comparing(PomodoroDto::getEndTime));
-        return pomodorosListToSaveRemotely;
+    private List<PomodoroDto> getAllSortedDistinctPomodoros(List<PomodoroDto> pomodorosFromDataBase,
+                                                            List<PomodoroDto> remotePomodoros) {
+        return Stream.concat(pomodorosFromDataBase.stream(), remotePomodoros.stream())
+                .distinct()
+                .sorted(Comparator.comparing(PomodoroDto::getEndTime))
+                .collect(Collectors.toList());
     }
 
 }

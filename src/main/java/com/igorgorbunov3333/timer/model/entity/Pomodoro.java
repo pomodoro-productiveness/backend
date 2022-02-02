@@ -33,8 +33,4 @@ public class Pomodoro {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
-    public Long getStartEndTimeDifferenceInSeconds() {
-        return ChronoUnit.SECONDS.between(startTime, endTime);
-    }
-
 }

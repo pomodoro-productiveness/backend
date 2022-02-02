@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.commandline;
 
-import com.igorgorbunov3333.timer.model.entity.Pomodoro;
+import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -64,19 +65,19 @@ public class CommandLine {
         } else if (input.equals("4")) {
             System.out.println(pomodoroService.getPomodorosInDay());
         } else if (input.equals("5")) {
-            List<Pomodoro> pomodoros = pomodoroService.getPomodorosInDayExtended();
+            List<PomodoroDto> pomodoros = pomodoroService.getPomodorosInDayExtended();
             if (pomodoros.isEmpty()) {
                 System.out.println(MESSAGE_NO_POMODOROS);
                 return;
             }
             printDailyPomodoros(pomodoros, true);
         } else if (input.equals("6")) {
-            Map<LocalDate, List<Pomodoro>> datesToPomadoros = pomodoroService.getPomodorosInMonthExtended();
+            Map<LocalDate, List<PomodoroDto>> datesToPomadoros = pomodoroService.getPomodorosInMonthExtended();
             if (datesToPomadoros.isEmpty()) {
                 System.out.println(MESSAGE_NO_POMODOROS);
                 return;
             }
-            for (Map.Entry<LocalDate, List<Pomodoro>> entry : datesToPomadoros.entrySet()) {
+            for (Map.Entry<LocalDate, List<PomodoroDto>> entry : datesToPomadoros.entrySet()) {
                 System.out.println();
                 System.out.println(entry.getKey());
                 System.out.println("pomodoros in day - " + entry.getValue().size());
@@ -117,19 +118,25 @@ public class CommandLine {
         System.out.println("save pomodoro. For example \"save\"");
     }
 
-    private void printDailyPomodoros(List<Pomodoro> pomodoros, boolean withId) {
+    private void printDailyPomodoros(List<PomodoroDto> pomodoros, boolean withId) {
         long pomodoroDurationInSeconds = 0;
-        for (Pomodoro pomodoro : pomodoros) {
+        for (PomodoroDto pomodoro : pomodoros) {
             printPomodoro(pomodoro, withId);
-            pomodoroDurationInSeconds += pomodoro.getStartEndTimeDifferenceInSeconds();
+            long pomodoroStartEndTimeDifference = getStartEndTimeDifferenceInSeconds(pomodoro);
+            pomodoroDurationInSeconds += pomodoroStartEndTimeDifference;
         }
         System.out.println("Pomodoros amount - " + pomodoros.size());
         System.out.println("Total time - " + secondsFormatter.formatInHours(pomodoroDurationInSeconds));
     }
 
-    private void printPomodoro(Pomodoro pomodoro, boolean withId) {
+    private long getStartEndTimeDifferenceInSeconds(PomodoroDto pomodoro) {
+        return ChronoUnit.SECONDS.between(pomodoro.getStartTime(), pomodoro.getEndTime());
+    }
+
+    private void printPomodoro(PomodoroDto pomodoro, boolean withId) {
         String pomodoroPeriod = mapTimestamp(pomodoro);
-        String pomodoroDuration = secondsFormatter.formatInMinutes(pomodoro.getStartEndTimeDifferenceInSeconds());
+        long pomodoroStartEndTimeDifference = getStartEndTimeDifferenceInSeconds(pomodoro);
+        String pomodoroDuration = secondsFormatter.formatInMinutes(pomodoroStartEndTimeDifference);
         String formattedPomodoroPeriodAndDuration = "time - "
                 .concat(pomodoroPeriod)
                 .concat(" | ")
@@ -147,7 +154,7 @@ public class CommandLine {
         System.out.println(pomodoroRow);
     }
 
-    private String mapTimestamp(Pomodoro pomodoro) {
+    private String mapTimestamp(PomodoroDto pomodoro) {
         String startTimeString = format(pomodoro.getStartTime());
         String endTimeString = format(pomodoro.getEndTime());
         return String.join(" : ", List.of(startTimeString, endTimeString));

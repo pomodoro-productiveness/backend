@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
+import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroEngine;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,9 +38,10 @@ public class DefaultPomodoroService implements PomodoroService {
     public void stopPomodoro() {
         Pomodoro pomodoro = buildPomodoro();
         long pomodoroMinimumLifetime = pomodoroEngine.getPomodoroCurrentDuration();
+        long startEndTimeDifference = ChronoUnit.SECONDS.between(pomodoro.getStartTime(), pomodoro.getEndTime());
         if (pomodoroMinimumLifetime == 0) {
             System.out.println("Pomodoro lifetime didn't set. Please configure");
-        } else if (pomodoro.getStartEndTimeDifferenceInSeconds() < pomodoroMinimumLifetime) {
+        } else if (startEndTimeDifference < pomodoroMinimumLifetime) {
             System.out.println("Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds");
             return;
         }
@@ -57,15 +60,17 @@ public class DefaultPomodoroService implements PomodoroService {
     }
 
     @Override
-    public List<Pomodoro> getPomodorosInDayExtended() {
-        return pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(START_DAY_TIMESTAMP, END_DAY_TIMESTAMP);
+    public List<PomodoroDto> getPomodorosInDayExtended() {
+        List<Pomodoro> pomodoros = pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(START_DAY_TIMESTAMP, END_DAY_TIMESTAMP);
+        return mapToDto(pomodoros);
     }
 
     @Override
-    public Map<LocalDate, List<Pomodoro>> getPomodorosInMonthExtended() {
+    public Map<LocalDate, List<PomodoroDto>> getPomodorosInMonthExtended() {
         LocalDateTime monthAgoStartTimestamp = START_DAY_TIMESTAMP.minusMonths(1);
         List<Pomodoro> pomodoros = pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(monthAgoStartTimestamp, END_DAY_TIMESTAMP);
-        Map<LocalDate, List<Pomodoro>> pomodorosByDates = pomodoros.stream()
+        List<PomodoroDto> pomodoroDtos = mapToDto(pomodoros);
+        Map<LocalDate, List<PomodoroDto>> pomodorosByDates = pomodoroDtos.stream()
                 .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().toLocalDate()));
         return new TreeMap<>(pomodorosByDates);
     }
@@ -126,6 +131,12 @@ public class DefaultPomodoroService implements PomodoroService {
         int pomodoroDuration = pomodoroEngine.getPomodoroCurrentDuration();
         LocalDateTime startTime = endTime.minusSeconds(pomodoroDuration);
         return new Pomodoro(null, startTime, endTime);
+    }
+
+    private List<PomodoroDto> mapToDto(List<Pomodoro> pomodoros) {
+        return pomodoros.stream()
+                .map(pomodoro -> new PomodoroDto(pomodoro.getId(), pomodoro.getStartTime(), pomodoro.getEndTime()))
+                .collect(Collectors.toList());
     }
 
 }
