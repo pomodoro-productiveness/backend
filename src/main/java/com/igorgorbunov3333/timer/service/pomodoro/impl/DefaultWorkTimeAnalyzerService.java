@@ -21,6 +21,7 @@ public class DefaultWorkTimeAnalyzerService implements WorkTimeAnalyzerService {
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroProperties pomodoroProperties;
 
+    @Override
     public AnalyzedWeekDto pomodorosToFinalizeDuringCurrentWeek() {
         LocalDate currentDay = LocalDate.now();
         int currentDayOfWeek = currentDay.getDayOfWeek().getValue();
