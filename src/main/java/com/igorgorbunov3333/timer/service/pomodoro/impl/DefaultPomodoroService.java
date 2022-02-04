@@ -27,6 +27,9 @@ public class DefaultPomodoroService implements PomodoroService {
     private static final LocalDateTime START_DAY_TIMESTAMP = LocalDate.now().atStartOfDay();
     private static final LocalDateTime END_DAY_TIMESTAMP = LocalDate.now().atTime(LocalTime.MAX);
 
+    private static final String LOG_POMODORO_STOPPED = "Pomodoro successfully stopped!";
+    private static final String LOG_POMODORO_SAVED = "Pomodoro successfully saved: ";
+
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroEngine pomodoroEngine;
     private final PomodoroProperties pomodoroProperties;
@@ -45,10 +48,14 @@ public class DefaultPomodoroService implements PomodoroService {
             System.out.println("Pomodoro lifetime didn't set. Please configure");
         } else if (startEndTimeDifference <= pomodoroMinimumLifetime) {
             System.out.println("Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds");
+            pomodoroEngine.stopPomodoro();
+            System.out.println(LOG_POMODORO_STOPPED);
             return;
         }
         pomodoroEngine.stopPomodoro();
-        pomodoroRepository.save(pomodoro);
+        System.out.println(LOG_POMODORO_STOPPED);
+        Pomodoro savedPomodoro = pomodoroRepository.save(pomodoro);
+        System.out.println(LOG_POMODORO_SAVED + savedPomodoro);
     }
 
     @Override
@@ -120,7 +127,7 @@ public class DefaultPomodoroService implements PomodoroService {
 
         Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime);
         Pomodoro savedPomodoro = pomodoroRepository.save(pomodoroToSave);
-        System.out.println("Pomodoro saved: " + savedPomodoro);
+        System.out.println(LOG_POMODORO_SAVED + savedPomodoro);
     }
 
     @Override
