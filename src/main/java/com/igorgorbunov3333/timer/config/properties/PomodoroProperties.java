@@ -5,7 +5,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Setter
 @Getter
@@ -13,7 +14,12 @@ import javax.validation.constraints.NotBlank;
 @ConfigurationProperties(prefix = "pomodoro")
 public class PomodoroProperties {
 
-    @NotBlank
-    private Long minimumLifetime;
+    @NotNull
+    @Positive
+    private Integer minimumLifetime;
+
+    @NotNull
+    @Positive
+    private Integer pomodorosPerDay;
 
 }
