@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
+import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
@@ -28,6 +29,7 @@ public class DefaultPomodoroService implements PomodoroService {
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroEngine pomodoroEngine;
+    private final PomodoroProperties pomodoroProperties;
 
     @Override
     public void starPomodoro() {
@@ -37,11 +39,11 @@ public class DefaultPomodoroService implements PomodoroService {
     @Override
     public void stopPomodoro() {
         Pomodoro pomodoro = buildPomodoro();
-        long pomodoroMinimumLifetime = pomodoroEngine.getPomodoroCurrentDuration();
+        long pomodoroMinimumLifetime = pomodoroProperties.getMinimumLifetime();
         long startEndTimeDifference = ChronoUnit.SECONDS.between(pomodoro.getStartTime(), pomodoro.getEndTime());
         if (pomodoroMinimumLifetime == 0) {
             System.out.println("Pomodoro lifetime didn't set. Please configure");
-        } else if (startEndTimeDifference < pomodoroMinimumLifetime) {
+        } else if (startEndTimeDifference <= pomodoroMinimumLifetime) {
             System.out.println("Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds");
             return;
         }
