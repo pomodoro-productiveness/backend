@@ -4,6 +4,7 @@ import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
+import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ public class DefaultPomodoroService implements PomodoroService {
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroEngine pomodoroEngine;
     private final PomodoroProperties pomodoroProperties;
+    private final PomodoroMapper pomodoroMapper;
 
     @Override
     public void starPomodoro() {
@@ -71,14 +73,14 @@ public class DefaultPomodoroService implements PomodoroService {
     @Override
     public List<PomodoroDto> getPomodorosInDayExtended() {
         List<Pomodoro> pomodoros = pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(START_DAY_TIMESTAMP, END_DAY_TIMESTAMP);
-        return mapToDto(pomodoros);
+        return pomodoroMapper.mapToDto(pomodoros);
     }
 
     @Override
-    public Map<LocalDate, List<PomodoroDto>> getPomodorosInMonthExtended() {
+    public Map<LocalDate, List<PomodoroDto>> getMonthlyPomodoros() {
         LocalDateTime monthAgoStartTimestamp = START_DAY_TIMESTAMP.minusMonths(1);
         List<Pomodoro> pomodoros = pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(monthAgoStartTimestamp, END_DAY_TIMESTAMP);
-        List<PomodoroDto> pomodoroDtos = mapToDto(pomodoros);
+        List<PomodoroDto> pomodoroDtos = pomodoroMapper.mapToDto(pomodoros);
         Map<LocalDate, List<PomodoroDto>> pomodorosByDates = pomodoroDtos.stream()
                 .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().toLocalDate()));
         return new TreeMap<>(pomodorosByDates);
@@ -140,12 +142,6 @@ public class DefaultPomodoroService implements PomodoroService {
         int pomodoroDuration = pomodoroEngine.getPomodoroCurrentDuration();
         LocalDateTime startTime = endTime.minusSeconds(pomodoroDuration);
         return new Pomodoro(null, startTime, endTime);
-    }
-
-    private List<PomodoroDto> mapToDto(List<Pomodoro> pomodoros) {
-        return pomodoros.stream()
-                .map(pomodoro -> new PomodoroDto(pomodoro.getId(), pomodoro.getStartTime(), pomodoro.getEndTime()))
-                .collect(Collectors.toList());
     }
 
 }

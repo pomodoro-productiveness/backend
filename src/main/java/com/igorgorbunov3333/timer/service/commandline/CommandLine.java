@@ -1,12 +1,14 @@
 package com.igorgorbunov3333.timer.service.commandline;
 
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -23,6 +25,7 @@ public class CommandLine {
 
     private final PomodoroService pomodoroService;
     private final SecondsFormatter secondsFormatter;
+    private final PomodoroPeriodService pomodoroPeriodService;
 
     public void start() {
         Scanner sc = new Scanner(System.in);
@@ -71,7 +74,7 @@ public class CommandLine {
             }
             printDailyPomodoros(pomodoros, true);
         } else if (input.equals("6")) {
-            Map<LocalDate, List<PomodoroDto>> datesToPomadoros = pomodoroService.getPomodorosInMonthExtended();
+            Map<LocalDate, List<PomodoroDto>> datesToPomadoros = pomodoroService.getMonthlyPomodoros();
             if (datesToPomadoros.isEmpty()) {
                 System.out.println(MESSAGE_NO_POMODOROS);
                 return;
@@ -96,6 +99,14 @@ public class CommandLine {
             pomodoroService.removePomodoro(pomodoroId);
         } else if (input.startsWith("save")) {
             pomodoroService.save();
+        } else if (input.equals("week")) {
+            Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoros = pomodoroPeriodService.getCurrentWeekPomodoros();
+            for (Map.Entry<DayOfWeek, List<PomodoroDto>> entry : weeklyPomodoros.entrySet()) {
+                System.out.println();
+                System.out.println(entry.getKey().toString());
+                List<PomodoroDto> dailyPomodoros = entry.getValue();
+                printDailyPomodoros(dailyPomodoros, false);
+            }
         } else {
             System.out.println("Invalid input, please try again");
         }
@@ -113,8 +124,10 @@ public class CommandLine {
         System.out.println("4. pomadoros today");
         System.out.println("5. pomadoros today extended");
         System.out.println("6. pomadoros for the last month");
+        System.out.println("Type \"help\" to list all available features");
         System.out.println("remove pomodoro by id. For example \"remove 10\"");
         System.out.println("save pomodoro. For example \"save\"");
+        System.out.println("list all pomodoros for current week. For example \"week\"");
     }
 
     private void printDailyPomodoros(List<PomodoroDto> pomodoros, boolean withId) {

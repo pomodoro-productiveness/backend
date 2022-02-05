@@ -18,7 +18,7 @@ public interface PomodoroService {
 
     List<PomodoroDto> getPomodorosInDayExtended();
 
-    Map<LocalDate, List<PomodoroDto>> getPomodorosInMonthExtended();
+    Map<LocalDate, List<PomodoroDto>> getMonthlyPomodoros();
 
     void removePomodoro(Long id);
 

@@ -4,6 +4,6 @@ import com.igorgorbunov3333.timer.model.dto.AnalyzedWeekDto;
 
 public interface WorkTimeAnalyzerService {
 
-    AnalyzedWeekDto pomodorosToFinalizeDuringCurrentWeek();
+    AnalyzedWeekDto getCurrentWeekPomodoroInfo();
 
 }
