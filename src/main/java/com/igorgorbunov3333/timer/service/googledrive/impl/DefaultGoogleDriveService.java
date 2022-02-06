@@ -7,7 +7,6 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.igorgorbunov3333.timer.config.properties.GoogleDriveProperties;
 import com.igorgorbunov3333.timer.model.dto.PomodoroDataDto;
-import com.igorgorbunov3333.timer.model.dto.PomodoroDataDtoV2;
 import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveCredentialsProvider;
 import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveService;
 import lombok.AllArgsConstructor;
@@ -20,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 @Service
 @AllArgsConstructor
@@ -49,7 +49,7 @@ public class DefaultGoogleDriveService implements GoogleDriveService {
 
     @Override
     @SneakyThrows
-    public void updatePomodoroData(PomodoroDataDtoV2 pomodoroData) {
+    public void updatePomodoroData(PomodoroDataDto pomodoroData) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String newFileContent = objectMapper.writeValueAsString(pomodoroData);
@@ -59,7 +59,7 @@ public class DefaultGoogleDriveService implements GoogleDriveService {
             System.out.println("file didn't created");
         }
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream("pomodoros.json"), "utf-8"))) {
+                new FileOutputStream("pomodoros.json"), StandardCharsets.UTF_8))) {
             writer.write(newFileContent);
         }
         File googleDocFile = new File();

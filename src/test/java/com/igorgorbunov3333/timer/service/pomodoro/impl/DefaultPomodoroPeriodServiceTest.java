@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
-import com.igorgorbunov3333.timer.model.dto.PomodoroDtoV2;
+import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
@@ -44,7 +44,7 @@ class DefaultPomodoroPeriodServiceTest {
         LocalDateTime end = currentDay.atTime(LocalTime.MAX);
         when(pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(start, end)).thenReturn(List.of());
 
-        Map<DayOfWeek, List<PomodoroDtoV2>> actual = testee.getCurrentWeekPomodoros();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.getCurrentWeekPomodoros();
 
         assertThat(actual).isEmpty();
     }
@@ -62,15 +62,15 @@ class DefaultPomodoroPeriodServiceTest {
         when(secondPomodoro.getStartTime()).thenReturn(start.plusHours(4));
         when(pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(start, end))
                 .thenReturn(List.of(firstPomodoro, secondPomodoro));
-        PomodoroDtoV2 firstPomodoroDtoV2 = mock(PomodoroDtoV2.class);
-        PomodoroDtoV2 secondPomodoroDtoV2 = mock(PomodoroDtoV2.class);
+        PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
+        PomodoroDto secondPomodoroDto = mock(PomodoroDto.class);
         when(pomodoroMapper.mapToDto(List.of(firstPomodoro, secondPomodoro)))
-                .thenReturn(List.of(firstPomodoroDtoV2, secondPomodoroDtoV2));
+                .thenReturn(List.of(firstPomodoroDto, secondPomodoroDto));
 
-        Map<DayOfWeek, List<PomodoroDtoV2>> actual = testee.getCurrentWeekPomodoros();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.getCurrentWeekPomodoros();
 
         assertThat(actual)
-                .containsExactlyEntriesOf(Map.of(DayOfWeek.MONDAY, List.of(firstPomodoroDtoV2, secondPomodoroDtoV2)));
+                .containsExactlyEntriesOf(Map.of(DayOfWeek.MONDAY, List.of(firstPomodoroDto, secondPomodoroDto)));
     }
 
     @Test
@@ -89,22 +89,22 @@ class DefaultPomodoroPeriodServiceTest {
 
         when(pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(start, end))
                 .thenReturn(List.of(firstDayPomodoro, secondDayPomodoro, thirdDayPomodoro));
-        PomodoroDtoV2 firstPomodoroDtoV2 = mock(PomodoroDtoV2.class);
-        PomodoroDtoV2 secondPomodoroDtoV2 = mock(PomodoroDtoV2.class);
-        PomodoroDtoV2 thirdPomodoroDtoV2 = mock(PomodoroDtoV2.class);
+        PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
+        PomodoroDto secondPomodoroDto = mock(PomodoroDto.class);
+        PomodoroDto thirdPomodoroDto = mock(PomodoroDto.class);
         when(pomodoroMapper.mapToDto(List.of(firstDayPomodoro)))
-                .thenReturn(List.of(firstPomodoroDtoV2));
+                .thenReturn(List.of(firstPomodoroDto));
         when(pomodoroMapper.mapToDto(List.of(secondDayPomodoro)))
-                .thenReturn(List.of(secondPomodoroDtoV2));
+                .thenReturn(List.of(secondPomodoroDto));
         when(pomodoroMapper.mapToDto(List.of(thirdDayPomodoro)))
-                .thenReturn(List.of(thirdPomodoroDtoV2));
+                .thenReturn(List.of(thirdPomodoroDto));
 
-        Map<DayOfWeek, List<PomodoroDtoV2>> actual = testee.getCurrentWeekPomodoros();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.getCurrentWeekPomodoros();
 
-        Map<DayOfWeek, List<PomodoroDtoV2>> expected = Map.of(
-                DayOfWeek.MONDAY, List.of(firstPomodoroDtoV2),
-                DayOfWeek.TUESDAY, List.of(secondPomodoroDtoV2),
-                DayOfWeek.WEDNESDAY, List.of(thirdPomodoroDtoV2));
+        Map<DayOfWeek, List<PomodoroDto>> expected = Map.of(
+                DayOfWeek.MONDAY, List.of(firstPomodoroDto),
+                DayOfWeek.TUESDAY, List.of(secondPomodoroDto),
+                DayOfWeek.WEDNESDAY, List.of(thirdPomodoroDto));
         assertThat(actual)
                 .containsExactlyEntriesOf(new TreeMap<>(expected));
     }
@@ -141,38 +141,38 @@ class DefaultPomodoroPeriodServiceTest {
                         sixthDayPomodoro,
                         seventhDayPomodoro
                 ));
-        PomodoroDtoV2 firstPomodoroDtoV2 = mock(PomodoroDtoV2.class);
-        PomodoroDtoV2 secondPomodoroDtoV2 = mock(PomodoroDtoV2.class);
-        PomodoroDtoV2 thirdPomodoroDtoV2 = mock(PomodoroDtoV2.class);
-        PomodoroDtoV2 fourthPomodoroDtoV2 = mock(PomodoroDtoV2.class);
-        PomodoroDtoV2 fifthPomodoroDtoV2 = mock(PomodoroDtoV2.class);
-        PomodoroDtoV2 sixthPomodoroDtoV2 = mock(PomodoroDtoV2.class);
-        PomodoroDtoV2 seventhPomodoroDtoV2 = mock(PomodoroDtoV2.class);
+        PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
+        PomodoroDto secondPomodoroDto = mock(PomodoroDto.class);
+        PomodoroDto thirdPomodoroDto = mock(PomodoroDto.class);
+        PomodoroDto fourthPomodoroDto = mock(PomodoroDto.class);
+        PomodoroDto fifthPomodoroDto = mock(PomodoroDto.class);
+        PomodoroDto sixthPomodoroDto = mock(PomodoroDto.class);
+        PomodoroDto seventhPomodoroDto = mock(PomodoroDto.class);
         when(pomodoroMapper.mapToDto(List.of(firstDayPomodoro)))
-                .thenReturn(List.of(firstPomodoroDtoV2));
+                .thenReturn(List.of(firstPomodoroDto));
         when(pomodoroMapper.mapToDto(List.of(secondDayPomodoro)))
-                .thenReturn(List.of(secondPomodoroDtoV2));
+                .thenReturn(List.of(secondPomodoroDto));
         when(pomodoroMapper.mapToDto(List.of(thirdDayPomodoro)))
-                .thenReturn(List.of(thirdPomodoroDtoV2));
+                .thenReturn(List.of(thirdPomodoroDto));
         when(pomodoroMapper.mapToDto(List.of(fourthDayPomodoro)))
-                .thenReturn(List.of(fourthPomodoroDtoV2));
+                .thenReturn(List.of(fourthPomodoroDto));
         when(pomodoroMapper.mapToDto(List.of(fifthDayPomodoro)))
-                .thenReturn(List.of(fifthPomodoroDtoV2));
+                .thenReturn(List.of(fifthPomodoroDto));
         when(pomodoroMapper.mapToDto(List.of(sixthDayPomodoro)))
-                .thenReturn(List.of(sixthPomodoroDtoV2));
+                .thenReturn(List.of(sixthPomodoroDto));
         when(pomodoroMapper.mapToDto(List.of(seventhDayPomodoro)))
-                .thenReturn(List.of(seventhPomodoroDtoV2));
+                .thenReturn(List.of(seventhPomodoroDto));
 
-        Map<DayOfWeek, List<PomodoroDtoV2>> actual = testee.getCurrentWeekPomodoros();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.getCurrentWeekPomodoros();
 
-        Map<DayOfWeek, List<PomodoroDtoV2>> expected = Map.of(
-                DayOfWeek.MONDAY, List.of(firstPomodoroDtoV2),
-                DayOfWeek.TUESDAY, List.of(secondPomodoroDtoV2),
-                DayOfWeek.WEDNESDAY, List.of(thirdPomodoroDtoV2),
-                DayOfWeek.THURSDAY, List.of(fourthPomodoroDtoV2),
-                DayOfWeek.FRIDAY, List.of(fifthPomodoroDtoV2),
-                DayOfWeek.SATURDAY, List.of(sixthPomodoroDtoV2),
-                DayOfWeek.SUNDAY, List.of(seventhPomodoroDtoV2));
+        Map<DayOfWeek, List<PomodoroDto>> expected = Map.of(
+                DayOfWeek.MONDAY, List.of(firstPomodoroDto),
+                DayOfWeek.TUESDAY, List.of(secondPomodoroDto),
+                DayOfWeek.WEDNESDAY, List.of(thirdPomodoroDto),
+                DayOfWeek.THURSDAY, List.of(fourthPomodoroDto),
+                DayOfWeek.FRIDAY, List.of(fifthPomodoroDto),
+                DayOfWeek.SATURDAY, List.of(sixthPomodoroDto),
+                DayOfWeek.SUNDAY, List.of(seventhPomodoroDto));
         assertThat(actual)
                 .containsExactlyEntriesOf(new TreeMap<>(expected));
     }

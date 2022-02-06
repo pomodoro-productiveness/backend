@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 @AllArgsConstructor
@@ -19,10 +20,19 @@ public class PomodoroDto {
     @JsonIgnore
     private Long id;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss[.SSSSSS]")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startTime;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss[.SSSSSS]")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endTime;
+
+    @Override
+    public String toString() {
+        return "PomodoroDtoV2{" +
+                "id=" + id +
+                ", startTime=" + startTime.truncatedTo(ChronoUnit.SECONDS) +
+                ", endTime=" + endTime.truncatedTo(ChronoUnit.SECONDS) +
+                '}';
+    }
 
 }
