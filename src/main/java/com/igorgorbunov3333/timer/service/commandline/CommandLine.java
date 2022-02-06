@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.commandline;
 
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.PomodoroDtoV2;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
@@ -22,6 +22,7 @@ public class CommandLine {
 
     private static final String MESSAGE_POMODORO_NOT_STARTED = "Pomodoro did not started!";
     private static final String MESSAGE_NO_POMODOROS = "No pomodoros to display!";
+    private static final String LOG_POMODORO_SAVED = "Pomodoro successfully saved: ";
 
     private final PomodoroService pomodoroService;
     private final SecondsFormatter secondsFormatter;
@@ -56,7 +57,8 @@ public class CommandLine {
                 System.out.println(MESSAGE_POMODORO_NOT_STARTED);
                 return;
             }
-            pomodoroService.stopPomodoro();
+            PomodoroDtoV2 savedPomodoro = pomodoroService.stopAndSavePomodoro();
+            System.out.println(LOG_POMODORO_SAVED + savedPomodoro);
         } else if (input.equals("3")) {
             if (pomodoroService.isNotActive()) {
                 System.out.println(MESSAGE_POMODORO_NOT_STARTED);
@@ -67,19 +69,19 @@ public class CommandLine {
         } else if (input.equals("4")) {
             System.out.println(pomodoroService.getPomodorosInDay());
         } else if (input.equals("5")) {
-            List<PomodoroDto> pomodoros = pomodoroService.getPomodorosInDayExtended();
+            List<PomodoroDtoV2> pomodoros = pomodoroService.getPomodorosInDayExtended();
             if (pomodoros.isEmpty()) {
                 System.out.println(MESSAGE_NO_POMODOROS);
                 return;
             }
             printDailyPomodoros(pomodoros, true);
         } else if (input.equals("6")) {
-            Map<LocalDate, List<PomodoroDto>> datesToPomadoros = pomodoroService.getMonthlyPomodoros();
+            Map<LocalDate, List<PomodoroDtoV2>> datesToPomadoros = pomodoroService.getMonthlyPomodoros();
             if (datesToPomadoros.isEmpty()) {
                 System.out.println(MESSAGE_NO_POMODOROS);
                 return;
             }
-            for (Map.Entry<LocalDate, List<PomodoroDto>> entry : datesToPomadoros.entrySet()) {
+            for (Map.Entry<LocalDate, List<PomodoroDtoV2>> entry : datesToPomadoros.entrySet()) {
                 System.out.println();
                 System.out.println(entry.getKey());
                 System.out.println("pomodoros in day - " + entry.getValue().size());
@@ -100,11 +102,11 @@ public class CommandLine {
         } else if (input.startsWith("save")) {
             pomodoroService.save();
         } else if (input.equals("week")) {
-            Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoros = pomodoroPeriodService.getCurrentWeekPomodoros();
-            for (Map.Entry<DayOfWeek, List<PomodoroDto>> entry : weeklyPomodoros.entrySet()) {
+            Map<DayOfWeek, List<PomodoroDtoV2>> weeklyPomodoros = pomodoroPeriodService.getCurrentWeekPomodoros();
+            for (Map.Entry<DayOfWeek, List<PomodoroDtoV2>> entry : weeklyPomodoros.entrySet()) {
                 System.out.println();
                 System.out.println(entry.getKey().toString());
-                List<PomodoroDto> dailyPomodoros = entry.getValue();
+                List<PomodoroDtoV2> dailyPomodoros = entry.getValue();
                 printDailyPomodoros(dailyPomodoros, false);
             }
         } else {
@@ -130,9 +132,9 @@ public class CommandLine {
         System.out.println("list all pomodoros for current week. For example \"week\"");
     }
 
-    private void printDailyPomodoros(List<PomodoroDto> pomodoros, boolean withId) {
+    private void printDailyPomodoros(List<PomodoroDtoV2> pomodoros, boolean withId) {
         long pomodoroDurationInSeconds = 0;
-        for (PomodoroDto pomodoro : pomodoros) {
+        for (PomodoroDtoV2 pomodoro : pomodoros) {
             printPomodoro(pomodoro, withId);
             long pomodoroStartEndTimeDifference = getStartEndTimeDifferenceInSeconds(pomodoro);
             pomodoroDurationInSeconds += pomodoroStartEndTimeDifference;
@@ -141,11 +143,11 @@ public class CommandLine {
         System.out.println("Total time - " + secondsFormatter.formatInHours(pomodoroDurationInSeconds));
     }
 
-    private long getStartEndTimeDifferenceInSeconds(PomodoroDto pomodoro) {
+    private long getStartEndTimeDifferenceInSeconds(PomodoroDtoV2 pomodoro) {
         return ChronoUnit.SECONDS.between(pomodoro.getStartTime(), pomodoro.getEndTime());
     }
 
-    private void printPomodoro(PomodoroDto pomodoro, boolean withId) {
+    private void printPomodoro(PomodoroDtoV2 pomodoro, boolean withId) {
         String pomodoroPeriod = mapTimestamp(pomodoro);
         long pomodoroStartEndTimeDifference = getStartEndTimeDifferenceInSeconds(pomodoro);
         String pomodoroDuration = secondsFormatter.formatInMinutes(pomodoroStartEndTimeDifference);
@@ -166,7 +168,7 @@ public class CommandLine {
         System.out.println(pomodoroRow);
     }
 
-    private String mapTimestamp(PomodoroDto pomodoro) {
+    private String mapTimestamp(PomodoroDtoV2 pomodoro) {
         String startTimeString = format(pomodoro.getStartTime());
         String endTimeString = format(pomodoro.getEndTime());
         return String.join(" : ", List.of(startTimeString, endTimeString));

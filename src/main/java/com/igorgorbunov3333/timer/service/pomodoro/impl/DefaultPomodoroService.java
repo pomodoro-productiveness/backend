@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.PomodoroDtoV2;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
@@ -29,7 +29,6 @@ public class DefaultPomodoroService implements PomodoroService {
     private static final LocalDateTime END_DAY_TIMESTAMP = LocalDate.now().atTime(LocalTime.MAX);
 
     private static final String LOG_POMODORO_STOPPED = "Pomodoro successfully stopped!";
-    private static final String LOG_POMODORO_SAVED = "Pomodoro successfully saved: ";
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroEngine pomodoroEngine;
@@ -42,7 +41,7 @@ public class DefaultPomodoroService implements PomodoroService {
     }
 
     @Override
-    public void stopPomodoro() {
+    public PomodoroDtoV2 stopAndSavePomodoro() {
         Pomodoro pomodoro = buildPomodoro();
         long pomodoroMinimumLifetime = pomodoroProperties.getMinimumLifetime();
         long startEndTimeDifference = ChronoUnit.SECONDS.between(pomodoro.getStartTime(), pomodoro.getEndTime());
@@ -52,12 +51,11 @@ public class DefaultPomodoroService implements PomodoroService {
             System.out.println("Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds");
             pomodoroEngine.stopPomodoro();
             System.out.println(LOG_POMODORO_STOPPED);
-            return;
+            return null;
         }
         pomodoroEngine.stopPomodoro();
-        System.out.println(LOG_POMODORO_STOPPED);
         Pomodoro savedPomodoro = pomodoroRepository.save(pomodoro);
-        System.out.println(LOG_POMODORO_SAVED + savedPomodoro);
+        return pomodoroMapper.mapToDto(savedPomodoro);
     }
 
     @Override
@@ -71,17 +69,17 @@ public class DefaultPomodoroService implements PomodoroService {
     }
 
     @Override
-    public List<PomodoroDto> getPomodorosInDayExtended() {
+    public List<PomodoroDtoV2> getPomodorosInDayExtended() {
         List<Pomodoro> pomodoros = pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(START_DAY_TIMESTAMP, END_DAY_TIMESTAMP);
         return pomodoroMapper.mapToDto(pomodoros);
     }
 
     @Override
-    public Map<LocalDate, List<PomodoroDto>> getMonthlyPomodoros() {
+    public Map<LocalDate, List<PomodoroDtoV2>> getMonthlyPomodoros() {
         LocalDateTime monthAgoStartTimestamp = START_DAY_TIMESTAMP.minusMonths(1);
         List<Pomodoro> pomodoros = pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(monthAgoStartTimestamp, END_DAY_TIMESTAMP);
-        List<PomodoroDto> pomodoroDtos = pomodoroMapper.mapToDto(pomodoros);
-        Map<LocalDate, List<PomodoroDto>> pomodorosByDates = pomodoroDtos.stream()
+        List<PomodoroDtoV2> pomodoroDtos = pomodoroMapper.mapToDto(pomodoros);
+        Map<LocalDate, List<PomodoroDtoV2>> pomodorosByDates = pomodoroDtos.stream()
                 .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().toLocalDate()));
         return new TreeMap<>(pomodorosByDates);
     }
@@ -104,7 +102,7 @@ public class DefaultPomodoroService implements PomodoroService {
     }
 
     @Override
-    public void save() {
+    public PomodoroDtoV2 save() {
         Optional<Pomodoro> latestPomodoroOptional = pomodoroRepository.findTopByOrderByEndTimeDesc();
         LocalDateTime latestPomodoroEndTime = latestPomodoroOptional
                 .map(Pomodoro::getEndTime)
@@ -114,7 +112,7 @@ public class DefaultPomodoroService implements PomodoroService {
         if (latestPomodoroEndTime == null) {
             Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime);
             pomodoroRepository.save(pomodoroToSave);
-            return;
+            return null;
         }
         long newPomodoroEndEpochSeconds = newPomodoroEndTime.toEpochSecond(ZoneOffset.UTC);
 
@@ -124,12 +122,12 @@ public class DefaultPomodoroService implements PomodoroService {
 
         if (secondsDifference <= 60 * 20) {
             System.out.println("Cannot save pomodoro automatically due to less than 20 minutes have passed since the end of the previous pomodoro");
-            return;
+            return null;
         }
 
         Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime);
         Pomodoro savedPomodoro = pomodoroRepository.save(pomodoroToSave);
-        System.out.println(LOG_POMODORO_SAVED + savedPomodoro);
+        return pomodoroMapper.mapToDto(savedPomodoro);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.PomodoroDtoV2;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
@@ -28,7 +28,7 @@ public class DefaultPomodoroPeriodService implements PomodoroPeriodService {
     private final CurrentDayService currentDayService;
 
     @Override
-    public Map<DayOfWeek, List<PomodoroDto>> getCurrentWeekPomodoros() {
+    public Map<DayOfWeek, List<PomodoroDtoV2>> getCurrentWeekPomodoros() {
         LocalDate currentDay = currentDayService.getCurrentDay();
         int currentDayOfWeek = currentDay.getDayOfWeek().getValue();
         LocalDate dayAtStartOfWeek = currentDay.minusDays(currentDayOfWeek - 1);
@@ -40,7 +40,7 @@ public class DefaultPomodoroPeriodService implements PomodoroPeriodService {
         }
         Map<DayOfWeek, List<Pomodoro>> dayOfWeekToPomodoros = weeklyPomodoros.stream()
                 .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().getDayOfWeek()));
-        Map<DayOfWeek, List<PomodoroDto>> dayOfWeekToPomodoroDtos = dayOfWeekToPomodoros.entrySet().stream()
+        Map<DayOfWeek, List<PomodoroDtoV2>> dayOfWeekToPomodoroDtos = dayOfWeekToPomodoros.entrySet().stream()
                 .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), pomodoroMapper.mapToDto(entry.getValue())))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return new TreeMap<>(dayOfWeekToPomodoroDtos);

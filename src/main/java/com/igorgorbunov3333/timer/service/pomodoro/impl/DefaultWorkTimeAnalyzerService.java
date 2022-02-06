@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.AnalyzedWeekDto;
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.PomodoroDtoV2;
 import com.igorgorbunov3333.timer.service.exception.NoDataException;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
 import com.igorgorbunov3333.timer.service.pomodoro.WorkTimeAnalyzerService;
@@ -23,7 +23,7 @@ public class DefaultWorkTimeAnalyzerService implements WorkTimeAnalyzerService {
 
     @Override
     public AnalyzedWeekDto getCurrentWeekPomodoroInfo() {
-        Map<DayOfWeek, List<PomodoroDto>> dayOfWeekToPomodoros = pomodoroPeriodService.getCurrentWeekPomodoros();
+        Map<DayOfWeek, List<PomodoroDtoV2>> dayOfWeekToPomodoros = pomodoroPeriodService.getCurrentWeekPomodoros();
         if (dayOfWeekToPomodoros.isEmpty()) {
             throw new NoDataException("No weekly pomodoros available");
         }
@@ -31,7 +31,7 @@ public class DefaultWorkTimeAnalyzerService implements WorkTimeAnalyzerService {
         int pomodorosOverworked = 0;
         int currentDayOfWeek = LocalDate.now().getDayOfWeek().getValue();
         for (int i = 0; i < currentDayOfWeek; i++) {
-            List<PomodoroDto> currentDayPomodoros = dayOfWeekToPomodoros.get(DayOfWeek.of(i));
+            List<PomodoroDtoV2> currentDayPomodoros = dayOfWeekToPomodoros.get(DayOfWeek.of(i));
             if (!currentDayPomodoros.isEmpty()) {
                 int pomodorosFinalizedAtDay = currentDayPomodoros.size();
                 int pomodorosNeedToFinalizeAtDay = pomodoroProperties.getPomodorosPerDay();
