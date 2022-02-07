@@ -58,7 +58,10 @@ public class CommandLine {
                 return;
             }
             PomodoroDto savedPomodoro = pomodoroService.stopAndSavePomodoro();
-            System.out.println(LOG_POMODORO_SAVED + savedPomodoro);
+            if (savedPomodoro != null) {
+                System.out.println(LOG_POMODORO_SAVED + savedPomodoro);
+            }
+            getAndPrintDailyPomodoros();
         } else if (input.equals("3")) {
             if (pomodoroService.isNotActive()) {
                 System.out.println(MESSAGE_POMODORO_NOT_STARTED);
@@ -69,12 +72,7 @@ public class CommandLine {
         } else if (input.equals("4")) {
             System.out.println(pomodoroService.getPomodorosInDay());
         } else if (input.equals("5")) {
-            List<PomodoroDto> pomodoros = pomodoroService.getPomodorosInDayExtended();
-            if (pomodoros.isEmpty()) {
-                System.out.println(MESSAGE_NO_POMODOROS);
-                return;
-            }
-            printDailyPomodoros(pomodoros, true);
+            getAndPrintDailyPomodoros();
         } else if (input.equals("6")) {
             Map<LocalDate, List<PomodoroDto>> datesToPomadoros = pomodoroService.getMonthlyPomodoros();
             if (datesToPomadoros.isEmpty()) {
@@ -114,6 +112,11 @@ public class CommandLine {
         }
     }
 
+    private void getAndPrintDailyPomodoros() {
+        List<PomodoroDto> pomodoros = pomodoroService.getPomodorosInDayExtended();
+        printDailyPomodoros(pomodoros, true);
+    }
+
     private String getPomodoroCurrentDurationInString() {
         int seconds = pomodoroService.getPomodoroCurrentDuration();
         return secondsFormatter.formatInMinutes(seconds);
@@ -133,6 +136,10 @@ public class CommandLine {
     }
 
     private void printDailyPomodoros(List<PomodoroDto> pomodoros, boolean withId) {
+        if (pomodoros.isEmpty()) {
+            System.out.println(MESSAGE_NO_POMODOROS);
+            return;
+        }
         long pomodoroDurationInSeconds = 0;
         for (PomodoroDto pomodoro : pomodoros) {
             printPomodoro(pomodoro, withId);
