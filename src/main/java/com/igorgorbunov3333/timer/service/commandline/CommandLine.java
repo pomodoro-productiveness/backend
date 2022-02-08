@@ -102,7 +102,9 @@ public class CommandLine {
             Long pomodoroId = Long.valueOf(pomodoroIdArgument);
             pomodoroService.removePomodoro(pomodoroId);
         } else if (input.startsWith("save")) {
-            pomodoroService.save();
+            PomodoroDto savedPomodoro = pomodoroService.save();
+            System.out.println(LOG_POMODORO_SAVED + savedPomodoro);
+            getAndPrintDailyPomodoros();
         } else if (input.equals("week")) {
             Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoros = pomodoroPeriodService.getCurrentWeekPomodoros();
             for (Map.Entry<DayOfWeek, List<PomodoroDto>> entry : weeklyPomodoros.entrySet()) {

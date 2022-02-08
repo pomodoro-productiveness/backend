@@ -28,7 +28,7 @@ public class PomodoroDto {
 
     @Override
     public String toString() {
-        return "PomodoroDtoV2{" +
+        return "Pomodoro {" +
                 "id=" + id +
                 ", startTime=" + startTime.truncatedTo(ChronoUnit.SECONDS) +
                 ", endTime=" + endTime.truncatedTo(ChronoUnit.SECONDS) +
