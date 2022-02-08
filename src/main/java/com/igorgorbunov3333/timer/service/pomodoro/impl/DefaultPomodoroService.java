@@ -135,6 +135,11 @@ public class DefaultPomodoroService implements PomodoroService {
         return !pomodoroEngine.isPomodoroCurrentlyRunning();
     }
 
+    @Override
+    public boolean isActive() {
+        return pomodoroEngine.isPomodoroCurrentlyRunning();
+    }
+
     private Pomodoro buildPomodoro() {
         LocalDateTime endTime = LocalDateTime.now();
         int pomodoroDuration = pomodoroEngine.getPomodoroCurrentDuration();

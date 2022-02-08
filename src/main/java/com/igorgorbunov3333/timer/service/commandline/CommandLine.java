@@ -45,6 +45,10 @@ public class CommandLine {
     @SneakyThrows
     private void gotoChoice(String input) {
         if (input.equals("1")) {
+            if (pomodoroService.isActive()) {
+                System.out.println("Pomodoro is running now: " + getPomodoroCurrentDurationInString());
+                return;
+            }
             pomodoroService.starPomodoro();
             System.out.println("Pomodoro has started");
             for (int i = 0; i < 3; i++) {

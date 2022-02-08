@@ -26,4 +26,5 @@ public interface PomodoroService {
 
     boolean isNotActive();
 
+    boolean isActive();
 }
