@@ -23,6 +23,7 @@ public class CommandLine {
     private static final String MESSAGE_POMODORO_NOT_STARTED = "Pomodoro did not started!";
     private static final String MESSAGE_NO_POMODOROS = "No pomodoros to display!";
     private static final String LOG_POMODORO_SAVED = "Pomodoro successfully saved: ";
+    private static final String INVALID_INPUT = "Invalid input, please try again";
 
     private final PomodoroService pomodoroService;
     private final SecondsFormatter secondsFormatter;
@@ -34,7 +35,11 @@ public class CommandLine {
         printFeaturesList();
         while (true) {
             String text = sc.nextLine();
-            gotoChoice(text);
+            try {
+                gotoChoice(text);
+            } catch (Exception e) {
+                System.out.println(INVALID_INPUT);
+            }
             if (text.equals("exit")) {
                 break;
             }
@@ -93,6 +98,18 @@ public class CommandLine {
             printFeaturesList();
         } else if (input.startsWith("remove")) {
             char[] inputChars = input.toCharArray();
+            if (inputChars.length == "remove".length()) {
+                List<PomodoroDto> dailyPomodoros = pomodoroService.getPomodorosInDayExtended();
+                if (dailyPomodoros.isEmpty()) {
+                    System.out.println("Unable to remove latest pomodoro as no daily pomodoros");
+                    return;
+                }
+                Long removedPomodoroId = pomodoroService.removeLatest();
+                if (removedPomodoroId != null) {
+                    System.out.println("Pomodoro with id " + removedPomodoroId + " successfully removed");
+                }
+                return;
+            }
             int index = "remove ".length();
             if (inputChars[index - 1] != ' ') {
                 System.out.println("Incorrect input \"" + input + "\". \"remove\" and id should be separated with \" \"");
@@ -114,7 +131,7 @@ public class CommandLine {
                 printDailyPomodoros(dailyPomodoros, false);
             }
         } else {
-            System.out.println("Invalid input, please try again");
+            System.out.println(INVALID_INPUT);
         }
     }
 

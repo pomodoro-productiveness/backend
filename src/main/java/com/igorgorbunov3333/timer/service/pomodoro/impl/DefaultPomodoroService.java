@@ -102,6 +102,18 @@ public class DefaultPomodoroService implements PomodoroService {
     }
 
     @Override
+    public Long removeLatest() {
+        List<PomodoroDto> dailyPomodoros = getPomodorosInDayExtended();
+        if (dailyPomodoros.isEmpty()) {
+            return null;
+        }
+        PomodoroDto latestDto = dailyPomodoros.get(dailyPomodoros.size() - 1);
+        Long pomodoroId = latestDto.getId();
+        pomodoroRepository.deleteById(pomodoroId);
+        return pomodoroId;
+    }
+
+    @Override
     public PomodoroDto save() {
         Optional<Pomodoro> latestPomodoroOptional = pomodoroRepository.findTopByOrderByEndTimeDesc();
         LocalDateTime latestPomodoroEndTime = latestPomodoroOptional

@@ -22,6 +22,8 @@ public interface PomodoroService {
 
     void removePomodoro(Long id);
 
+    Long removeLatest();
+
     PomodoroDto save();
 
     boolean isNotActive();
