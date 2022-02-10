@@ -1,0 +1,16 @@
+package com.igorgorbunov3333.timer.service.util;
+
+import com.igorgorbunov3333.timer.model.TemporalObject;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+import java.time.temporal.ChronoUnit;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class PomodoroChronoUtil {
+
+    public static long getStartEndTimeDifferenceInSeconds(TemporalObject temporalObject) {
+        return ChronoUnit.SECONDS.between(temporalObject.getStartTime(), temporalObject.getEndTime());
+    }
+
+}

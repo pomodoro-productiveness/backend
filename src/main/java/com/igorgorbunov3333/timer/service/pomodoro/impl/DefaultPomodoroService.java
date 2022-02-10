@@ -7,6 +7,7 @@ import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
+import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +44,7 @@ public class DefaultPomodoroService implements PomodoroService {
     public PomodoroDto stopAndSavePomodoro() {
         Pomodoro pomodoro = buildPomodoro();
         long pomodoroMinimumLifetime = pomodoroProperties.getMinimumLifetime();
-        long startEndTimeDifference = ChronoUnit.SECONDS.between(pomodoro.getStartTime(), pomodoro.getEndTime());
+        long startEndTimeDifference = PomodoroChronoUtil.getStartEndTimeDifferenceInSeconds(pomodoro);
         if (pomodoroMinimumLifetime == 0) {
             System.out.println("Pomodoro lifetime didn't set. Please configure");
         } else if (startEndTimeDifference <= pomodoroMinimumLifetime) {

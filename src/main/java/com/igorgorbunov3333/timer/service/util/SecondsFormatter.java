@@ -1,17 +1,18 @@
 package com.igorgorbunov3333.timer.service.util;
 
-import org.springframework.stereotype.Component;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-@Component
-public class SecondsFormatter {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class SecondsFormatter {
 
-    public String formatInMinutes(long seconds) {
+    public static String formatInMinutes(long seconds) {
         long minutes = seconds / 60;
         long remainingSeconds = seconds - (minutes * 60);
         return String.format("%02d:%02d", minutes, remainingSeconds);
     }
 
-    public String formatInHours(long seconds) {
+    public static String formatInHours(long seconds) {
         long hours = seconds / 3600;
         long secondsForMinutes = seconds - (hours * 3600);
         long minutes = secondsForMinutes / 60;

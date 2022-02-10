@@ -2,6 +2,7 @@ package com.igorgorbunov3333.timer.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.igorgorbunov3333.timer.model.TemporalObject;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -15,7 +16,7 @@ import java.time.temporal.ChronoUnit;
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = "id")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class PomodoroDto {
+public class PomodoroDto implements TemporalObject {
 
     @JsonIgnore
     private Long id;

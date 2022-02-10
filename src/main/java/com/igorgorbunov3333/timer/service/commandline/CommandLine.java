@@ -4,6 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
+import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -28,7 +28,6 @@ public class CommandLine {
     private static final String INVALID_INPUT = "Invalid input, please try again";
 
     private final PomodoroService pomodoroService;
-    private final SecondsFormatter secondsFormatter;
     private final PomodoroPeriodService pomodoroPeriodService;
     private final PomodoroEngine pomodoroEngine;
 
@@ -154,7 +153,7 @@ public class CommandLine {
 
     private String getPomodoroCurrentDurationInString() {
         int seconds = pomodoroService.getPomodoroCurrentDuration();
-        return secondsFormatter.formatInMinutes(seconds);
+        return SecondsFormatter.formatInMinutes(seconds);
     }
 
     private void printFeaturesList() {
@@ -178,21 +177,17 @@ public class CommandLine {
         long pomodoroDurationInSeconds = 0;
         for (PomodoroDto pomodoro : pomodoros) {
             printPomodoro(pomodoro, withId);
-            long pomodoroStartEndTimeDifference = getStartEndTimeDifferenceInSeconds(pomodoro);
+            long pomodoroStartEndTimeDifference = PomodoroChronoUtil.getStartEndTimeDifferenceInSeconds(pomodoro);
             pomodoroDurationInSeconds += pomodoroStartEndTimeDifference;
         }
         System.out.println("Pomodoros amount - " + pomodoros.size());
-        System.out.println("Total time - " + secondsFormatter.formatInHours(pomodoroDurationInSeconds));
-    }
-
-    private long getStartEndTimeDifferenceInSeconds(PomodoroDto pomodoro) {
-        return ChronoUnit.SECONDS.between(pomodoro.getStartTime(), pomodoro.getEndTime());
+        System.out.println("Total time - " + SecondsFormatter.formatInHours(pomodoroDurationInSeconds));
     }
 
     private void printPomodoro(PomodoroDto pomodoro, boolean withId) {
         String pomodoroPeriod = mapTimestamp(pomodoro);
-        long pomodoroStartEndTimeDifference = getStartEndTimeDifferenceInSeconds(pomodoro);
-        String pomodoroDuration = secondsFormatter.formatInMinutes(pomodoroStartEndTimeDifference);
+        long pomodoroStartEndTimeDifference = PomodoroChronoUtil.getStartEndTimeDifferenceInSeconds(pomodoro);
+        String pomodoroDuration = SecondsFormatter.formatInMinutes(pomodoroStartEndTimeDifference);
         String formattedPomodoroPeriodAndDuration = "time - "
                 .concat(pomodoroPeriod)
                 .concat(" | ")

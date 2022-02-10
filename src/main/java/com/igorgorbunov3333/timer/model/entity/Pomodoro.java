@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.model.entity;
 
+import com.igorgorbunov3333.timer.model.TemporalObject;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class Pomodoro {
+public class Pomodoro implements TemporalObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
