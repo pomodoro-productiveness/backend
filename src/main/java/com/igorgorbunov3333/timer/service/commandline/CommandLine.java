@@ -21,6 +21,7 @@ import java.util.Scanner;
 public class CommandLine {
 
     private static final String MESSAGE_POMODORO_NOT_STARTED = "Pomodoro did not started!";
+    private static final String MESSAGE_POMODORO_PAUSED = "Pomodoro is paused now: ";
     private static final String MESSAGE_NO_POMODOROS = "No pomodoros to display!";
     private static final String LOG_POMODORO_SAVED = "Pomodoro successfully saved: ";
     private static final String INVALID_INPUT = "Invalid input, please try again";
@@ -54,6 +55,10 @@ public class CommandLine {
                 System.out.println("Pomodoro is running now: " + getPomodoroCurrentDurationInString());
                 return;
             }
+            if (pomodoroService.isPaused()) {
+                System.out.println(MESSAGE_POMODORO_PAUSED + getPomodoroCurrentDurationInString());
+                return;
+            }
             pomodoroService.starPomodoro();
             System.out.println("Pomodoro has started");
             for (int i = 0; i < 3; i++) {
@@ -62,7 +67,7 @@ public class CommandLine {
                 System.out.println(formattedTime);
             }
         } else if (input.equals("2")) {
-            if (pomodoroService.isNotActive()) {
+            if (pomodoroService.isNotActive() && !pomodoroService.isPaused()) {
                 System.out.println(MESSAGE_POMODORO_NOT_STARTED);
                 return;
             }
@@ -72,7 +77,7 @@ public class CommandLine {
             }
             getAndPrintDailyPomodoros();
         } else if (input.equals("3")) {
-            if (pomodoroService.isNotActive()) {
+            if (pomodoroService.isNotActive() && !pomodoroService.isPaused()) {
                 System.out.println(MESSAGE_POMODORO_NOT_STARTED);
                 return;
             }
@@ -130,6 +135,11 @@ public class CommandLine {
                 List<PomodoroDto> dailyPomodoros = entry.getValue();
                 printDailyPomodoros(dailyPomodoros, false);
             }
+        } else if (input.equals("pause")) {
+            pomodoroService.pause();
+            System.out.println("Pomodoro paused!");
+        } else if (input.equals("resume")) {
+            pomodoroService.resume();
         } else {
             System.out.println(INVALID_INPUT);
         }

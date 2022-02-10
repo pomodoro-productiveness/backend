@@ -29,4 +29,10 @@ public interface PomodoroService {
     boolean isNotActive();
 
     boolean isActive();
+
+    boolean isPaused();
+
+    void pause();
+
+    void resume();
 }

@@ -17,26 +17,13 @@ public class PomodoroEngine {
     private final AudioPlayerService player;
 
     @Async
-    @SneakyThrows
     public void startPomodoro() {
-        if (PomodoroState.running) {
-            return;
-        }
-        PomodoroState.running = true;
-        PomodoroState.duration.set(0);
-        boolean playerStarted = false;
-        do {
-            Thread.sleep(1000);
-            int currentValue = PomodoroState.duration.incrementAndGet();
-            if (currentValue >= SECONDS_IN_20_MINUTES && !playerStarted) {
-                player.play();
-                playerStarted = true;
-            }
-        } while (PomodoroState.running);
+        startPomodoro(0);
     }
 
     public void stopPomodoro() {
         PomodoroState.running = false;
+        PomodoroState.paused = false;
         player.stop();
 
         PomodoroState.duration.set(0);
@@ -50,11 +37,44 @@ public class PomodoroEngine {
         return PomodoroState.running;
     }
 
+    public boolean isPomodoroPaused() {
+        return PomodoroState.paused;
+    }
+
+    public void pausePomodoro() {
+        PomodoroState.paused = true;
+        PomodoroState.running = false;
+     }
+
+    @Async
+    public void resumePomodoro() {
+        PomodoroState.paused = false;
+        startPomodoro(PomodoroState.duration.get());
+    }
+
+    @SneakyThrows
+    private void startPomodoro(int currentDuration) {
+        if (PomodoroState.running) {
+            return;
+        }
+        PomodoroState.running = true;
+        PomodoroState.duration.set(currentDuration);
+        boolean playerStarted = false;
+        do {
+            Thread.sleep(1000);
+            int currentValue = PomodoroState.duration.incrementAndGet();
+            if (currentValue >= SECONDS_IN_20_MINUTES && !playerStarted) {
+                player.play();
+                playerStarted = true;
+            }
+        } while (PomodoroState.running);
+    }
+
     private static class PomodoroState {
 
-        private static AtomicInteger duration = new AtomicInteger(0);
+        private static final AtomicInteger duration = new AtomicInteger(0);
         private static boolean running;
-
+        private static boolean paused;
     }
 
 }
