@@ -143,21 +143,6 @@ public class DefaultPomodoroService implements PomodoroService {
     }
 
     @Override
-    public boolean isNotActive() {
-        return !pomodoroEngine.isPomodoroCurrentlyRunning();
-    }
-
-    @Override
-    public boolean isActive() {
-        return pomodoroEngine.isPomodoroCurrentlyRunning();
-    }
-
-    @Override
-    public boolean isPaused() {
-        return pomodoroEngine.isPomodoroPaused();
-    }
-
-    @Override
     public void pause() {
         pomodoroEngine.pausePomodoro();
     }

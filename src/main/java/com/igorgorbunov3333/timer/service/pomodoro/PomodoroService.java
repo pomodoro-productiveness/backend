@@ -26,12 +26,6 @@ public interface PomodoroService {
 
     PomodoroDto save();
 
-    boolean isNotActive();
-
-    boolean isActive();
-
-    boolean isPaused();
-
     void pause();
 
     void resume();

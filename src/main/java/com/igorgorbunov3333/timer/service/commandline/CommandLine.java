@@ -1,6 +1,7 @@
 package com.igorgorbunov3333.timer.service.commandline;
 
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.service.pomodoro.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
@@ -29,6 +30,7 @@ public class CommandLine {
     private final PomodoroService pomodoroService;
     private final SecondsFormatter secondsFormatter;
     private final PomodoroPeriodService pomodoroPeriodService;
+    private final PomodoroEngine pomodoroEngine;
 
     public void start() {
         Scanner sc = new Scanner(System.in);
@@ -51,11 +53,11 @@ public class CommandLine {
     @SneakyThrows
     private void gotoChoice(String input) {
         if (input.equals("1")) {
-            if (pomodoroService.isActive()) {
+            if (pomodoroEngine.isPomodoroCurrentlyRunning()) {
                 System.out.println("Pomodoro is running now: " + getPomodoroCurrentDurationInString());
                 return;
             }
-            if (pomodoroService.isPaused()) {
+            if (pomodoroEngine.isPomodoroPaused()) {
                 System.out.println(MESSAGE_POMODORO_PAUSED + getPomodoroCurrentDurationInString());
                 return;
             }
@@ -67,7 +69,7 @@ public class CommandLine {
                 System.out.println(formattedTime);
             }
         } else if (input.equals("2")) {
-            if (pomodoroService.isNotActive() && !pomodoroService.isPaused()) {
+            if (!pomodoroEngine.isPomodoroCurrentlyRunning() && !pomodoroEngine.isPomodoroPaused()) {
                 System.out.println(MESSAGE_POMODORO_NOT_STARTED);
                 return;
             }
@@ -77,7 +79,7 @@ public class CommandLine {
             }
             getAndPrintDailyPomodoros();
         } else if (input.equals("3")) {
-            if (pomodoroService.isNotActive() && !pomodoroService.isPaused()) {
+            if (!pomodoroEngine.isPomodoroCurrentlyRunning() && !pomodoroEngine.isPomodoroPaused()) {
                 System.out.println(MESSAGE_POMODORO_NOT_STARTED);
                 return;
             }
