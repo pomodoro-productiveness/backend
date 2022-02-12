@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -32,6 +33,8 @@ class DefaultPomodoroSynchronizerServiceTest {
 
     @Captor
     private ArgumentCaptor<List<Pomodoro>> pomodorosArgumentCaptor;
+    @Captor
+    private ArgumentCaptor<PomodoroDataDto> pomodoroDataArgumentCaptor;
 
     @InjectMocks
     private DefaultPomodoroSynchronizerService testee;
@@ -112,7 +115,34 @@ class DefaultPomodoroSynchronizerServiceTest {
 
     @Test
     void synchronize_WhenOnlyLocalPomodorosPresent_ThenUpdateRemotePomodoros() {
+        final LocalDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0);
+        final LocalDateTime firstPomodoroEndTime = LocalDateTime.of(2022, 1, 1, 7, 20);
+        final LocalDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 1, 2, 7, 0);
+        final LocalDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 1, 2, 7, 20);
 
+
+        Pomodoro firstLocalPomodoro = mock(Pomodoro.class);
+        when(firstLocalPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
+        when(firstLocalPomodoro.getEndTime()).thenReturn(firstPomodoroEndTime);
+        Pomodoro secondLocalPomodoro = mock(Pomodoro.class);
+        when(secondLocalPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
+        when(secondLocalPomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
+        when(pomodoroRepository.findAll()).thenReturn(List.of(firstLocalPomodoro, secondLocalPomodoro));
+        PomodoroDataDto pomodoroData = mock(PomodoroDataDto.class);
+        when(pomodoroData.getPomodoros()).thenReturn(List.of());
+        when(googleDriveService.getPomodoroData()).thenReturn(pomodoroData);
+        doNothing().when(googleDriveService).updatePomodoroData(pomodoroDataArgumentCaptor.capture());
+
+        testee.synchronize();
+
+        verifyNoMoreInteractions(pomodoroRepository);
+        PomodoroDataDto actualPomodoroData = pomodoroDataArgumentCaptor.getValue();
+        assertThat(actualPomodoroData.getPomodoros())
+                .extracting(pomodoro -> Tuple.tuple(pomodoro.getStartTime(), pomodoro.getEndTime()))
+                .containsExactlyInAnyOrderElementsOf(List.of(
+                        Tuple.tuple(firstPomodoroStartTime, firstPomodoroEndTime),
+                        Tuple.tuple(secondPomodoroStartTime, secondPomodoroEndTime)
+                ));
     }
 
     @Test
