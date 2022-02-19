@@ -130,6 +130,9 @@ public class CommandLine {
             getAndPrintDailyPomodoros();
         } else if (input.equals("week")) {
             Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoros = pomodoroPeriodService.getCurrentWeekPomodoros();
+            if (weeklyPomodoros.isEmpty()) {
+                System.out.println(MESSAGE_NO_POMODOROS);
+            }
             for (Map.Entry<DayOfWeek, List<PomodoroDto>> entry : weeklyPomodoros.entrySet()) {
                 System.out.println();
                 System.out.println(entry.getKey().toString());

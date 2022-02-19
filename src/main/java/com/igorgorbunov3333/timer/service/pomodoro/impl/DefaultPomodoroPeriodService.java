@@ -14,10 +14,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @AllArgsConstructor
@@ -38,12 +40,29 @@ public class DefaultPomodoroPeriodService implements PomodoroPeriodService {
         if (weeklyPomodoros.isEmpty()) {
             return Map.of();
         }
+        Map<DayOfWeek, List<PomodoroDto>> daysOfWeekToPomodoros = getDaysOfWeekToPomodoros(currentDayOfWeek, weeklyPomodoros);
+        return new TreeMap<>(daysOfWeekToPomodoros);
+    }
+
+    private Map<DayOfWeek, List<PomodoroDto>> getDaysOfWeekToPomodoros(int currentDayOfWeek,
+                                                                       List<Pomodoro> weeklyPomodoros) {
         Map<DayOfWeek, List<Pomodoro>> dayOfWeekToPomodoros = weeklyPomodoros.stream()
                 .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().getDayOfWeek()));
-        Map<DayOfWeek, List<PomodoroDto>> dayOfWeekToPomodoroDtos = dayOfWeekToPomodoros.entrySet().stream()
-                .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), pomodoroMapper.mapToDto(entry.getValue())))
+        return IntStream.range(DayOfWeek.MONDAY.getValue(), currentDayOfWeek + 1)
+                .boxed()
+                .map(DayOfWeek::of)
+                .map(dayOfWeek -> new AbstractMap.SimpleEntry<>(
+                        dayOfWeek,
+                        getDailyPomodoros(dayOfWeekToPomodoros, dayOfWeek)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        return new TreeMap<>(dayOfWeekToPomodoroDtos);
+    }
+
+    private List<PomodoroDto> getDailyPomodoros(Map<DayOfWeek, List<Pomodoro>> dayOfWeekToPomodoros,
+                                                DayOfWeek dayOfWeek) {
+        List<Pomodoro> dailyPomodoros = dayOfWeekToPomodoros.computeIfAbsent(dayOfWeek, k -> new ArrayList<>());
+        return dailyPomodoros.stream()
+                .map(pomodoroMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
 }
