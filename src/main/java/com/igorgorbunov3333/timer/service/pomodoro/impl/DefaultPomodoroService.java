@@ -1,13 +1,11 @@
 package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
-import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
+import com.igorgorbunov3333.timer.service.exception.DataPersistingException;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
-import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,39 +26,14 @@ public class DefaultPomodoroService implements PomodoroService {
     private static final LocalDateTime START_DAY_TIMESTAMP = LocalDate.now().atStartOfDay();
     private static final LocalDateTime END_DAY_TIMESTAMP = LocalDate.now().atTime(LocalTime.MAX);
 
-    private static final String LOG_POMODORO_STOPPED = "Pomodoro successfully stopped!";
-
     private final PomodoroRepository pomodoroRepository;
-    private final PomodoroEngine pomodoroEngine;
-    private final PomodoroProperties pomodoroProperties;
     private final PomodoroMapper pomodoroMapper;
 
     @Override
-    public void starPomodoro() {
-        pomodoroEngine.startPomodoro();
-    }
-
-    @Override
-    public PomodoroDto stopAndSavePomodoro() {
-        Pomodoro pomodoro = buildPomodoro();
-        long pomodoroMinimumLifetime = pomodoroProperties.getMinimumLifetime();
-        long startEndTimeDifference = PomodoroChronoUtil.getStartEndTimeDifferenceInSeconds(pomodoro);
-        if (pomodoroMinimumLifetime == 0) {
-            System.out.println("Pomodoro lifetime didn't set. Please configure");
-        } else if (startEndTimeDifference <= pomodoroMinimumLifetime) {
-            System.out.println("Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds");
-            pomodoroEngine.stopPomodoro();
-            System.out.println(LOG_POMODORO_STOPPED);
-            return null;
-        }
-        pomodoroEngine.stopPomodoro();
+    public PomodoroDto saveByDuration(int pomodoroDuration) {
+        Pomodoro pomodoro = buildPomodoro(pomodoroDuration);
         Pomodoro savedPomodoro = pomodoroRepository.save(pomodoro);
         return pomodoroMapper.mapToDto(savedPomodoro);
-    }
-
-    @Override
-    public int getPomodoroCurrentDuration() {
-        return pomodoroEngine.getPomodoroCurrentDuration();
     }
 
     @Override
@@ -105,7 +78,7 @@ public class DefaultPomodoroService implements PomodoroService {
     public Long removeLatest() {
         List<PomodoroDto> dailyPomodoros = getPomodorosInDayExtended();
         if (dailyPomodoros.isEmpty()) {
-            return null;
+            throw new DataPersistingException("No daily pomodoros");
         }
         PomodoroDto latestDto = dailyPomodoros.get(dailyPomodoros.size() - 1);
         Long pomodoroId = latestDto.getId();
@@ -133,8 +106,8 @@ public class DefaultPomodoroService implements PomodoroService {
         long secondsDifference = newPomodoroEndEpochSeconds - latestPomodoroEndtEpochSeconds;
 
         if (secondsDifference <= 60 * 20) {
-            System.out.println("Cannot save pomodoro automatically due to less than 20 minutes have passed since the end of the previous pomodoro");
-            return null;
+            throw new DataPersistingException("Cannot save pomodoro automatically due to less than 20 minutes have " +
+                    "passed since the end of the previous pomodoro");
         }
 
         Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime);
@@ -142,19 +115,8 @@ public class DefaultPomodoroService implements PomodoroService {
         return pomodoroMapper.mapToDto(savedPomodoro);
     }
 
-    @Override
-    public void pause() {
-        pomodoroEngine.pausePomodoro();
-    }
-
-    @Override
-    public void resume() {
-        pomodoroEngine.resumePomodoro();
-    }
-
-    private Pomodoro buildPomodoro() {
+    private Pomodoro buildPomodoro(int pomodoroDuration) {
         LocalDateTime endTime = LocalDateTime.now();
-        int pomodoroDuration = pomodoroEngine.getPomodoroCurrentDuration();
         LocalDateTime startTime = endTime.minusSeconds(pomodoroDuration);
         return new Pomodoro(null, startTime, endTime);
     }

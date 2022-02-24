@@ -8,11 +8,7 @@ import java.util.Map;
 
 public interface PomodoroService {
 
-    void starPomodoro();
-
-    PomodoroDto stopAndSavePomodoro();
-
-    int getPomodoroCurrentDuration();
+    PomodoroDto saveByDuration(int pomodoroDuration);
 
     long getPomodorosInDay();
 
@@ -26,7 +22,4 @@ public interface PomodoroService {
 
     PomodoroDto save();
 
-    void pause();
-
-    void resume();
 }

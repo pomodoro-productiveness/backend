@@ -1,18 +1,18 @@
 package com.igorgorbunov3333.timer.service.commandline;
 
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroEngine;
+import com.igorgorbunov3333.timer.model.dto.engine.PomodoroActionInfoDto;
+import com.igorgorbunov3333.timer.service.commandline.impl.DefaultPrinterService;
+import com.igorgorbunov3333.timer.service.exception.DataPersistingException;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
-import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
-import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
+import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
+import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -21,20 +21,18 @@ import java.util.Scanner;
 @AllArgsConstructor
 public class CommandLine {
 
-    private static final String MESSAGE_POMODORO_NOT_STARTED = "Pomodoro did not started!";
-    private static final String MESSAGE_POMODORO_PAUSED = "Pomodoro is paused now: ";
-    private static final String MESSAGE_NO_POMODOROS = "No pomodoros to display!";
-    private static final String LOG_POMODORO_SAVED = "Pomodoro successfully saved: ";
     private static final String INVALID_INPUT = "Invalid input, please try again";
 
     private final PomodoroService pomodoroService;
     private final PomodoroPeriodService pomodoroPeriodService;
     private final PomodoroEngine pomodoroEngine;
+    private final PomodoroEngineService pomodoroEngineService;
+    private final PrinterService printerService;
 
     public void start() {
         Scanner sc = new Scanner(System.in);
         System.out.println();
-        printFeaturesList();
+        printerService.printFeaturesList();
         while (true) {
             String text = sc.nextLine();
             try {
@@ -52,56 +50,32 @@ public class CommandLine {
     @SneakyThrows
     private void gotoChoice(String input) {
         if (input.equals("1")) {
-            if (pomodoroEngine.isPomodoroCurrentlyRunning()) {
-                System.out.println("Pomodoro is running now: " + getPomodoroCurrentDurationInString());
-                return;
-            }
-            if (pomodoroEngine.isPomodoroPaused()) {
-                System.out.println(MESSAGE_POMODORO_PAUSED + getPomodoroCurrentDurationInString());
-                return;
-            }
-            pomodoroService.starPomodoro();
-            System.out.println("Pomodoro has started");
-            for (int i = 0; i < 3; i++) {
-                Thread.sleep(1100);
-                String formattedTime = getPomodoroCurrentDurationInString();
-                System.out.println(formattedTime);
+            PomodoroActionInfoDto pomodoroActionInfoDto = pomodoroEngineService.startPomodoro();
+            if (!pomodoroActionInfoDto.isDoneSuccessfully()) {
+                System.out.println(pomodoroActionInfoDto.getFailureMessage());
+            } else {
+                System.out.println("Pomodoro has started");
+                printerService.printFirstThreeFirstPomodoroSecondsDuration();
             }
         } else if (input.equals("2")) {
-            if (!pomodoroEngine.isPomodoroCurrentlyRunning() && !pomodoroEngine.isPomodoroPaused()) {
-                System.out.println(MESSAGE_POMODORO_NOT_STARTED);
-                return;
+            PomodoroActionInfoDto pomodoroActionInfoDto = pomodoroEngineService.stopPomodoro();
+            if (!pomodoroActionInfoDto.isDoneSuccessfully()) {
+                System.out.println(pomodoroActionInfoDto.getFailureMessage());
+            } else {
+                System.out.println(DefaultPrinterService.MESSAGE_POMODORO_SAVED + pomodoroActionInfoDto.getValue());
+                printerService.getAndPrintDailyPomodoros();
             }
-            PomodoroDto savedPomodoro = pomodoroService.stopAndSavePomodoro();
-            if (savedPomodoro != null) {
-                System.out.println(LOG_POMODORO_SAVED + savedPomodoro);
-            }
-            getAndPrintDailyPomodoros();
         } else if (input.equals("3")) {
-            if (!pomodoroEngine.isPomodoroCurrentlyRunning() && !pomodoroEngine.isPomodoroPaused()) {
-                System.out.println(MESSAGE_POMODORO_NOT_STARTED);
-                return;
-            }
-            String formattedTime = getPomodoroCurrentDurationInString();
-            System.out.println(formattedTime);
+            String pomodoroCurrentDuration = pomodoroEngineService.getPomodoroCurrentDuration();
+            System.out.println(pomodoroCurrentDuration);
         } else if (input.equals("4")) {
             System.out.println(pomodoroService.getPomodorosInDay());
         } else if (input.equals("5")) {
-            getAndPrintDailyPomodoros();
+            printerService.getAndPrintDailyPomodoros();
         } else if (input.equals("6")) {
-            Map<LocalDate, List<PomodoroDto>> datesToPomadoros = pomodoroService.getMonthlyPomodoros();
-            if (datesToPomadoros.isEmpty()) {
-                System.out.println(MESSAGE_NO_POMODOROS);
-                return;
-            }
-            for (Map.Entry<LocalDate, List<PomodoroDto>> entry : datesToPomadoros.entrySet()) {
-                System.out.println();
-                System.out.println(entry.getKey());
-                System.out.println("pomodoros in day - " + entry.getValue().size());
-                printDailyPomodoros(entry.getValue(), false);
-            }
+            printerService.printPomodorosForLastMonth();
         } else if (input.equals("help")) {
-            printFeaturesList();
+            printerService.printFeaturesList();
         } else if (input.startsWith("remove")) {
             char[] inputChars = input.toCharArray();
             if (inputChars.length == "remove".length()) {
@@ -110,7 +84,13 @@ public class CommandLine {
                     System.out.println("Unable to remove latest pomodoro as no daily pomodoros");
                     return;
                 }
-                Long removedPomodoroId = pomodoroService.removeLatest();
+                Long removedPomodoroId;
+                try {
+                    removedPomodoroId = pomodoroService.removeLatest();
+                } catch (DataPersistingException e) {
+                    System.out.println(e.getMessage());
+                    return;
+                }
                 if (removedPomodoroId != null) {
                     System.out.println("Pomodoro with id " + removedPomodoroId + " successfully removed");
                 }
@@ -125,100 +105,34 @@ public class CommandLine {
             Long pomodoroId = Long.valueOf(pomodoroIdArgument);
             pomodoroService.removePomodoro(pomodoroId);
         } else if (input.startsWith("save")) {
-            PomodoroDto savedPomodoro = pomodoroService.save();
-            System.out.println(LOG_POMODORO_SAVED + savedPomodoro);
-            getAndPrintDailyPomodoros();
+            PomodoroDto savedPomodoro;
+            try {
+                savedPomodoro = pomodoroService.save();
+            } catch (DataPersistingException e) {
+                System.out.println(e.getMessage());
+                return;
+            }
+            System.out.println(DefaultPrinterService.MESSAGE_POMODORO_SAVED + savedPomodoro);
+            printerService.getAndPrintDailyPomodoros();
         } else if (input.equals("week")) {
             Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoros = pomodoroPeriodService.getCurrentWeekPomodoros();
             if (weeklyPomodoros.isEmpty()) {
-                System.out.println(MESSAGE_NO_POMODOROS);
+                System.out.println(DefaultPrinterService.MESSAGE_POMODORO_SAVED);
             }
             for (Map.Entry<DayOfWeek, List<PomodoroDto>> entry : weeklyPomodoros.entrySet()) {
                 System.out.println();
                 System.out.println(entry.getKey().toString());
                 List<PomodoroDto> dailyPomodoros = entry.getValue();
-                printDailyPomodoros(dailyPomodoros, false);
+                printerService.printDailyPomodoros(dailyPomodoros, false);
             }
         } else if (input.equals("pause")) {
-            pomodoroService.pause();
+            pomodoroEngine.pausePomodoro();
             System.out.println("Pomodoro paused!");
         } else if (input.equals("resume")) {
-            pomodoroService.resume();
+            pomodoroEngine.resumePomodoro();
         } else {
             System.out.println(INVALID_INPUT);
         }
-    }
-
-    private void getAndPrintDailyPomodoros() {
-        List<PomodoroDto> pomodoros = pomodoroService.getPomodorosInDayExtended();
-        printDailyPomodoros(pomodoros, true);
-    }
-
-    private String getPomodoroCurrentDurationInString() {
-        int seconds = pomodoroService.getPomodoroCurrentDuration();
-        return SecondsFormatter.formatInMinutes(seconds);
-    }
-
-    private void printFeaturesList() {
-        System.out.println("1. start");
-        System.out.println("2. stop");
-        System.out.println("3. current time");
-        System.out.println("4. pomadoros today");
-        System.out.println("5. pomadoros today extended");
-        System.out.println("6. pomadoros for the last month");
-        System.out.println("Type \"help\" to list all available features");
-        System.out.println("remove pomodoro by id. For example \"remove 10\"");
-        System.out.println("save pomodoro. For example \"save\"");
-        System.out.println("list all pomodoros for current week. For example \"week\"");
-    }
-
-    private void printDailyPomodoros(List<PomodoroDto> pomodoros, boolean withId) {
-        if (pomodoros.isEmpty()) {
-            System.out.println(MESSAGE_NO_POMODOROS);
-            return;
-        }
-        long pomodoroDurationInSeconds = 0;
-        for (PomodoroDto pomodoro : pomodoros) {
-            printPomodoro(pomodoro, withId);
-            long pomodoroStartEndTimeDifference = PomodoroChronoUtil.getStartEndTimeDifferenceInSeconds(pomodoro);
-            pomodoroDurationInSeconds += pomodoroStartEndTimeDifference;
-        }
-        System.out.println("Pomodoros amount - " + pomodoros.size());
-        System.out.println("Total time - " + SecondsFormatter.formatInHours(pomodoroDurationInSeconds));
-    }
-
-    private void printPomodoro(PomodoroDto pomodoro, boolean withId) {
-        String pomodoroPeriod = mapTimestamp(pomodoro);
-        long pomodoroStartEndTimeDifference = PomodoroChronoUtil.getStartEndTimeDifferenceInSeconds(pomodoro);
-        String pomodoroDuration = SecondsFormatter.formatInMinutes(pomodoroStartEndTimeDifference);
-        String formattedPomodoroPeriodAndDuration = "time - "
-                .concat(pomodoroPeriod)
-                .concat(" | ")
-                .concat("duration - ")
-                .concat(pomodoroDuration);
-        String pomodoroRow;
-        if (withId) {
-            String pomodoroId = pomodoro.getId().toString();
-            pomodoroRow = "id - ".concat(pomodoroId)
-                    .concat(" | ")
-                    .concat(formattedPomodoroPeriodAndDuration);
-        } else {
-            pomodoroRow = formattedPomodoroPeriodAndDuration;
-        }
-        System.out.println(pomodoroRow);
-    }
-
-    private String mapTimestamp(PomodoroDto pomodoro) {
-        String startTimeString = format(pomodoro.getStartTime());
-        String endTimeString = format(pomodoro.getEndTime());
-        return String.join(" : ", List.of(startTimeString, endTimeString));
-    }
-
-    private String format(LocalDateTime startTime) {
-        int hours = startTime.getHour();
-        int minutes = startTime.getMinute();
-        int seconds = startTime.getSecond();
-        return String.format("%d:%02d:%02d", hours, minutes, seconds);
     }
 
     private String getArgumentString(String input, char[] inputChars, int index) {
