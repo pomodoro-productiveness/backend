@@ -6,13 +6,13 @@ import com.igorgorbunov3333.timer.service.exception.DataPersistingException;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
-import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -25,7 +25,6 @@ public class CommandLine {
 
     private final PomodoroService pomodoroService;
     private final PomodoroPeriodService pomodoroPeriodService;
-    private final PomodoroEngine pomodoroEngine;
     private final PomodoroEngineService pomodoroEngineService;
     private final PrinterService printerService;
 
@@ -58,9 +57,9 @@ public class CommandLine {
         } else if (input.equals("4")) {
             System.out.println(pomodoroService.getPomodorosInDay());
         } else if (input.equals("5")) {
-            printerService.getAndPrintDailyPomodoros();
+            getAndPrintDailyPomodoros();
         } else if (input.equals("6")) {
-            printerService.printPomodorosForLastMonth();
+            getAndPrintMonthlyPomodoros();
         } else if (input.equals("help")) {
             printerService.printFeaturesList();
         } else if (input.startsWith("remove")) {
@@ -68,11 +67,11 @@ public class CommandLine {
         } else if (input.startsWith("save")) {
             savePomodoroAutomatically();
         } else if (input.equals("week")) {
-            showPomodorosForCurrentWeek();
+            getAndPrintPomodorosForCurrentWeek();
         } else if (input.equals("pause")) {
             pausePomodoro();
         } else if (input.equals("resume")) {
-            pomodoroEngine.resumePomodoro();
+            pomodoroEngineService.resumePomodoro();
         } else {
             System.out.println(INVALID_INPUT);
         }
@@ -98,7 +97,7 @@ public class CommandLine {
             return;
         }
         System.out.println(DefaultPrinterService.MESSAGE_POMODORO_SAVED + savedPomodoro);
-        printerService.getAndPrintDailyPomodoros();
+        getAndPrintDailyPomodoros();
     }
 
     private void showPomodoroCurrentDuration() {
@@ -145,24 +144,32 @@ public class CommandLine {
             return;
         }
         System.out.println(DefaultPrinterService.MESSAGE_POMODORO_SAVED + savedPomodoro);
-        printerService.getAndPrintDailyPomodoros();
+        getAndPrintDailyPomodoros();
     }
 
-    private void showPomodorosForCurrentWeek() {
+    private void getAndPrintPomodorosForCurrentWeek() {
         Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoros = pomodoroPeriodService.getCurrentWeekPomodoros();
         if (weeklyPomodoros.isEmpty()) {
-            System.out.println(DefaultPrinterService.MESSAGE_POMODORO_SAVED);
+            System.out.println("No weekly pomodoros");
         }
-        for (Map.Entry<DayOfWeek, List<PomodoroDto>> entry : weeklyPomodoros.entrySet()) {
-            System.out.println();
-            System.out.println(entry.getKey().toString());
-            List<PomodoroDto> dailyPomodoros = entry.getValue();
-            printerService.printDailyPomodoros(dailyPomodoros, false);
+        printerService.printDayOfWeekToPomodoros(weeklyPomodoros);
+    }
+
+    private void getAndPrintDailyPomodoros() {
+        List<PomodoroDto> pomodoros = pomodoroService.getPomodorosInDayExtended();
+        printerService.printPomodorosWithIds(pomodoros);
+    }
+
+    private void getAndPrintMonthlyPomodoros() {
+        Map<LocalDate, List<PomodoroDto>> datesToPomadoros = pomodoroService.getMonthlyPomodoros();
+        if (datesToPomadoros.isEmpty()) {
+            System.out.println("No monthly pomodoros");
         }
+        printerService.printLocalDatePomodoros(datesToPomadoros);
     }
 
     private void pausePomodoro() {
-        pomodoroEngine.pausePomodoro();
+        pomodoroEngineService.pausePomodoro();
         System.out.println("Pomodoro paused!");
     }
 

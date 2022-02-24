@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @AllArgsConstructor
 public class PomodoroStoppedEventListener implements ApplicationListener<PomodoroStoppedSpringEvent> {
@@ -19,7 +21,8 @@ public class PomodoroStoppedEventListener implements ApplicationListener<Pomodor
     public void onApplicationEvent(PomodoroStoppedSpringEvent event) {
         int pomodoroDuration = event.getPomodoroDuration();
         PomodoroDto savedPomodoro = pomodoroService.saveByDuration(pomodoroDuration);
-        printerService.printSavedAndDailyPomodorosAfterStoppingPomodoro(savedPomodoro);
+        List<PomodoroDto> dailyPomodoros = pomodoroService.getPomodorosInDayExtended();
+        printerService.printSavedAndDailyPomodorosAfterStoppingPomodoro(savedPomodoro, dailyPomodoros);
     }
 
 }

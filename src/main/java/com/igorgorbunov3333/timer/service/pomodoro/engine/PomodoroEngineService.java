@@ -11,4 +11,8 @@ public interface PomodoroEngineService {
     String getPomodoroCurrentDuration();
 
     String getPomodoroCurrentDurationInString();
+
+    void pausePomodoro();
+
+    void resumePomodoro();
 }

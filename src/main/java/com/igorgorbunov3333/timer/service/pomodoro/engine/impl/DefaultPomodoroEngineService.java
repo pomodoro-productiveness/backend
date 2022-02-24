@@ -65,4 +65,14 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
         return SecondsFormatter.formatInMinutes(seconds);
     }
 
+    @Override
+    public void pausePomodoro() {
+        pomodoroEngine.pausePomodoro();
+    }
+
+    @Override
+    public void resumePomodoro() {
+        pomodoroEngine.resumePomodoro();
+    }
+
 }
