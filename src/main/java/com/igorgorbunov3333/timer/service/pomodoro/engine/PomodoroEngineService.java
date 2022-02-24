@@ -1,12 +1,12 @@
 package com.igorgorbunov3333.timer.service.pomodoro.engine;
 
-import com.igorgorbunov3333.timer.model.dto.engine.PomodoroActionInfoDto;
+import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 
 public interface PomodoroEngineService {
 
-    PomodoroActionInfoDto startPomodoro();
+    void startPomodoro();
 
-    PomodoroActionInfoDto stopPomodoro();
+    PomodoroDto stopPomodoro();
 
     String getPomodoroCurrentDuration();
 

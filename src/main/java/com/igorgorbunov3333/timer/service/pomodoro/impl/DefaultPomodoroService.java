@@ -87,7 +87,7 @@ public class DefaultPomodoroService implements PomodoroService {
     }
 
     @Override
-    public PomodoroDto save() {
+    public PomodoroDto saveAutomatically() {
         Optional<Pomodoro> latestPomodoroOptional = pomodoroRepository.findTopByOrderByEndTimeDesc();
         LocalDateTime latestPomodoroEndTime = latestPomodoroOptional
                 .map(Pomodoro::getEndTime)

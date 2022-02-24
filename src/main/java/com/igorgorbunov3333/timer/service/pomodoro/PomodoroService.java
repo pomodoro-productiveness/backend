@@ -20,6 +20,6 @@ public interface PomodoroService {
 
     Long removeLatest();
 
-    PomodoroDto save();
+    PomodoroDto saveAutomatically();
 
 }

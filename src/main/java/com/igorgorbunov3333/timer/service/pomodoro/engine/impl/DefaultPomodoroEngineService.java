@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.pomodoro.engine.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
-import com.igorgorbunov3333.timer.model.dto.engine.PomodoroActionInfoDto;
+import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
@@ -22,23 +22,22 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
     private final PomodoroProperties pomodoroProperties;
 
     @Override
-    public PomodoroActionInfoDto startPomodoro() {
+    public void startPomodoro() {
         if (pomodoroEngine.isPomodoroCurrentlyRunning()) {
             String message = "Pomodoro is running now: " + getPomodoroCurrentDurationInString();
-            return new PomodoroActionInfoDto(false, message, null);
+            throw new PomodoroEngineException(message);
         }
         if (pomodoroEngine.isPomodoroPaused()) {
             String message = MESSAGE_POMODORO_PAUSED + getPomodoroCurrentDurationInString();
-            return new PomodoroActionInfoDto(false, message, null);
+            throw new PomodoroEngineException(message);
         }
         pomodoroEngine.startPomodoro();
-        return new PomodoroActionInfoDto(true, "", null);
     }
 
     @Override
-    public PomodoroActionInfoDto stopPomodoro() {
+    public PomodoroDto stopPomodoro() {
         if (!pomodoroEngine.isPomodoroCurrentlyRunning() && !pomodoroEngine.isPomodoroPaused()) {
-            return new PomodoroActionInfoDto(false, MESSAGE_POMODORO_NOT_STARTED, null);
+            throw new PomodoroEngineException(MESSAGE_POMODORO_NOT_STARTED);
         }
         int duration = pomodoroEngine.stopPomodoro();
         long pomodoroMinimumLifetime = pomodoroProperties.getMinimumLifetime();
@@ -46,13 +45,10 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
             System.out.println("Pomodoro lifetime didn't set. Please configure");
         }
         if (duration <= pomodoroMinimumLifetime) {
-            return new PomodoroActionInfoDto(false, "Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds", null);
+            String message = "Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds";
+            throw new PomodoroEngineException(message);
         }
-        PomodoroDto savedPomodoro = pomodoroService.saveByDuration(duration);
-        if (savedPomodoro != null) {
-            return new PomodoroActionInfoDto(true, "", savedPomodoro);
-        }
-        return new PomodoroActionInfoDto(false, "Pomodoro didn't save", null);
+        return pomodoroService.saveByDuration(duration);
     }
 
     @Override
