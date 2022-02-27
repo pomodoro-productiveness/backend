@@ -5,6 +5,7 @@ import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveService;
+import com.igorgorbunov3333.timer.service.pomodoro.synchronization.impl.DefaultPomodoroSynchronizerService;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

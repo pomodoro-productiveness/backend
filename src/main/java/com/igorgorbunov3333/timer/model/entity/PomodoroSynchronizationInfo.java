@@ -1,8 +1,8 @@
 package com.igorgorbunov3333.timer.model.entity;
 
-import com.igorgorbunov3333.timer.model.TemporalObject;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,21 +14,28 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
-@AllArgsConstructor
+@Entity
+@Builder
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class Pomodoro implements TemporalObject {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class PomodoroSynchronizationInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime startTime;
+    private LocalDateTime timestamp;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime endTime;
+    private Boolean synchronizedSuccessfully;
+
+    @Column(updatable = false)
+    private String synchronizationResult;
+
+    @Column(updatable = false)
+    private String error;
 
 }

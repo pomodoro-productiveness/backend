@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.warmup;
 
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroSynchronizerService;
+import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroSynchronizerService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;

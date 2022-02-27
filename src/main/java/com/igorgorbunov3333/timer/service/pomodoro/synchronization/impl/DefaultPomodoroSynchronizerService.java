@@ -1,12 +1,15 @@
-package com.igorgorbunov3333.timer.service.pomodoro.impl;
+package com.igorgorbunov3333.timer.service.pomodoro.synchronization.impl;
 
 import com.igorgorbunov3333.timer.model.dto.PomodoroDataDto;
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
+import com.igorgorbunov3333.timer.model.entity.PomodoroSynchronizationInfo;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveService;
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroSynchronizerService;
+import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroInfoSynchronizationService;
+import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroSynchronizerService;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,9 +25,20 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
 
     private final PomodoroRepository pomodoroRepository;
     private final GoogleDriveService googleDriveService;
+    private final PomodoroInfoSynchronizationService pomodoroInfoSynchronizationService;
 
+    @Async
     @Override
     public void synchronize() {
+        try {
+            synchronizePomodoros();
+        } catch (Exception e) {
+            String synchronizationError = e.getMessage() + ". Caused by: " + e.getCause().getMessage();
+            savePomodoroInfoSynchronization(Boolean.FALSE, null, synchronizationError);
+        }
+    }
+
+    private void synchronizePomodoros() {
         List<PomodoroDto> pomodorosFromDataBase = pomodoroRepository.findAll().stream()
                 .map(pomodoro -> new PomodoroDto(null, pomodoro.getStartTime(), pomodoro.getEndTime()))
                 .sorted(Comparator.comparing(PomodoroDto::getStartTime))
@@ -36,7 +50,8 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                 .map(p -> new PomodoroDto(p.getId(), p.getStartTime(), p.getEndTime()))
                 .collect(Collectors.toList());
         if (pomodorosFromDataBase.equals(remotePomodoros)) {
-            System.out.println("Nothing to synchronize between remote and local pomodoros");
+            String synchronizationResult = "Nothing to synchronize between remote and local pomodoros";
+            savePomodoroInfoSynchronization(Boolean.TRUE, synchronizationResult, null);
             return;
         }
 
@@ -46,8 +61,8 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         List<PomodoroDto> pomodorosToSaveRemotely = getAllSortedDistinctPomodoros(pomodorosFromDataBase, remotePomodoros);
         PomodoroDataDto pomodoroDataToSaveRemotely = new PomodoroDataDto(pomodorosToSaveRemotely);
         if (remotePomodorosNotContainAnyLocalOrDifferentSize) {
-            System.out.println("Updating remote pomodoros");
             googleDriveService.updatePomodoroData(pomodoroDataToSaveRemotely);
+            savePomodoroInfoSynchronization(Boolean.TRUE, "Updated remote pomodoros", null);
         }
 
         if (localPomodorosDoesNotContainAllRemotePomodoros) {
@@ -55,9 +70,21 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                     .filter(pomodoroDto -> !pomodorosFromDataBase.contains(pomodoroDto))
                     .map(pomodoroDto -> new Pomodoro(null, pomodoroDto.getStartTime(), pomodoroDto.getEndTime()))
                     .collect(Collectors.toList());
-            System.out.println("Updating local pomodoros");
             pomodoroRepository.saveAll(pomodorosToSaveLocally);
+            savePomodoroInfoSynchronization(Boolean.TRUE, "Updated local pomodoros", null);
         }
+    }
+
+    private void savePomodoroInfoSynchronization(Boolean successfullySynchronized,
+                                                 String synchronizationResult,
+                                                 String synchronizationError) {
+        PomodoroSynchronizationInfo pomodoroSynchronizationInfo = PomodoroSynchronizationInfo.builder()
+                .timestamp(LocalDateTime.now())
+                .synchronizedSuccessfully(successfullySynchronized)
+                .synchronizationResult(synchronizationResult)
+                .error(synchronizationError)
+                .build();
+        pomodoroInfoSynchronizationService.save(pomodoroSynchronizationInfo);
     }
 
     private List<PomodoroDto> getAllSortedDistinctPomodoros(List<PomodoroDto> pomodorosFromDataBase,

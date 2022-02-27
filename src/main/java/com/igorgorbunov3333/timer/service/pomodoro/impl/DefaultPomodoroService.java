@@ -6,8 +6,10 @@ import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.exception.DataPersistingException;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
+import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroSynchronizerService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +22,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class DefaultPomodoroService implements PomodoroService {
 
@@ -28,11 +31,13 @@ public class DefaultPomodoroService implements PomodoroService {
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroMapper pomodoroMapper;
+    private final PomodoroSynchronizerService pomodoroSynchronizerService;
 
     @Override
     public PomodoroDto saveByDuration(int pomodoroDuration) {
         Pomodoro pomodoro = buildPomodoro(pomodoroDuration);
         Pomodoro savedPomodoro = pomodoroRepository.save(pomodoro);
+        pomodoroSynchronizerService.synchronize();
         return pomodoroMapper.mapToDto(savedPomodoro);
     }
 
@@ -112,6 +117,7 @@ public class DefaultPomodoroService implements PomodoroService {
 
         Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime);
         Pomodoro savedPomodoro = pomodoroRepository.save(pomodoroToSave);
+        pomodoroSynchronizerService.synchronize();
         return pomodoroMapper.mapToDto(savedPomodoro);
     }
 
