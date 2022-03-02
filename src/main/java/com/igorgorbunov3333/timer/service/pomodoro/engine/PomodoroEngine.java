@@ -75,7 +75,7 @@ public class PomodoroEngine {
             if (currentValue >= SECONDS_IN_25_MINUTES) {
                 final int pomodoroCurrentDuration = PomodoroState.duration.get();
                 stopPomodoro();
-                pomodoroStoppedSpringEventPublisher.publishPomodoroStoppedEvent(pomodoroCurrentDuration);
+                pomodoroStoppedSpringEventPublisher.publish(pomodoroCurrentDuration);
             }
         } while (PomodoroState.running.get());
     }

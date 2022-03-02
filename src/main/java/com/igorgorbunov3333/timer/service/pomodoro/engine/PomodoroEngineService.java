@@ -15,4 +15,7 @@ public interface PomodoroEngineService {
     void pausePomodoro();
 
     void resumePomodoro();
+
+    void printFirstThreeFirstPomodoroSecondsDuration();
+
 }

@@ -3,7 +3,8 @@ package com.igorgorbunov3333.timer.service.pomodoro.impl;
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
-import com.igorgorbunov3333.timer.service.exception.DataPersistingException;
+import com.igorgorbunov3333.timer.service.exception.PomodoroCrudException;
+import com.igorgorbunov3333.timer.service.exception.NoDataException;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroSynchronizerService;
@@ -64,30 +65,26 @@ public class DefaultPomodoroService implements PomodoroService {
 
     @Override
     public void removePomodoro(Long id) {
-        Optional<Pomodoro> pomodoroOptional = pomodoroRepository.findById(id);
-        if (pomodoroOptional.isEmpty()) {
-            System.out.println("No such pomodoro with id [" + id + "]");
-            return;
-        }
-        Pomodoro pomodoro = pomodoroOptional.get();
+        Pomodoro pomodoro = pomodoroRepository.findById(id)
+                .orElseThrow(() -> new NoDataException("No such pomodoro with id [" + id + "]"));
         LocalDate pomodoroLocalDate = pomodoro.getStartTime().toLocalDate();
         if (pomodoroLocalDate.isBefore(LocalDate.now())) {
-            System.out.println("Pomodoro with id [" + id + "] cannot be deleted because pomodoro not from todays day");
-            return;
+            throw new PomodoroCrudException("Pomodoro with id [" + id + "] cannot be deleted because pomodoro not from todays day");
         }
         pomodoroRepository.deleteById(id);
-        System.out.println("Pomodoro with id [" + id + "] removed");
+        pomodoroSynchronizerService.synchronizeAfterRemovingPomodoro(id);
     }
 
     @Override
     public Long removeLatest() {
         List<PomodoroDto> dailyPomodoros = getPomodorosInDayExtended();
         if (dailyPomodoros.isEmpty()) {
-            throw new DataPersistingException("No daily pomodoros");
+            throw new NoDataException("No daily pomodoros");
         }
         PomodoroDto latestDto = dailyPomodoros.get(dailyPomodoros.size() - 1);
         Long pomodoroId = latestDto.getId();
         pomodoroRepository.deleteById(pomodoroId);
+        pomodoroSynchronizerService.synchronizeAfterRemovingPomodoro(pomodoroId);
         return pomodoroId;
     }
 
@@ -111,7 +108,7 @@ public class DefaultPomodoroService implements PomodoroService {
         long secondsDifference = newPomodoroEndEpochSeconds - latestPomodoroEndtEpochSeconds;
 
         if (secondsDifference <= 60 * 20) {
-            throw new DataPersistingException("Cannot save pomodoro automatically due to less than 20 minutes have " +
+            throw new PomodoroCrudException("Cannot save pomodoro automatically due to less than 20 minutes have " +
                     "passed since the end of the previous pomodoro");
         }
 

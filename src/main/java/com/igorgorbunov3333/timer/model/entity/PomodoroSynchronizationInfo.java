@@ -27,7 +27,7 @@ public class PomodoroSynchronizationInfo {
     private Long id;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime timestamp;
+    private LocalDateTime time;
 
     @Column(nullable = false, updatable = false)
     private Boolean synchronizedSuccessfully;
@@ -36,6 +36,6 @@ public class PomodoroSynchronizationInfo {
     private String synchronizationResult;
 
     @Column(updatable = false)
-    private String error;
+    private String synchronizationError;
 
 }

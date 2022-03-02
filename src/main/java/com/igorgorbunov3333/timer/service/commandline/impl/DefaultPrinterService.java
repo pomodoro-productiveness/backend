@@ -2,11 +2,10 @@ package com.igorgorbunov3333.timer.service.commandline.impl;
 
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.service.commandline.PrinterService;
-import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -22,7 +21,10 @@ public class DefaultPrinterService implements PrinterService {
     public static final String MESSAGE_POMODORO_SAVED = "Pomodoro successfully saved: ";
     public static final String MESSAGE_NO_POMODOROS = "No pomodoros to display!";
 
-    private final PomodoroEngineService pomodoroEngineService;
+    @Override
+    public void print(@NonNull String message) {
+        System.out.println(message);
+    }
 
     @Override
     public void printFeaturesList() {
@@ -71,16 +73,6 @@ public class DefaultPrinterService implements PrinterService {
             System.out.println(entry.getKey().toString());
             List<PomodoroDto> dailyPomodoros = entry.getValue();
             printPomodorosWithIds(dailyPomodoros, false);
-        }
-    }
-
-    @Override
-    @SneakyThrows
-    public void printFirstThreeFirstPomodoroSecondsDuration() {
-        for (int i = 0; i < 3; i++) {
-            Thread.sleep(1100);
-            String formattedTime = pomodoroEngineService.getPomodoroCurrentDurationInString();
-            System.out.println(formattedTime);
         }
     }
 

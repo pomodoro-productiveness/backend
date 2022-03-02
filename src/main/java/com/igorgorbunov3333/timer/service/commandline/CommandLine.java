@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.commandline;
 
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.service.commandline.impl.DefaultPrinterService;
-import com.igorgorbunov3333.timer.service.exception.DataPersistingException;
+import com.igorgorbunov3333.timer.service.exception.PomodoroCrudException;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
@@ -85,7 +85,7 @@ public class CommandLine {
             return;
         }
         System.out.println("Pomodoro has started");
-        printerService.printFirstThreeFirstPomodoroSecondsDuration();
+        pomodoroEngineService.printFirstThreeFirstPomodoroSecondsDuration();
     }
 
     private void stopPomodoro() {
@@ -116,7 +116,7 @@ public class CommandLine {
             Long removedPomodoroId;
             try {
                 removedPomodoroId = pomodoroService.removeLatest();
-            } catch (DataPersistingException e) {
+            } catch (PomodoroCrudException e) {
                 System.out.println(e.getMessage());
                 return;
             }
@@ -132,14 +132,19 @@ public class CommandLine {
         }
         String pomodoroIdArgument = getArgumentString(input, inputChars, index);
         Long pomodoroId = Long.valueOf(pomodoroIdArgument);
-        pomodoroService.removePomodoro(pomodoroId);
+        try {
+            pomodoroService.removePomodoro(pomodoroId);
+        } catch (PomodoroCrudException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println("Pomodoro with id [" + pomodoroId + "] removed");
     }
 
     private void savePomodoroAutomatically() {
         PomodoroDto savedPomodoro;
         try {
             savedPomodoro = pomodoroService.saveAutomatically();
-        } catch (DataPersistingException e) {
+        } catch (PomodoroCrudException e) {
             System.out.println(e.getMessage());
             return;
         }

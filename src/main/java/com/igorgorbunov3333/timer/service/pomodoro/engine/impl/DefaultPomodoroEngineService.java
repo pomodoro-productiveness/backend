@@ -2,12 +2,14 @@ package com.igorgorbunov3333.timer.service.pomodoro.engine.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.service.commandline.PrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +22,7 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
     private final PomodoroService pomodoroService;
     private final PomodoroEngine pomodoroEngine;
     private final PomodoroProperties pomodoroProperties;
+    private final PrinterService printerService;
 
     @Override
     public void startPomodoro() {
@@ -73,6 +76,16 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
     @Override
     public void resumePomodoro() {
         pomodoroEngine.resumePomodoro();
+    }
+
+    @Override
+    @SneakyThrows
+    public void printFirstThreeFirstPomodoroSecondsDuration() {
+        for (int i = 0; i < 3; i++) {
+            Thread.sleep(1100);
+            String formattedTime = getPomodoroCurrentDurationInString();
+            printerService.print(formattedTime);
+        }
     }
 
 }

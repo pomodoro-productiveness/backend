@@ -16,7 +16,6 @@ public class WarmUpper {
     void onStartup() {
         try {
             pomodoroSynchronizerService.synchronize();
-            System.out.println("Pomodoros successfully synchronized");
         } catch (Exception e) {
             System.out.println("Pomodoro was not synchronized due to the error");
             e.printStackTrace();

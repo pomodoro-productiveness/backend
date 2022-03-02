@@ -11,9 +11,9 @@ public class PomodoroStoppedSpringEventPublisher {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public void publishPomodoroStoppedEvent(Integer pomodoroDuration) {
-        PomodoroStoppedSpringEvent pomodoroStoppedEvent = new PomodoroStoppedSpringEvent(this, pomodoroDuration);
-        applicationEventPublisher.publishEvent(pomodoroStoppedEvent);
+    public void publish(Integer pomodoroDuration) {
+        PomodoroStoppedSpringEvent event = new PomodoroStoppedSpringEvent(this, pomodoroDuration);
+        applicationEventPublisher.publishEvent(event);
     }
 
 }

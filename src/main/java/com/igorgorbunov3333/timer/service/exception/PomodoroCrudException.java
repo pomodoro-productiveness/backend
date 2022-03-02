@@ -4,9 +4,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class DataPersistingException extends RuntimeException {
+public final class PomodoroCrudException extends RuntimeException {
 
-    public DataPersistingException(String message) {
+    public PomodoroCrudException(String message) {
         super(message);
     }
 
