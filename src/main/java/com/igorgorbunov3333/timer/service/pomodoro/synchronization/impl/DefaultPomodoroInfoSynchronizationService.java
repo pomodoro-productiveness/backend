@@ -9,6 +9,7 @@ import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class DefaultPomodoroInfoSynchronizationService implements PomodoroInfoSy
 
     @Override
     @Transactional
-    public void save(@NonNull Boolean successfullySynchronized,
+    public void save(@NonNull Boolean newSynchronizationResult,
                      SynchronizationResult synchronizationResult,
                      String synchronizationError) {
         LocalDateTime nowTimestamp = LocalDateTime.now();
@@ -30,9 +31,17 @@ public class DefaultPomodoroInfoSynchronizationService implements PomodoroInfoSy
                 pomodoroSynchronizationInfoRepository.findByTimeBefore(sevenDaysAgoTimestamp);
         pomodoroSynchronizationInfoRepository.deleteAll(pomodoroSynchronizationInfosBeforeSevenDays);
         pomodoroSynchronizationInfoRepository.flush();
+        PomodoroSynchronizationInfo latestPomodoroSynchronizationInfo = getLatestPomodoroSynchronizationInfo()
+                .orElse(null);
+        Long previousSynchronizationInfoId = null;
+        if (latestPomodoroSynchronizationInfo != null
+                && latestPomodoroSynchronizationInfo.getTime().toLocalDate().equals(LocalDate.now())) {
+            previousSynchronizationInfoId = latestPomodoroSynchronizationInfo.getId();
+        }
         PomodoroSynchronizationInfo pomodoroSynchronizationInfo = PomodoroSynchronizationInfo.builder()
+                .id(previousSynchronizationInfoId)
                 .time(nowTimestamp)
-                .synchronizedSuccessfully(successfullySynchronized)
+                .synchronizedSuccessfully(newSynchronizationResult)
                 .synchronizationResult(synchronizationResult.name())
                 .synchronizationError(synchronizationError)
                 .build();

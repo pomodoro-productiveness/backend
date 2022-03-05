@@ -33,7 +33,7 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
 
     @Async
     @Override
-    public void synchronizeAfterRemovingPomodoro(Long pomodoroId) {
+    public void synchronizeAfterRemovingPomodoro(LocalDateTime synchronyzationBoundTimestamp) {
         PomodoroSynchronizationInfo pomodoroSynchronizationInfo =
                 pomodoroInfoSynchronizationService.getLatestPomodoroSynchronizationInfo()
                 .orElse(null);
@@ -50,7 +50,7 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
             consoleMessage = "Previous synchronization was not successful";
         }
         if (needToSynchronize) {
-            synchronizePomodorosAfterRemovingPomodoro();
+            synchronizePomodorosAfterRemovingPomodoro(synchronyzationBoundTimestamp);
         } else {
             printerService.print("Unable to synchronize. " + consoleMessage);
         }
@@ -58,9 +58,9 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
 
     @Async
     @Override
-    public void synchronize() {
+    public void synchronize(LocalDateTime synchronyzationBoundTimestamp) {
         try {
-            synchronizePomodoros();
+            synchronizePomodoros(synchronyzationBoundTimestamp);
         } catch (Exception e) {
             String exceptionName = e.getClass().getName();
             String causeMessage = e.getCause() != null ? e.getCause().getMessage() : "";
@@ -69,15 +69,15 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         }
     }
 
-    private void synchronizePomodorosAfterRemovingPomodoro() {
-        List<PomodoroDto> pomodorosToSaveRemotely = getSortedPomodorosFromDatabase();
+    private void synchronizePomodorosAfterRemovingPomodoro(LocalDateTime synchronyzationBoundTimestamp) {
+        List<PomodoroDto> pomodorosToSaveRemotely = getSortedPomodorosFromDatabase(synchronyzationBoundTimestamp);
         PomodoroDataDto pomodoroDataToSaveRemotely = new PomodoroDataDto(pomodorosToSaveRemotely);
         googleDriveService.updatePomodoroData(pomodoroDataToSaveRemotely);
         pomodoroInfoSynchronizationService.save(Boolean.TRUE, SynchronizationResult.UPDATED_REMOTELY, null);
     }
 
-    private void synchronizePomodoros() {
-        List<PomodoroDto> pomodorosFromDataBase = getSortedPomodorosFromDatabase();
+    private void synchronizePomodoros(LocalDateTime synchronyzationBoundTimestamp) {
+        List<PomodoroDto> pomodorosFromDataBase = getSortedPomodorosFromDatabase(synchronyzationBoundTimestamp);
         List<PomodoroDto> remotePomodoros = getSortedRemotePomodoros();
         if (pomodorosFromDataBase.equals(remotePomodoros)) {
             pomodoroInfoSynchronizationService.save(Boolean.TRUE, SynchronizationResult.UPDATED_NOTHING, null);
@@ -104,8 +104,8 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         }
     }
 
-    private List<PomodoroDto> getSortedPomodorosFromDatabase() {
-        return pomodoroRepository.findAll().stream()
+    private List<PomodoroDto> getSortedPomodorosFromDatabase(LocalDateTime timestamp) {
+        return pomodoroRepository.findByEndTimeOrEndTimeBefore(timestamp).stream()
                 .map(pomodoro -> new PomodoroDto(null, pomodoro.getStartTime(), pomodoro.getEndTime()))
                 .sorted(Comparator.comparing(PomodoroDto::getStartTime))
                 .map(p -> new PomodoroDto(p.getId(), p.getStartTime(), p.getEndTime()))

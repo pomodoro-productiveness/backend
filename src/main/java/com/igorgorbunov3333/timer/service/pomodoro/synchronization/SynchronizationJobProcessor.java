@@ -7,6 +7,8 @@ import lombok.SneakyThrows;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @Scope("prototype")
 @AllArgsConstructor
@@ -22,9 +24,10 @@ public class SynchronizationJobProcessor implements Runnable {
             while (true) {
                 SynchronizationJobDto synchronizationJobDto = pomodoroSynchronizationScheduler.take();
                 if (SynchronizationAction.UPDATE.equals(synchronizationJobDto.getSynchronizationAction())) {
-                    pomodoroSynchronizerService.synchronize();
+                    pomodoroSynchronizerService.synchronize(synchronizationJobDto.getTimestamp());
                 } else {
-                    pomodoroSynchronizerService.synchronizeAfterRemovingPomodoro(synchronizationJobDto.getPomodoroId());
+                    LocalDateTime timestamp = synchronizationJobDto.getTimestamp();
+                    pomodoroSynchronizerService.synchronizeAfterRemovingPomodoro(timestamp);
                 }
             }
         } catch (Exception e) {

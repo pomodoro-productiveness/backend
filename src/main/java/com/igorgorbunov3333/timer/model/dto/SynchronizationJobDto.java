@@ -4,11 +4,13 @@ import com.igorgorbunov3333.timer.service.pomodoro.synchronization.enums.Synchro
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @AllArgsConstructor
 public class SynchronizationJobDto {
 
     private final SynchronizationAction synchronizationAction;
-    private final Long pomodoroId;
+    private final LocalDateTime timestamp;
 
 }

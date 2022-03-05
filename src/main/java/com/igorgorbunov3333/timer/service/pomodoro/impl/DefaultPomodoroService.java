@@ -72,7 +72,7 @@ public class DefaultPomodoroService implements PomodoroService {
             throw new PomodoroCrudException("Pomodoro with id [" + pomodoroId + "] cannot be deleted because pomodoro not from todays day");
         }
         pomodoroRepository.deleteById(pomodoroId);
-        pomodoroSynchronizationScheduler.addRemovalJob(pomodoroId);
+        pomodoroSynchronizationScheduler.addRemovalJob();
     }
 
     @Override
@@ -84,7 +84,7 @@ public class DefaultPomodoroService implements PomodoroService {
         PomodoroDto latestDto = dailyPomodoros.get(dailyPomodoros.size() - 1);
         Long pomodoroId = latestDto.getId();
         pomodoroRepository.deleteById(pomodoroId);
-        pomodoroSynchronizationScheduler.addRemovalJob(pomodoroId);
+        pomodoroSynchronizationScheduler.addRemovalJob();
         return pomodoroId;
     }
 
