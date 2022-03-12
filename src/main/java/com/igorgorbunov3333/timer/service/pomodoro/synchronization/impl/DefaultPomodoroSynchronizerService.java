@@ -59,9 +59,9 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
     }
 
     @Override
-    public void synchronize(LocalDateTime synchronyzationBoundTimestamp) {
+    public void synchronize(LocalDateTime synchronizationBoundTimestamp) {
         try {
-            synchronizePomodoros(synchronyzationBoundTimestamp);
+            synchronizePomodoros(synchronizationBoundTimestamp);
         } catch (Exception e) {
             saveWithSynchronizationError(e);
         }

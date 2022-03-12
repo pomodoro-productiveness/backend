@@ -38,11 +38,12 @@ public class DefaultPomodoroInfoSynchronizationService implements PomodoroInfoSy
                 && latestPomodoroSynchronizationInfo.getTime().toLocalDate().equals(LocalDate.now())) {
             previousSynchronizationInfoId = latestPomodoroSynchronizationInfo.getId();
         }
+        String synchronizationResultName = synchronizationResult == null ? null : synchronizationResult.name();
         PomodoroSynchronizationInfo pomodoroSynchronizationInfo = PomodoroSynchronizationInfo.builder()
                 .id(previousSynchronizationInfoId)
                 .time(nowTimestamp)
                 .synchronizedSuccessfully(newSynchronizationResult)
-                .synchronizationResult(synchronizationResult.name())
+                .synchronizationResult(synchronizationResultName)
                 .synchronizationError(synchronizationError)
                 .build();
         pomodoroSynchronizationInfoRepository.save(pomodoroSynchronizationInfo);
