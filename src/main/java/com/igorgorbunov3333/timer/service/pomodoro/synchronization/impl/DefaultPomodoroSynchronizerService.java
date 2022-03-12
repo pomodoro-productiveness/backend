@@ -48,7 +48,11 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
             consoleMessage = "Previous synchronization was not successful";
         }
         if (needToSynchronize) {
-            synchronizePomodorosAfterRemovingPomodoro(synchronyzationBoundTimestamp);
+            try {
+                synchronizePomodorosAfterRemovingPomodoro(synchronyzationBoundTimestamp);
+            } catch (Exception e) {
+                saveWithSynchronizationError(e);
+            }
         } else {
             printerService.print("Unable to synchronize. " + consoleMessage);
         }
@@ -59,10 +63,7 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         try {
             synchronizePomodoros(synchronyzationBoundTimestamp);
         } catch (Exception e) {
-            String exceptionName = e.getClass().getName();
-            String causeMessage = e.getCause() != null ? e.getCause().getMessage() : "";
-            String synchronizationError = exceptionName + ": " + e.getMessage() + ". Caused by: " + causeMessage;
-            pomodoroInfoSynchronizationService.save(Boolean.FALSE, null, synchronizationError);
+            saveWithSynchronizationError(e);
         }
     }
 
@@ -137,6 +138,13 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                 .distinct()
                 .sorted(Comparator.comparing(PomodoroDto::getEndTime))
                 .collect(Collectors.toList());
+    }
+
+    private void saveWithSynchronizationError(Exception e) {
+        String exceptionName = e.getClass().getName();
+        String causeMessage = e.getCause() != null ? e.getCause().getMessage() : "";
+        String synchronizationError = exceptionName + ": " + e.getMessage() + ". Caused by: " + causeMessage;
+        pomodoroInfoSynchronizationService.save(Boolean.FALSE, null, synchronizationError);
     }
 
 }
