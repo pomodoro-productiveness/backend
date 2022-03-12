@@ -11,7 +11,6 @@ import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveService;
 import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroInfoSynchronizationService;
 import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroSynchronizerService;
 import lombok.AllArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,7 +30,6 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
     private final PomodoroInfoSynchronizationService pomodoroInfoSynchronizationService;
     private final PrinterService printerService;
 
-    @Async
     @Override
     public void synchronizeAfterRemovingPomodoro(LocalDateTime synchronyzationBoundTimestamp) {
         PomodoroSynchronizationInfo pomodoroSynchronizationInfo =
@@ -56,7 +54,6 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         }
     }
 
-    @Async
     @Override
     public void synchronize(LocalDateTime synchronyzationBoundTimestamp) {
         try {
@@ -105,7 +102,7 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
     }
 
     private List<PomodoroDto> getSortedPomodorosFromDatabase(LocalDateTime timestamp) {
-        return pomodoroRepository.findByEndTimeOrEndTimeBefore(timestamp).stream()
+        return pomodoroRepository.findByEndTimeLessThanEqual(timestamp).stream()
                 .map(pomodoro -> new PomodoroDto(null, pomodoro.getStartTime(), pomodoro.getEndTime()))
                 .sorted(Comparator.comparing(PomodoroDto::getStartTime))
                 .map(p -> new PomodoroDto(p.getId(), p.getStartTime(), p.getEndTime()))

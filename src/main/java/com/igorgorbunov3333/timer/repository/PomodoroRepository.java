@@ -15,6 +15,6 @@ public interface PomodoroRepository extends JpaRepository<Pomodoro, Long> {
 
     Optional<Pomodoro> findTopByOrderByEndTimeDesc();
 
-    List<Pomodoro> findByEndTimeOrEndTimeBefore(LocalDateTime timestamp);
+    List<Pomodoro> findByEndTimeLessThanEqual(LocalDateTime timestamp);
 
 }

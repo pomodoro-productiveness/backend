@@ -3,22 +3,19 @@ package com.igorgorbunov3333.timer.service.pomodoro.synchronization;
 import com.igorgorbunov3333.timer.model.dto.SynchronizationJobDto;
 import com.igorgorbunov3333.timer.service.pomodoro.synchronization.enums.SynchronizationAction;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Component
-@Scope("prototype")
 @AllArgsConstructor
-public class SynchronizationJobProcessor implements Runnable {
+public class SynchronizationJobProcessor {
 
     private final PomodoroSynchronizerService pomodoroSynchronizerService;
     private final PomodoroSynchronizationScheduler pomodoroSynchronizationScheduler;
 
-    @Override
-    @SneakyThrows
+    @Async
     public void run() {
         try {
             while (true) {

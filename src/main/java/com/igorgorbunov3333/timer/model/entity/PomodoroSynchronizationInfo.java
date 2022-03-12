@@ -26,16 +26,13 @@ public class PomodoroSynchronizationInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private LocalDateTime time;
 
     @Column(nullable = false, updatable = false)
     private Boolean synchronizedSuccessfully;
 
-    @Column(updatable = false)
     private String synchronizationResult;
-
-    @Column(updatable = false)
     private String synchronizationError;
 
 }
