@@ -23,13 +23,13 @@ public class PomodoroSynchronizationScheduler {
 
     @SneakyThrows
     public void addUpdateJob() {
-        SynchronizationJobDto job = new SynchronizationJobDto(SynchronizationAction.UPDATE, LocalDateTime.now());
+        SynchronizationJobDto job = new SynchronizationJobDto(SynchronizationAction.UPDATE, LocalDateTime.now().plusSeconds(1L));
         queue.put(job);
     }
 
     @SneakyThrows
     public void addRemovalJob() {
-        SynchronizationJobDto job = new SynchronizationJobDto(SynchronizationAction.REMOVE, LocalDateTime.now());
+        SynchronizationJobDto job = new SynchronizationJobDto(SynchronizationAction.REMOVE, LocalDateTime.now().plusSeconds(1L));
         queue.put(job);
     }
 
