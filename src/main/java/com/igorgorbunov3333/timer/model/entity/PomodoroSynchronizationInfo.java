@@ -29,7 +29,7 @@ public class PomodoroSynchronizationInfo {
     @Column(nullable = false)
     private LocalDateTime time;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private Boolean synchronizedSuccessfully;
 
     private String synchronizationResult;
