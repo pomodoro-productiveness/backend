@@ -61,7 +61,7 @@ class DefaultPomodoroSynchronizerServiceTest {
         Pomodoro secondPomodoro = mock(Pomodoro.class);
         when(secondPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
         when(secondPomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
                 .thenReturn(List.of(firstPomodoro, secondPomodoro));
 
         PomodoroDto firstRemotePomodoro = mock(PomodoroDto.class);
@@ -83,7 +83,7 @@ class DefaultPomodoroSynchronizerServiceTest {
 
     @Test
     void synchronize_WhenNoRemoteAndLocalPomodoros_ThenDoNotSynchronize() {
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
                 .thenReturn(List.of());
         when(googleDriveService.getPomodoroData()).thenReturn(mock(PomodoroDataDto.class));
 
@@ -101,7 +101,7 @@ class DefaultPomodoroSynchronizerServiceTest {
         final LocalDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 1, 2, 7, 0);
         final LocalDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 1, 2, 7, 20);
 
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
                 .thenReturn(List.of());
 
         PomodoroDto firstRemotePomodoro = mock(PomodoroDto.class);
@@ -141,7 +141,7 @@ class DefaultPomodoroSynchronizerServiceTest {
         Pomodoro secondLocalPomodoro = mock(Pomodoro.class);
         when(secondLocalPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
         when(secondLocalPomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
                 .thenReturn(List.of(firstLocalPomodoro, secondLocalPomodoro));
         PomodoroDataDto pomodoroData = mock(PomodoroDataDto.class);
         when(pomodoroData.getPomodoros()).thenReturn(List.of());
@@ -178,7 +178,7 @@ class DefaultPomodoroSynchronizerServiceTest {
         Pomodoro secondLocalPomodoro = mock(Pomodoro.class);
         when(secondLocalPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
         when(secondLocalPomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
                 .thenReturn(List.of(firstLocalPomodoro, secondLocalPomodoro));
 
         PomodoroDto previousPomodoro = mock(PomodoroDto.class);
@@ -239,7 +239,7 @@ class DefaultPomodoroSynchronizerServiceTest {
         Pomodoro nextLocalPomodoro = mock(Pomodoro.class);
         when(nextLocalPomodoro.getStartTime()).thenReturn(nextPomodoroStartTime);
         when(nextLocalPomodoro.getEndTime()).thenReturn(nextPomodoroEndTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
                 .thenReturn(List.of(
                         previousLocalPomodoro,
                         firstLocalPomodoro,
