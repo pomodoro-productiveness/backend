@@ -31,4 +31,7 @@ public class Pomodoro implements TemporalObject {
     @Column(nullable = false, updatable = false)
     private LocalDateTime endTime;
 
+//    @Column(updatable = false)
+//    private boolean savedAutomatically;
+
 }

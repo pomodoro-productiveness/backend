@@ -6,6 +6,7 @@ import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.model.entity.enums.SynchronizationResult;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveService;
+import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroInfoSynchronizationService;
 import com.igorgorbunov3333.timer.service.pomodoro.synchronization.impl.DefaultPomodoroSynchronizerService;
 import org.assertj.core.groups.Tuple;
@@ -39,6 +40,8 @@ class DefaultPomodoroSynchronizerServiceTest {
     private GoogleDriveService googleDriveService;
     @Mock
     private PomodoroInfoSynchronizationService pomodoroInfoSynchronizationService;
+    @Mock
+    private PomodoroMapper pomodoroMapper;
 
     @Captor
     private ArgumentCaptor<List<Pomodoro>> localPomodorosArgumentCaptor;
@@ -51,27 +54,23 @@ class DefaultPomodoroSynchronizerServiceTest {
     @Test
     void synchronize_WhenRemotePomodorosSameAsLocal_ThenDoNotSynchronize() {
         final LocalDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0);
-        final LocalDateTime firstPomodoroEndTime = LocalDateTime.of(2022, 1, 1, 7, 20);
         final LocalDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 1, 2, 7, 0);
-        final LocalDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 1, 2, 7, 20);
 
+        PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
+        when(firstPomodoroDto.getStartTime()).thenReturn(firstPomodoroStartTime);
+        PomodoroDto secondPomodoroDto = mock(PomodoroDto.class);
+        when(secondPomodoroDto.getStartTime()).thenReturn(secondPomodoroStartTime);
         Pomodoro firstPomodoro = mock(Pomodoro.class);
         when(firstPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
-        when(firstPomodoro.getEndTime()).thenReturn(firstPomodoroEndTime);
         Pomodoro secondPomodoro = mock(Pomodoro.class);
         when(secondPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
-        when(secondPomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
                 .thenReturn(List.of(firstPomodoro, secondPomodoro));
+        when(pomodoroMapper.mapToDto(List.of(firstPomodoro, secondPomodoro)))
+                .thenReturn(List.of(firstPomodoroDto, secondPomodoroDto));
 
-        PomodoroDto firstRemotePomodoro = mock(PomodoroDto.class);
-        when(firstRemotePomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
-        when(firstRemotePomodoro.getEndTime()).thenReturn(firstPomodoroEndTime);
-        PomodoroDto secondRemotePomodoro = mock(PomodoroDto.class);
-        when(secondRemotePomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
-        when(secondRemotePomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
         PomodoroDataDto pomodoroData = mock(PomodoroDataDto.class);
-        when(pomodoroData.getPomodoros()).thenReturn(List.of(firstRemotePomodoro, secondRemotePomodoro));
+        when(pomodoroData.getPomodoros()).thenReturn(List.of(firstPomodoroDto, secondPomodoroDto));
         when(googleDriveService.getPomodoroData()).thenReturn(pomodoroData);
 
         testee.synchronize(SYNCHRONIZATION_BOUND_TIMESTAMP);
@@ -83,7 +82,7 @@ class DefaultPomodoroSynchronizerServiceTest {
 
     @Test
     void synchronize_WhenNoRemoteAndLocalPomodoros_ThenDoNotSynchronize() {
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
                 .thenReturn(List.of());
         when(googleDriveService.getPomodoroData()).thenReturn(mock(PomodoroDataDto.class));
 
@@ -101,7 +100,7 @@ class DefaultPomodoroSynchronizerServiceTest {
         final LocalDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 1, 2, 7, 0);
         final LocalDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 1, 2, 7, 20);
 
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
                 .thenReturn(List.of());
 
         PomodoroDto firstRemotePomodoro = mock(PomodoroDto.class);
@@ -135,14 +134,21 @@ class DefaultPomodoroSynchronizerServiceTest {
         final LocalDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 1, 2, 7, 0);
         final LocalDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 1, 2, 7, 20);
 
+        PomodoroDto firstPomodoro = mock(PomodoroDto.class);
+        when(firstPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
+        when(firstPomodoro.getEndTime()).thenReturn(firstPomodoroEndTime);
+        PomodoroDto secondPomodoro = mock(PomodoroDto.class);
+        when(secondPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
+        when(secondPomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
         Pomodoro firstLocalPomodoro = mock(Pomodoro.class);
         when(firstLocalPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
-        when(firstLocalPomodoro.getEndTime()).thenReturn(firstPomodoroEndTime);
         Pomodoro secondLocalPomodoro = mock(Pomodoro.class);
         when(secondLocalPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
-        when(secondLocalPomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
                 .thenReturn(List.of(firstLocalPomodoro, secondLocalPomodoro));
+        when(pomodoroMapper.mapToDto(List.of(firstLocalPomodoro, secondLocalPomodoro)))
+                .thenReturn(List.of(firstPomodoro, secondPomodoro));
+
         PomodoroDataDto pomodoroData = mock(PomodoroDataDto.class);
         when(pomodoroData.getPomodoros()).thenReturn(List.of());
         when(googleDriveService.getPomodoroData()).thenReturn(pomodoroData);
@@ -172,32 +178,32 @@ class DefaultPomodoroSynchronizerServiceTest {
         final LocalDateTime nextPomodoroStartTime = LocalDateTime.of(2022, 3, 1, 7, 0);
         final LocalDateTime nextPomodoroEndTime = LocalDateTime.of(2022, 3, 1, 7, 20);
 
-        Pomodoro firstLocalPomodoro = mock(Pomodoro.class);
+        PomodoroDto firstLocalPomodoro = mock(PomodoroDto.class);
         when(firstLocalPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
         when(firstLocalPomodoro.getEndTime()).thenReturn(firstPomodoroEndTime);
-        Pomodoro secondLocalPomodoro = mock(Pomodoro.class);
+        PomodoroDto secondLocalPomodoro = mock(PomodoroDto.class);
         when(secondLocalPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
         when(secondLocalPomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
+        Pomodoro firstPomodoro = mock(Pomodoro.class);
+        when(firstPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
+        Pomodoro secondPomodoro = mock(Pomodoro.class);
+        when(secondPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+                .thenReturn(List.of(firstPomodoro, secondPomodoro));
+        when(pomodoroMapper.mapToDto(List.of(firstPomodoro, secondPomodoro)))
                 .thenReturn(List.of(firstLocalPomodoro, secondLocalPomodoro));
 
         PomodoroDto previousPomodoro = mock(PomodoroDto.class);
         when(previousPomodoro.getStartTime()).thenReturn(previousPomodoroStartTime);
         when(previousPomodoro.getEndTime()).thenReturn(previousPomodoroEndTime);
-        PomodoroDto firstRemotePomodoro = mock(PomodoroDto.class);
-        when(firstRemotePomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
-        when(firstRemotePomodoro.getEndTime()).thenReturn(firstPomodoroEndTime);
-        PomodoroDto secondRemotePomodoro = mock(PomodoroDto.class);
-        when(secondRemotePomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
-        when(secondRemotePomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
         PomodoroDataDto pomodoroData = mock(PomodoroDataDto.class);
         PomodoroDto nextPomodoro = mock(PomodoroDto.class);
         when(nextPomodoro.getStartTime()).thenReturn(nextPomodoroStartTime);
         when(nextPomodoro.getEndTime()).thenReturn(nextPomodoroEndTime);
         when(pomodoroData.getPomodoros()).thenReturn(List.of(
                 previousPomodoro,
-                firstRemotePomodoro,
-                secondRemotePomodoro,
+                firstLocalPomodoro,
+                secondLocalPomodoro,
                 nextPomodoro
         ));
         when(googleDriveService.getPomodoroData()).thenReturn(pomodoroData);
@@ -227,36 +233,50 @@ class DefaultPomodoroSynchronizerServiceTest {
         final LocalDateTime nextPomodoroStartTime = LocalDateTime.of(2022, 3, 1, 7, 0);
         final LocalDateTime nextPomodoroEndTime = LocalDateTime.of(2022, 3, 1, 7, 20);
 
+        PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
+        when(firstPomodoroDto.getStartTime()).thenReturn(previousPomodoroStartTime);
+        when(firstPomodoroDto.getEndTime()).thenReturn(previousPomodoroEndTime);
+        PomodoroDto secondPomodoroDto = mock(PomodoroDto.class);
+        when(secondPomodoroDto.getStartTime()).thenReturn(firstPomodoroStartTime);
+        when(secondPomodoroDto.getEndTime()).thenReturn(firstPomodoroEndTime);
+        PomodoroDto thirdPomodoroDto = mock(PomodoroDto.class);
+        when(thirdPomodoroDto.getStartTime()).thenReturn(secondPomodoroStartTime);
+        when(thirdPomodoroDto.getEndTime()).thenReturn(secondPomodoroEndTime);
+        PomodoroDto fourthPomodoroDto = mock(PomodoroDto.class);
+        when(fourthPomodoroDto.getStartTime()).thenReturn(nextPomodoroStartTime);
+        when(fourthPomodoroDto.getEndTime()).thenReturn(nextPomodoroEndTime);
+
         Pomodoro previousLocalPomodoro = mock(Pomodoro.class);
         when(previousLocalPomodoro.getStartTime()).thenReturn(previousPomodoroStartTime);
-        when(previousLocalPomodoro.getEndTime()).thenReturn(previousPomodoroEndTime);
         Pomodoro firstLocalPomodoro = mock(Pomodoro.class);
         when(firstLocalPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
-        when(firstLocalPomodoro.getEndTime()).thenReturn(firstPomodoroEndTime);
         Pomodoro secondLocalPomodoro = mock(Pomodoro.class);
         when(secondLocalPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
-        when(secondLocalPomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
         Pomodoro nextLocalPomodoro = mock(Pomodoro.class);
         when(nextLocalPomodoro.getStartTime()).thenReturn(nextPomodoroStartTime);
-        when(nextLocalPomodoro.getEndTime()).thenReturn(nextPomodoroEndTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.plusSeconds(2L)))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
                 .thenReturn(List.of(
                         previousLocalPomodoro,
                         firstLocalPomodoro,
                         secondLocalPomodoro,
                         nextLocalPomodoro
                 ));
+        when(pomodoroMapper.mapToDto(List.of(
+                previousLocalPomodoro,
+                firstLocalPomodoro,
+                secondLocalPomodoro,
+                nextLocalPomodoro
+        ))).thenReturn(List.of(
+                firstPomodoroDto,
+                secondPomodoroDto,
+                thirdPomodoroDto,
+                fourthPomodoroDto
+        ));
 
-        PomodoroDto firstRemotePomodoro = mock(PomodoroDto.class);
-        when(firstRemotePomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
-        when(firstRemotePomodoro.getEndTime()).thenReturn(firstPomodoroEndTime);
-        PomodoroDto secondRemotePomodoro = mock(PomodoroDto.class);
-        when(secondRemotePomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
-        when(secondRemotePomodoro.getEndTime()).thenReturn(secondPomodoroEndTime);
         PomodoroDataDto pomodoroData = mock(PomodoroDataDto.class);
         when(pomodoroData.getPomodoros()).thenReturn(List.of(
-                firstRemotePomodoro,
-                secondRemotePomodoro
+                secondPomodoroDto,
+                thirdPomodoroDto
         ));
         when(googleDriveService.getPomodoroData()).thenReturn(pomodoroData);
         doNothing().when(googleDriveService).updatePomodoroData(remmotePomodoroDataArgumentCaptor.capture());

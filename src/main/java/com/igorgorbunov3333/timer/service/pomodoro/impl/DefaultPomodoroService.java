@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -72,6 +73,7 @@ public class DefaultPomodoroService implements PomodoroService {
             throw new PomodoroCrudException("Pomodoro with id [" + pomodoroId + "] cannot be deleted because pomodoro not from todays day");
         }
         pomodoroRepository.deleteById(pomodoroId);
+        pomodoroRepository.flush();
         pomodoroSynchronizationScheduler.addRemovalJob();
     }
 
@@ -84,6 +86,7 @@ public class DefaultPomodoroService implements PomodoroService {
         PomodoroDto latestDto = dailyPomodoros.get(dailyPomodoros.size() - 1);
         Long pomodoroId = latestDto.getId();
         pomodoroRepository.deleteById(pomodoroId);
+        pomodoroRepository.flush();
         pomodoroSynchronizationScheduler.addRemovalJob();
         return pomodoroId;
     }
@@ -95,7 +98,7 @@ public class DefaultPomodoroService implements PomodoroService {
                 .map(Pomodoro::getEndTime)
                 .orElse(null);
 
-        LocalDateTime newPomodoroEndTime = LocalDateTime.now().minusMinutes(1L);
+        LocalDateTime newPomodoroEndTime = LocalDateTime.now().minusMinutes(1L).truncatedTo(ChronoUnit.SECONDS);
         if (latestPomodoroEndTime == null) {
             Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime);
             pomodoroRepository.save(pomodoroToSave);
@@ -118,9 +121,9 @@ public class DefaultPomodoroService implements PomodoroService {
         return pomodoroMapper.mapToDto(savedPomodoro);
     }
 
-    private Pomodoro buildPomodoro(int pomodoroDuration) {
-        LocalDateTime endTime = LocalDateTime.now();
-        LocalDateTime startTime = endTime.minusSeconds(pomodoroDuration);
+    private Pomodoro buildPomodoro(int pomodoroSecondsDuration) {
+        LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        LocalDateTime startTime = endTime.minusSeconds(pomodoroSecondsDuration);
         return new Pomodoro(null, startTime, endTime);
     }
 

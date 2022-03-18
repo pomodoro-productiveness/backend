@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -23,13 +24,15 @@ public class PomodoroSynchronizationScheduler {
 
     @SneakyThrows
     public void addUpdateJob() {
-        SynchronizationJobDto job = new SynchronizationJobDto(SynchronizationAction.UPDATE, LocalDateTime.now());
+        LocalDateTime boundTimestamp = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        SynchronizationJobDto job = new SynchronizationJobDto(SynchronizationAction.UPDATE, boundTimestamp);
         queue.put(job);
     }
 
     @SneakyThrows
     public void addRemovalJob() {
-        SynchronizationJobDto job = new SynchronizationJobDto(SynchronizationAction.REMOVE, LocalDateTime.now());
+        LocalDateTime boundTimestamp = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        SynchronizationJobDto job = new SynchronizationJobDto(SynchronizationAction.REMOVE, boundTimestamp);
         queue.put(job);
     }
 

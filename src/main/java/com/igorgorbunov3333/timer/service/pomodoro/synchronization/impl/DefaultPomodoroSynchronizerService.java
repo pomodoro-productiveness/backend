@@ -8,6 +8,7 @@ import com.igorgorbunov3333.timer.model.entity.enums.SynchronizationResult;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.commandline.PrinterService;
 import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveService;
+import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroInfoSynchronizationService;
 import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroSynchronizerService;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -30,6 +30,7 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
     private final GoogleDriveService googleDriveService;
     private final PomodoroInfoSynchronizationService pomodoroInfoSynchronizationService;
     private final PrinterService printerService;
+    private final PomodoroMapper pomodoroMapper;
 
     @Override
     public void synchronizeAfterRemovingPomodoro(LocalDateTime synchronyzationBoundTimestamp) {
@@ -69,17 +70,16 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
     }
 
     private void synchronizePomodorosAfterRemovingPomodoro(LocalDateTime synchronyzationBoundTimestamp) {
-        LocalDateTime time = synchronyzationBoundTimestamp.truncatedTo(ChronoUnit.SECONDS).plusSeconds(2L);
-        List<PomodoroDto> pomodorosToSaveRemotely = getSortedPomodorosFromDatabase(time);
+        List<PomodoroDto> pomodorosToSaveRemotely = getSortedPomodorosFromDatabase(synchronyzationBoundTimestamp);
         PomodoroDataDto pomodoroDataToSaveRemotely = new PomodoroDataDto(pomodorosToSaveRemotely);
         googleDriveService.updatePomodoroData(pomodoroDataToSaveRemotely);
         pomodoroInfoSynchronizationService.save(Boolean.TRUE, SynchronizationResult.UPDATED_REMOTELY, null);
     }
 
     private void synchronizePomodoros(LocalDateTime synchronyzationBoundTimestamp) {
-        LocalDateTime time = synchronyzationBoundTimestamp.truncatedTo(ChronoUnit.SECONDS).plusSeconds(2L);
-        List<PomodoroDto> pomodorosFromDataBase = getSortedPomodorosFromDatabase(time);
+        List<PomodoroDto> pomodorosFromDataBase = getSortedPomodorosFromDatabase(synchronyzationBoundTimestamp);
         List<PomodoroDto> remotePomodoros = getSortedRemotePomodoros();
+
         if (pomodorosFromDataBase.equals(remotePomodoros)) {
             pomodoroInfoSynchronizationService.save(Boolean.TRUE, SynchronizationResult.UPDATED_NOTHING, null);
             return;
@@ -106,18 +106,16 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
     }
 
     private List<PomodoroDto> getSortedPomodorosFromDatabase(LocalDateTime timestamp) {
-        return pomodoroRepository.findByEndTimeLessThanEqual(timestamp).stream()
-                .map(pomodoro -> new PomodoroDto(null, pomodoro.getStartTime(), pomodoro.getEndTime()))
-                .sorted(Comparator.comparing(PomodoroDto::getStartTime))
-                .map(p -> new PomodoroDto(p.getId(), p.getStartTime(), p.getEndTime()))
+        List<Pomodoro> pomodoros = pomodoroRepository.findByEndTimeLessThanEqual(timestamp).stream()
+                .sorted(Comparator.comparing(Pomodoro::getStartTime))
                 .collect(Collectors.toList());
+        return pomodoroMapper.mapToDto(pomodoros);
     }
 
     private List<PomodoroDto> getSortedRemotePomodoros() {
         PomodoroDataDto pomodoroDataDto = googleDriveService.getPomodoroData();
         return pomodoroDataDto.getPomodoros().stream()
                 .sorted(Comparator.comparing(PomodoroDto::getStartTime))
-                .map(p -> new PomodoroDto(p.getId(), p.getStartTime(), p.getEndTime()))
                 .collect(Collectors.toList());
     }
 
