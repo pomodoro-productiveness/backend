@@ -7,6 +7,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @AllArgsConstructor
 public class WarmUpper {
@@ -17,7 +19,8 @@ public class WarmUpper {
     @EventListener({ContextRefreshedEvent.class})
     void onStartup() {
         synchronizationJobProcessor.run();
-        pomodoroSynchronizationScheduler.addUpdateJob();
+        LocalDateTime boundTimestamp = LocalDateTime.now();
+        pomodoroSynchronizationScheduler.addUpdateJob(boundTimestamp);
     }
 
 }

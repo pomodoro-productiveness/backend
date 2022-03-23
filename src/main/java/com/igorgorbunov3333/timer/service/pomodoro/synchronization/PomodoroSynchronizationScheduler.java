@@ -23,8 +23,7 @@ public class PomodoroSynchronizationScheduler {
     }
 
     @SneakyThrows
-    public void addUpdateJob() {
-        LocalDateTime boundTimestamp = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    public void addUpdateJob(LocalDateTime boundTimestamp) {
         SynchronizationJobDto job = new SynchronizationJobDto(SynchronizationAction.UPDATE, boundTimestamp);
         queue.put(job);
     }

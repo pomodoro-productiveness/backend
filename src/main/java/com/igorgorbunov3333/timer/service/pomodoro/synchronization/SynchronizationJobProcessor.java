@@ -20,6 +20,7 @@ public class SynchronizationJobProcessor {
         try {
             while (true) {
                 SynchronizationJobDto synchronizationJobDto = pomodoroSynchronizationScheduler.take();
+                Thread.sleep(10000);
                 if (SynchronizationAction.UPDATE.equals(synchronizationJobDto.getSynchronizationAction())) {
                     pomodoroSynchronizerService.synchronize(synchronizationJobDto.getTimestamp());
                 } else {

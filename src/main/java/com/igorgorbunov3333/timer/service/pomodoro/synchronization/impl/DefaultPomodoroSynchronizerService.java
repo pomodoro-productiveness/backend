@@ -36,7 +36,7 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
     public void synchronizeAfterRemovingPomodoro(LocalDateTime synchronyzationBoundTimestamp) {
         PomodoroSynchronizationInfo pomodoroSynchronizationInfo =
                 pomodoroInfoSynchronizationService.getLatestPomodoroSynchronizationInfo()
-                .orElse(null);
+                        .orElse(null);
         boolean needToSynchronize = true;
         String consoleMessage = "";
         if (pomodoroSynchronizationInfo == null) {

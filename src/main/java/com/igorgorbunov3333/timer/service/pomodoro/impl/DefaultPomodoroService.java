@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -38,8 +39,8 @@ public class DefaultPomodoroService implements PomodoroService {
     @Override
     public PomodoroDto saveByDuration(int pomodoroDuration) {
         Pomodoro pomodoro = buildPomodoro(pomodoroDuration);
-        Pomodoro savedPomodoro = pomodoroRepository.save(pomodoro);
-        pomodoroSynchronizationScheduler.addUpdateJob();
+        Pomodoro savedPomodoro = pomodoroRepository.saveAndFlush(pomodoro);
+        pomodoroSynchronizationScheduler.addUpdateJob(savedPomodoro.getEndTime());
         return pomodoroMapper.mapToDto(savedPomodoro);
     }
 
@@ -104,10 +105,11 @@ public class DefaultPomodoroService implements PomodoroService {
             pomodoroRepository.save(pomodoroToSave);
             return null;
         }
-        long newPomodoroEndEpochSeconds = newPomodoroEndTime.toEpochSecond(ZoneOffset.UTC);
+        ZoneOffset zoneOffset = OffsetDateTime.now().getOffset();
+        long newPomodoroEndEpochSeconds = newPomodoroEndTime.toEpochSecond(zoneOffset);
 
         LocalDateTime latestPomodoroEndTimePlusMinute = latestPomodoroEndTime.plusMinutes(1L);
-        long latestPomodoroEndtEpochSeconds = latestPomodoroEndTimePlusMinute.toEpochSecond(ZoneOffset.UTC);
+        long latestPomodoroEndtEpochSeconds = latestPomodoroEndTimePlusMinute.toEpochSecond(zoneOffset);
         long secondsDifference = newPomodoroEndEpochSeconds - latestPomodoroEndtEpochSeconds;
 
         if (secondsDifference <= 60 * 20) {
@@ -117,7 +119,7 @@ public class DefaultPomodoroService implements PomodoroService {
 
         Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime);
         Pomodoro savedPomodoro = pomodoroRepository.save(pomodoroToSave);
-        pomodoroSynchronizationScheduler.addUpdateJob();
+        pomodoroSynchronizationScheduler.addUpdateJob(savedPomodoro.getEndTime());
         return pomodoroMapper.mapToDto(savedPomodoro);
     }
 
