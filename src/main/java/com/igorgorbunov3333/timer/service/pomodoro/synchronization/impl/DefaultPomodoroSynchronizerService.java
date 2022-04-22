@@ -16,9 +16,13 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -110,16 +114,34 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
 
     private List<PomodoroDto> getSortedPomodorosFromDatabase(ZonedDateTime timestamp) {
         List<Pomodoro> pomodoros = pomodoroRepository.findByEndTimeLessThanEqual(timestamp).stream()
+                .map(mapToPomodoroWithUtcTimeZone())
                 .sorted(Comparator.comparing(Pomodoro::getStartTime))
                 .collect(Collectors.toList());
         return pomodoroMapper.mapToDto(pomodoros);
     }
 
+    private Function<Pomodoro, Pomodoro> mapToPomodoroWithUtcTimeZone() {
+        return p -> new Pomodoro(
+                null,
+                p.getStartTime().withZoneSameInstant(ZoneOffset.UTC),
+                p.getEndTime().withZoneSameInstant(ZoneOffset.UTC)
+        );
+    }
+
     private List<PomodoroDto> getSortedRemotePomodoros() {
         PomodoroDataDto pomodoroDataDto = googleDriveService.getPomodoroData();
         return pomodoroDataDto.getPomodoros().stream()
+                .map(mapToPomodoroDtoWithUtcTimeZone())
                 .sorted(Comparator.comparing(PomodoroDto::getStartTime))
                 .collect(Collectors.toList());
+    }
+
+    private Function<PomodoroDto, PomodoroDto> mapToPomodoroDtoWithUtcTimeZone() {
+        return p -> new PomodoroDto(
+                null,
+                p.getStartTime().withZoneSameInstant(ZoneOffset.UTC),
+                p.getEndTime().withZoneSameInstant(ZoneOffset.UTC)
+        );
     }
 
     private List<PomodoroDto> getAllSortedDistinctPomodoros(List<PomodoroDto> pomodorosFromDataBase,
@@ -140,8 +162,17 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         remotePomodoros.removeAll(remotePomodorosToRemove);
         return Stream.concat(pomodorosFromDataBase.stream(), remotePomodoros.stream())
                 .distinct()
+                .map(mapToPomodoroDtoWithSystemDefaultTimeZone())
                 .sorted(Comparator.comparing(PomodoroDto::getEndTime))
                 .collect(Collectors.toList());
+    }
+
+    private Function<PomodoroDto, PomodoroDto> mapToPomodoroDtoWithSystemDefaultTimeZone() {
+        return p -> new PomodoroDto(
+                null,
+                p.getStartTime().withZoneSameInstant(ZoneId.systemDefault()),
+                p.getEndTime().withZoneSameInstant(ZoneId.systemDefault())
+        );
     }
 
     private void saveWithSynchronizationError(Exception e) {

@@ -1,11 +1,11 @@
 package com.igorgorbunov3333.timer.model;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public interface TemporalObject {
 
-    LocalDateTime getStartTime();
+    ZonedDateTime getStartTime();
 
-    LocalDateTime getEndTime();
+    ZonedDateTime getEndTime();
 
 }
