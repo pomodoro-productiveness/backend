@@ -17,7 +17,11 @@ public class PomodoroMapper {
     }
 
     public PomodoroDto mapToDto(Pomodoro pomodoro) {
-        return new PomodoroDto(pomodoro.getId(), pomodoro.getStartTime(), pomodoro.getEndTime());
+        return new PomodoroDto(
+                pomodoro.getId(),
+                pomodoro.getStartTime(),
+                pomodoro.getEndTime()
+        );
     }
 
 }

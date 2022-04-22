@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
@@ -26,12 +26,9 @@ public class Pomodoro implements TemporalObject {
     private Long id;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime startTime;
+    public ZonedDateTime startTime;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime endTime;
-
-//    @Column(updatable = false)
-//    private boolean savedAutomatically;
+    public ZonedDateTime endTime;
 
 }

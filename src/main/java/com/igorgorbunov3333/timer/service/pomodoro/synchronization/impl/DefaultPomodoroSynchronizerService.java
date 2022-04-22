@@ -70,14 +70,14 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
     }
 
     private void synchronizePomodorosAfterRemovingPomodoro(LocalDateTime synchronyzationBoundTimestamp) {
-        List<PomodoroDto> pomodorosToSaveRemotely = getSortedPomodorosFromDatabase(synchronyzationBoundTimestamp);
+        List<PomodoroDto> pomodorosToSaveRemotely = getSortedPomodorosFromDatabase(synchronyzationBoundTimestamp.atZone(ZoneId.systemDefault()));
         PomodoroDataDto pomodoroDataToSaveRemotely = new PomodoroDataDto(pomodorosToSaveRemotely);
         googleDriveService.updatePomodoroData(pomodoroDataToSaveRemotely);
         pomodoroInfoSynchronizationService.save(Boolean.TRUE, SynchronizationResult.UPDATED_REMOTELY, null);
     }
 
     private void synchronizePomodoros(LocalDateTime synchronyzationBoundTimestamp) {
-        List<PomodoroDto> pomodorosFromDataBase = getSortedPomodorosFromDatabase(synchronyzationBoundTimestamp);
+        List<PomodoroDto> pomodorosFromDataBase = getSortedPomodorosFromDatabase(synchronyzationBoundTimestamp.atZone(ZoneId.systemDefault()));
         List<PomodoroDto> remotePomodoros = getSortedRemotePomodoros();
 
         if (pomodorosFromDataBase.equals(remotePomodoros)) {
@@ -98,14 +98,17 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         if (localPomodorosDoesNotContainAllRemotePomodoros) {
             List<Pomodoro> pomodorosToSaveLocally = pomodoroDataToSaveRemotely.getPomodoros().stream()
                     .filter(pomodoroDto -> !pomodorosFromDataBase.contains(pomodoroDto))
-                    .map(pomodoroDto -> new Pomodoro(null, pomodoroDto.getStartTime(), pomodoroDto.getEndTime()))
-                    .collect(Collectors.toList());
+                    .map(pomodoroDto -> new Pomodoro(
+                            null,
+                            pomodoroDto.getStartTime(),
+                            pomodoroDto.getEndTime())
+                    ).collect(Collectors.toList());
             pomodoroRepository.saveAll(pomodorosToSaveLocally);
             pomodoroInfoSynchronizationService.save(Boolean.TRUE, SynchronizationResult.UPDATED_LOCALLY, null);
         }
     }
 
-    private List<PomodoroDto> getSortedPomodorosFromDatabase(LocalDateTime timestamp) {
+    private List<PomodoroDto> getSortedPomodorosFromDatabase(ZonedDateTime timestamp) {
         List<Pomodoro> pomodoros = pomodoroRepository.findByEndTimeLessThanEqual(timestamp).stream()
                 .sorted(Comparator.comparing(Pomodoro::getStartTime))
                 .collect(Collectors.toList());
@@ -123,10 +126,10 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                                                             List<PomodoroDto> remotePomodoros) {
         List<PomodoroDto> remotePomodorosToRemove = new ArrayList<>();
         for (PomodoroDto pomodoroFromDb : pomodorosFromDataBase) {
-            LocalDateTime startTimeFromDb = pomodoroFromDb.getStartTime();
-            LocalDateTime endTimeFromDb = pomodoroFromDb.getEndTime();
+            ZonedDateTime startTimeFromDb = pomodoroFromDb.getStartTime();
+            ZonedDateTime endTimeFromDb = pomodoroFromDb.getEndTime();
             for (PomodoroDto remotePomodoro : remotePomodoros) {
-                LocalDateTime remoteStartTime = remotePomodoro.getStartTime();
+                ZonedDateTime remoteStartTime = remotePomodoro.getStartTime();
                 if (!startTimeFromDb.equals(remoteStartTime)
                         && remoteStartTime.plusSeconds(2).isAfter(startTimeFromDb)
                         && remoteStartTime.plusSeconds(2).isBefore(endTimeFromDb)) {

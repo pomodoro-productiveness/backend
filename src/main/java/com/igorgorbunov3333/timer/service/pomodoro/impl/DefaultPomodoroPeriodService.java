@@ -13,6 +13,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +36,9 @@ public class DefaultPomodoroPeriodService implements PomodoroPeriodService {
         LocalDate currentDay = currentDayService.getCurrentDay();
         int currentDayOfWeek = currentDay.getDayOfWeek().getValue();
         LocalDate dayAtStartOfWeek = currentDay.minusDays(currentDayOfWeek - 1);
-        LocalDateTime start = dayAtStartOfWeek.atStartOfDay();
-        LocalDateTime end = currentDay.atTime(LocalTime.MAX);
+        ZoneId currentZoneId = ZoneId.systemDefault();
+        ZonedDateTime start = dayAtStartOfWeek.atStartOfDay().atZone(currentZoneId);
+        ZonedDateTime end = currentDay.atTime(LocalTime.MAX).atZone(currentZoneId);
         List<Pomodoro> weeklyPomodoros = pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(start, end);
         if (weeklyPomodoros.isEmpty()) {
             return Map.of();

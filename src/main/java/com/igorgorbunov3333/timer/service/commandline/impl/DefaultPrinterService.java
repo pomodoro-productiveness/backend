@@ -114,8 +114,8 @@ public class DefaultPrinterService implements PrinterService {
     }
 
     private String printPomodoroStartEndTime(PomodoroDto pomodoro) {
-        String startTimeString = printDateTime(pomodoro.getStartTime());
-        String endTimeString = printDateTime(pomodoro.getEndTime());
+        String startTimeString = printDateTime(pomodoro.getStartTime().toLocalDateTime());
+        String endTimeString = printDateTime(pomodoro.getEndTime().toLocalDateTime());
         return String.join(" : ", List.of(startTimeString, endTimeString));
     }
 

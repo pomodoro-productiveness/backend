@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Getter
@@ -21,11 +21,11 @@ public class PomodoroDto implements TemporalObject {
     @JsonIgnore
     private Long id;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime startTime;
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime startTime;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime endTime;
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime endTime;
 
     @Override
     public String toString() {

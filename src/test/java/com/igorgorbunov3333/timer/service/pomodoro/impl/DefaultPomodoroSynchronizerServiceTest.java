@@ -19,6 +19,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class DefaultPomodoroSynchronizerServiceTest {
 
+    private static final ZoneId CURRENT_ZONE_ID = ZoneId.of("Europe/Kiev");
     private static final LocalDateTime SYNCHRONIZATION_BOUND_TIMESTAMP =
             LocalDateTime.of(2022, 3, 5, 1, 1);
 
@@ -53,8 +56,10 @@ class DefaultPomodoroSynchronizerServiceTest {
 
     @Test
     void synchronize_WhenRemotePomodorosSameAsLocal_ThenDoNotSynchronize() {
-        final LocalDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0);
-        final LocalDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 1, 2, 7, 0);
+        final ZonedDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 1, 2, 7, 0)
+                .atZone(ZoneId.systemDefault());
 
         PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
         when(firstPomodoroDto.getStartTime()).thenReturn(firstPomodoroStartTime);
@@ -64,7 +69,7 @@ class DefaultPomodoroSynchronizerServiceTest {
         when(firstPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
         Pomodoro secondPomodoro = mock(Pomodoro.class);
         when(secondPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstPomodoro, secondPomodoro));
         when(pomodoroMapper.mapToDto(List.of(firstPomodoro, secondPomodoro)))
                 .thenReturn(List.of(firstPomodoroDto, secondPomodoroDto));
@@ -82,7 +87,7 @@ class DefaultPomodoroSynchronizerServiceTest {
 
     @Test
     void synchronize_WhenNoRemoteAndLocalPomodoros_ThenDoNotSynchronize() {
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of());
         when(googleDriveService.getPomodoroData()).thenReturn(mock(PomodoroDataDto.class));
 
@@ -95,12 +100,16 @@ class DefaultPomodoroSynchronizerServiceTest {
 
     @Test
     void synchronize_WhenOnlyRemotePomodorosPresent_ThenUpdateLocalPomodoros() {
-        final LocalDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0);
-        final LocalDateTime firstPomodoroEndTime = LocalDateTime.of(2022, 1, 1, 7, 20);
-        final LocalDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 1, 2, 7, 0);
-        final LocalDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 1, 2, 7, 20);
+        final ZonedDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime firstPomodoroEndTime = LocalDateTime.of(2022, 1, 1, 7, 20)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 1, 2, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 1, 2, 7, 20)
+                .atZone(ZoneId.systemDefault());
 
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of());
 
         PomodoroDto firstRemotePomodoro = mock(PomodoroDto.class);
@@ -129,10 +138,14 @@ class DefaultPomodoroSynchronizerServiceTest {
 
     @Test
     void synchronize_WhenOnlyLocalPomodorosPresent_ThenUpdateRemotePomodoros() {
-        final LocalDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0);
-        final LocalDateTime firstPomodoroEndTime = LocalDateTime.of(2022, 1, 1, 7, 20);
-        final LocalDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 1, 2, 7, 0);
-        final LocalDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 1, 2, 7, 20);
+        final ZonedDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime firstPomodoroEndTime = LocalDateTime.of(2022, 1, 1, 7, 20)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 1, 2, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 1, 2, 7, 20)
+                .atZone(ZoneId.systemDefault());
 
         PomodoroDto firstPomodoro = mock(PomodoroDto.class);
         when(firstPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
@@ -144,7 +157,7 @@ class DefaultPomodoroSynchronizerServiceTest {
         when(firstLocalPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
         Pomodoro secondLocalPomodoro = mock(Pomodoro.class);
         when(secondLocalPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstLocalPomodoro, secondLocalPomodoro));
         when(pomodoroMapper.mapToDto(List.of(firstLocalPomodoro, secondLocalPomodoro)))
                 .thenReturn(List.of(firstPomodoro, secondPomodoro));
@@ -169,14 +182,22 @@ class DefaultPomodoroSynchronizerServiceTest {
 
     @Test
     void synchronize_WhenRemotePomodorosDifferFromLocal_ThenUpdateLocalPomodoros() {
-        final LocalDateTime previousPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0);
-        final LocalDateTime previousPomodoroEndTime = LocalDateTime.of(2022, 1, 1, 7, 20);
-        final LocalDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 2, 1, 7, 0);
-        final LocalDateTime firstPomodoroEndTime = LocalDateTime.of(2022, 2, 1, 7, 20);
-        final LocalDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 2, 2, 7, 0);
-        final LocalDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 2, 2, 7, 20);
-        final LocalDateTime nextPomodoroStartTime = LocalDateTime.of(2022, 3, 1, 7, 0);
-        final LocalDateTime nextPomodoroEndTime = LocalDateTime.of(2022, 3, 1, 7, 20);
+        final ZonedDateTime previousPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime previousPomodoroEndTime = LocalDateTime.of(2022, 1, 1, 7, 20)
+                .atZone(ZoneId.systemDefault());;
+        final ZonedDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 2, 1, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime firstPomodoroEndTime = LocalDateTime.of(2022, 2, 1, 7, 20)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 2, 2, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 2, 2, 7, 20)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime nextPomodoroStartTime = LocalDateTime.of(2022, 3, 1, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime nextPomodoroEndTime = LocalDateTime.of(2022, 3, 1, 7, 20)
+                .atZone(ZoneId.systemDefault());
 
         PomodoroDto firstLocalPomodoro = mock(PomodoroDto.class);
         when(firstLocalPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
@@ -188,7 +209,7 @@ class DefaultPomodoroSynchronizerServiceTest {
         when(firstPomodoro.getStartTime()).thenReturn(firstPomodoroStartTime);
         Pomodoro secondPomodoro = mock(Pomodoro.class);
         when(secondPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstPomodoro, secondPomodoro));
         when(pomodoroMapper.mapToDto(List.of(firstPomodoro, secondPomodoro)))
                 .thenReturn(List.of(firstLocalPomodoro, secondLocalPomodoro));
@@ -224,14 +245,22 @@ class DefaultPomodoroSynchronizerServiceTest {
 
     @Test
     void synchronize_WhenLocalPomodorosDifferFromRemote_ThenUpdateRemotePomodoros() {
-        final LocalDateTime previousPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0);
-        final LocalDateTime previousPomodoroEndTime = LocalDateTime.of(2022, 1, 1, 7, 20);
-        final LocalDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 2, 1, 7, 0);
-        final LocalDateTime firstPomodoroEndTime = LocalDateTime.of(2022, 2, 1, 7, 20);
-        final LocalDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 2, 2, 7, 0);
-        final LocalDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 2, 2, 7, 20);
-        final LocalDateTime nextPomodoroStartTime = LocalDateTime.of(2022, 3, 1, 7, 0);
-        final LocalDateTime nextPomodoroEndTime = LocalDateTime.of(2022, 3, 1, 7, 20);
+        final ZonedDateTime previousPomodoroStartTime = LocalDateTime.of(2022, 1, 1, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime previousPomodoroEndTime = LocalDateTime.of(2022, 1, 1, 7, 20)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime firstPomodoroStartTime = LocalDateTime.of(2022, 2, 1, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime firstPomodoroEndTime = LocalDateTime.of(2022, 2, 1, 7, 20)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime secondPomodoroStartTime = LocalDateTime.of(2022, 2, 2, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime secondPomodoroEndTime = LocalDateTime.of(2022, 2, 2, 7, 20)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime nextPomodoroStartTime = LocalDateTime.of(2022, 3, 1, 7, 0)
+                .atZone(ZoneId.systemDefault());
+        final ZonedDateTime nextPomodoroEndTime = LocalDateTime.of(2022, 3, 1, 7, 20)
+                .atZone(ZoneId.systemDefault());
 
         PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
         when(firstPomodoroDto.getStartTime()).thenReturn(previousPomodoroStartTime);
@@ -254,7 +283,7 @@ class DefaultPomodoroSynchronizerServiceTest {
         when(secondLocalPomodoro.getStartTime()).thenReturn(secondPomodoroStartTime);
         Pomodoro nextLocalPomodoro = mock(Pomodoro.class);
         when(nextLocalPomodoro.getStartTime()).thenReturn(nextPomodoroStartTime);
-        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP))
+        when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(
                         previousLocalPomodoro,
                         firstLocalPomodoro,
