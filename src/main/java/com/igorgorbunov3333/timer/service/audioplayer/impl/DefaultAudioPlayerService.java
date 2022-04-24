@@ -1,6 +1,8 @@
 package com.igorgorbunov3333.timer.service.audioplayer.impl;
 
+import com.igorgorbunov3333.timer.config.properties.AudioPlayerProperties;
 import com.igorgorbunov3333.timer.service.audioplayer.AudioPlayerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.sound.sampled.AudioInputStream;
@@ -12,7 +14,8 @@ import java.io.File;
 @Service
 public class DefaultAudioPlayerService implements AudioPlayerService {
 
-    private static final String PATH = "D:\\timer.snd";
+    @Autowired
+    private AudioPlayerProperties properties;
 
     private final Clip clip = AudioSystem.getClip();
 
@@ -21,8 +24,9 @@ public class DefaultAudioPlayerService implements AudioPlayerService {
 
     @Override
     public void play() {
+        String path = properties.getPath();
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(PATH).getAbsoluteFile());
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(path).getAbsoluteFile());
             clip.open(audioInputStream);
             clip.loop(Clip.LOOP_CONTINUOUSLY);
             clip.start();

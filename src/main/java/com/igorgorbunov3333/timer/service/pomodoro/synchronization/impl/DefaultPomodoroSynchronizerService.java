@@ -101,8 +101,12 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
 
         if (localPomodorosDoesNotContainAllRemotePomodoros) {
             List<Pomodoro> pomodorosToSaveLocally = pomodoroDataToSaveRemotely.getPomodoros().stream()
-                    .filter(pomodoroDto -> !pomodorosFromDataBase.contains(pomodoroDto))
-                    .map(pomodoroDto -> new Pomodoro(
+                    .filter(pomodoroDto -> !pomodorosFromDataBase.contains(new PomodoroDto(
+                                    null,
+                                    pomodoroDto.getStartTime().withZoneSameInstant(ZoneOffset.UTC),
+                                    pomodoroDto.getEndTime().withZoneSameInstant(ZoneOffset.UTC))
+                            )
+                    ).map(pomodoroDto -> new Pomodoro(
                             null,
                             pomodoroDto.getStartTime(),
                             pomodoroDto.getEndTime())

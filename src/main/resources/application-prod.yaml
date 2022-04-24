@@ -4,7 +4,7 @@ spring:
     banner-mode: OFF
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/pomodoro_database
+    url: jdbc:postgresql://localhost:5431/pomodoro_database
     username: postgres
     password: root
   jpa.show-sql: false
@@ -16,5 +16,3 @@ google-drive:
   document-id: ${DRIVE_DOCUMENT_ID:}
   credentials-path: ${DRIVE_CREDENTIALS_PATH:}
   file-name: ${DRIVE_FILE_NAME:}
-audio-player:
-  path: ${AUDIO_PLAYER_PATH:}
