@@ -104,12 +104,14 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                     .filter(pomodoroDto -> !pomodorosFromDataBase.contains(new PomodoroDto(
                                     null,
                                     pomodoroDto.getStartTime().withZoneSameInstant(ZoneOffset.UTC),
-                                    pomodoroDto.getEndTime().withZoneSameInstant(ZoneOffset.UTC))
+                                    pomodoroDto.getEndTime().withZoneSameInstant(ZoneOffset.UTC),
+                                    pomodoroDto.isSavedAutomatically())
                             )
                     ).map(pomodoroDto -> new Pomodoro(
                             null,
                             pomodoroDto.getStartTime(),
-                            pomodoroDto.getEndTime())
+                            pomodoroDto.getEndTime(),
+                            pomodoroDto.isSavedAutomatically())
                     ).collect(Collectors.toList());
             pomodoroRepository.saveAll(pomodorosToSaveLocally);
             pomodoroInfoSynchronizationService.save(Boolean.TRUE, SynchronizationResult.UPDATED_LOCALLY, null);
@@ -128,7 +130,8 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         return p -> new Pomodoro(
                 null,
                 p.getStartTime().withZoneSameInstant(ZoneOffset.UTC),
-                p.getEndTime().withZoneSameInstant(ZoneOffset.UTC)
+                p.getEndTime().withZoneSameInstant(ZoneOffset.UTC),
+                p.isSavedAutomatically()
         );
     }
 
@@ -144,7 +147,8 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         return p -> new PomodoroDto(
                 null,
                 p.getStartTime().withZoneSameInstant(ZoneOffset.UTC),
-                p.getEndTime().withZoneSameInstant(ZoneOffset.UTC)
+                p.getEndTime().withZoneSameInstant(ZoneOffset.UTC),
+                p.isSavedAutomatically()
         );
     }
 
@@ -175,7 +179,8 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
         return p -> new PomodoroDto(
                 null,
                 p.getStartTime().withZoneSameInstant(ZoneId.systemDefault()),
-                p.getEndTime().withZoneSameInstant(ZoneId.systemDefault())
+                p.getEndTime().withZoneSameInstant(ZoneId.systemDefault()),
+                p.isSavedAutomatically()
         );
     }
 

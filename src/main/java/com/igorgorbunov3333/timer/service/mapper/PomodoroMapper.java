@@ -20,7 +20,8 @@ public class PomodoroMapper {
         return new PomodoroDto(
                 pomodoro.getId(),
                 pomodoro.getStartTime(),
-                pomodoro.getEndTime()
+                pomodoro.getEndTime(),
+                pomodoro.isSavedAutomatically()
         );
     }
 

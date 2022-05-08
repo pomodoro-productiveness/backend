@@ -26,9 +26,12 @@ public class Pomodoro implements TemporalObject {
     private Long id;
 
     @Column(nullable = false, updatable = false)
-    public ZonedDateTime startTime;
+    private ZonedDateTime startTime;
 
     @Column(nullable = false, updatable = false)
-    public ZonedDateTime endTime;
+    private ZonedDateTime endTime;
+
+    @Column(nullable = false, updatable = false)
+    private boolean savedAutomatically;
 
 }

@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Getter
 @AllArgsConstructor
@@ -27,12 +26,14 @@ public class PomodoroDto implements TemporalObject {
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private ZonedDateTime endTime;
 
+    private boolean savedAutomatically;
+
     @Override
     public String toString() {
         return "Pomodoro {" +
                 "id=" + id +
-                ", startTime=" + startTime.truncatedTo(ChronoUnit.SECONDS) +
-                ", endTime=" + endTime.truncatedTo(ChronoUnit.SECONDS) +
+                ", startTime=" + startTime.toLocalDateTime() +
+                ", endTime=" + endTime.toLocalDateTime() +
                 '}';
     }
 

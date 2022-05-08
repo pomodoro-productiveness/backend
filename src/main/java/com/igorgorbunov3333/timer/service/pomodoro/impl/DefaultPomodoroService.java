@@ -104,7 +104,7 @@ public class DefaultPomodoroService implements PomodoroService {
                 .minusMinutes(1L)
                 .truncatedTo(ChronoUnit.SECONDS);
         if (latestPomodoroEndTime == null) {
-            Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime);
+            Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime, true);
             pomodoroRepository.save(pomodoroToSave);
             return null;
         }
@@ -119,7 +119,7 @@ public class DefaultPomodoroService implements PomodoroService {
                     "passed since the end of the previous pomodoro");
         }
 
-        Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime);
+        Pomodoro pomodoroToSave = new Pomodoro(null, newPomodoroEndTime.minusMinutes(20L), newPomodoroEndTime, true);
         Pomodoro savedPomodoro = pomodoroRepository.save(pomodoroToSave);
         pomodoroSynchronizationScheduler.addUpdateJob(savedPomodoro.getEndTime().toLocalDateTime());
         return pomodoroMapper.mapToDto(savedPomodoro);
@@ -131,7 +131,7 @@ public class DefaultPomodoroService implements PomodoroService {
                 .truncatedTo(ChronoUnit.SECONDS)
                 .atZone(currentZoneId);
         ZonedDateTime startTime = endTime.minusSeconds(pomodoroSecondsDuration);
-        return new Pomodoro(null, startTime, endTime);
+        return new Pomodoro(null, startTime, endTime, false);
     }
 
 }
