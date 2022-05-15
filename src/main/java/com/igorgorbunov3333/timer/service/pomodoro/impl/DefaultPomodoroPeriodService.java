@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
-import com.igorgorbunov3333.timer.service.util.CurrentDayService;
+import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,17 +28,17 @@ public class DefaultPomodoroPeriodService implements PomodoroPeriodService {
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroMapper pomodoroMapper;
-    private final CurrentDayService currentDayService;
+    private final CurrentTimeService currentTimeService;
 
     @Override
     public Map<DayOfWeek, List<PomodoroDto>> getCurrentWeekPomodoros() {
-        LocalDate currentDay = currentDayService.getCurrentDay();
+        LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();
         int currentDayOfWeek = currentDay.getDayOfWeek().getValue();
         LocalDate dayAtStartOfWeek = currentDay.minusDays(currentDayOfWeek - 1);
         ZoneId currentZoneId = ZoneId.systemDefault();
         ZonedDateTime start = dayAtStartOfWeek.atStartOfDay().atZone(currentZoneId);
         ZonedDateTime end = currentDay.atTime(LocalTime.MAX).atZone(currentZoneId);
-        List<Pomodoro> weeklyPomodoros = pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(start, end);
+        List<Pomodoro> weeklyPomodoros = pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start, end);
         if (weeklyPomodoros.isEmpty()) {
             return Map.of();
         }

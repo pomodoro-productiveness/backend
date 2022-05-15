@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.util.CurrentDayService;
+import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,20 +35,20 @@ class DefaultPomodoroPeriodServiceTest {
     @Mock
     private PomodoroMapper pomodoroMapper;
     @Mock
-    private CurrentDayService currentDayService;
+    private CurrentTimeService currentTimeService;
 
     @InjectMocks
     private DefaultPomodoroPeriodService testee;
 
     @Test
     void getCurrentWeekPomodoros_WhenNoWeeklyPomodoros_ThenReturnEmptyMap() {
-        LocalDate currentDay = LocalDate.of(2022, 2, 5); //Saturday
-        when(currentDayService.getCurrentDay()).thenReturn(currentDay);
+        LocalDateTime currentDayTime = LocalDate.of(2022, 2, 5).atStartOfDay(); //Saturday
+        when(currentTimeService.getCurrentDateTime()).thenReturn(currentDayTime);
         ZonedDateTime start = LocalDate.of(2022, 1, 31)
                 .atStartOfDay()
                 .atZone(CURRENT_ZONE_ID);
-        ZonedDateTime end = currentDay.atTime(LocalTime.MAX).atZone(CURRENT_ZONE_ID);
-        when(pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(start, end)).thenReturn(List.of());
+        ZonedDateTime end = currentDayTime.toLocalDate().atTime(LocalTime.MAX).atZone(CURRENT_ZONE_ID);
+        when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start, end)).thenReturn(List.of());
 
         Map<DayOfWeek, List<PomodoroDto>> actual = testee.getCurrentWeekPomodoros();
 
@@ -57,16 +57,16 @@ class DefaultPomodoroPeriodServiceTest {
 
     @Test
     void getCurrentWeekPomodoros_WhenStartOfWeek_ThenReturnResult() {
-        LocalDate currentDay = LocalDate.of(2022, 1, 31); //Monday
-        when(currentDayService.getCurrentDay()).thenReturn(currentDay);
-        LocalDateTime start = currentDay.atStartOfDay();
-        LocalDateTime end = currentDay.atTime(LocalTime.MAX);
+        LocalDateTime localDateTime = LocalDate.of(2022, 1, 31).atStartOfDay(); //Monday
+        when(currentTimeService.getCurrentDateTime()).thenReturn(localDateTime);
+        LocalDateTime start = localDateTime.toLocalDate().atStartOfDay();
+        LocalDateTime end = localDateTime.toLocalDate().atTime(LocalTime.MAX);
 
         Pomodoro firstPomodoro = mock(Pomodoro.class);
         when(firstPomodoro.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
         Pomodoro secondPomodoro = mock(Pomodoro.class);
         when(secondPomodoro.getStartTime()).thenReturn(start.plusHours(4).atZone(CURRENT_ZONE_ID));
-        when(pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
+        when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstPomodoro, secondPomodoro));
         PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
         PomodoroDto secondPomodoroDto = mock(PomodoroDto.class);
@@ -81,10 +81,10 @@ class DefaultPomodoroPeriodServiceTest {
 
     @Test
     void getCurrentWeekPomodoros_WhenMiddleOfWeek_ThenReturnResult() {
-        LocalDate currentDay = LocalDate.of(2022, 2, 2); // Wednesday
-        when(currentDayService.getCurrentDay()).thenReturn(currentDay);
+        LocalDateTime localDateTime = LocalDate.of(2022, 2, 2).atStartOfDay(); // Wednesday
+        when(currentTimeService.getCurrentDateTime()).thenReturn(localDateTime);
         LocalDateTime start = LocalDate.of(2022, 1, 31).atStartOfDay(); // Monday
-        LocalDateTime end = currentDay.atTime(LocalTime.MAX);
+        LocalDateTime end = localDateTime.toLocalDate().atTime(LocalTime.MAX);
 
         Pomodoro firstDayPomodoro = mock(Pomodoro.class);
         when(firstDayPomodoro.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
@@ -93,7 +93,7 @@ class DefaultPomodoroPeriodServiceTest {
         Pomodoro thirdDayPomodoro = mock(Pomodoro.class);
         when(thirdDayPomodoro.getStartTime()).thenReturn(start.plusDays(2).plusHours(4).atZone(CURRENT_ZONE_ID));
 
-        when(pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
+        when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstDayPomodoro, secondDayPomodoro, thirdDayPomodoro));
         PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
         PomodoroDto secondPomodoroDto = mock(PomodoroDto.class);
@@ -115,17 +115,17 @@ class DefaultPomodoroPeriodServiceTest {
     @Test
     void getCurrentWeekPomodoros_WhenSomeDaysWithoutPomodoros_ThenReturnResult() {
         // Tuesday without pomodoros
-        LocalDate currentDay = LocalDate.of(2022, 2, 2); // Wednesday
-        when(currentDayService.getCurrentDay()).thenReturn(currentDay);
+        LocalDateTime localDateTime = LocalDate.of(2022, 2, 2).atStartOfDay(); // Wednesday
+        when(currentTimeService.getCurrentDateTime()).thenReturn(localDateTime);
         LocalDateTime start = LocalDate.of(2022, 1, 31).atStartOfDay(); // Monday
-        LocalDateTime end = currentDay.atTime(LocalTime.MAX);
+        LocalDateTime end = localDateTime.toLocalDate().atTime(LocalTime.MAX);
 
         Pomodoro firstDayPomodoro = mock(Pomodoro.class);
         when(firstDayPomodoro.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
         Pomodoro thirdDayPomodoro = mock(Pomodoro.class);
         when(thirdDayPomodoro.getStartTime()).thenReturn(start.plusDays(2).plusHours(4).atZone(CURRENT_ZONE_ID));
 
-        when(pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
+        when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstDayPomodoro, thirdDayPomodoro));
         PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
         PomodoroDto thirdPomodoroDto = mock(PomodoroDto.class);
@@ -144,10 +144,10 @@ class DefaultPomodoroPeriodServiceTest {
 
     @Test
     void getCurrentWeekPomodoros_WhenEndOfWeek_ThenReturnResult() {
-        LocalDate currentDay = LocalDate.of(2022, 2, 6); //Sunday
-        when(currentDayService.getCurrentDay()).thenReturn(currentDay);
+        LocalDateTime localDateTime = LocalDate.of(2022, 2, 6).atStartOfDay(); //Sunday
+        when(currentTimeService.getCurrentDateTime()).thenReturn(localDateTime);
         LocalDateTime start = LocalDate.of(2022, 1, 31).atStartOfDay(); //Monday
-        LocalDateTime end = currentDay.atTime(LocalTime.MAX);
+        LocalDateTime end = localDateTime.toLocalDate().atTime(LocalTime.MAX);
 
         Pomodoro firstDayPomodoro = mock(Pomodoro.class);
         when(firstDayPomodoro.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
@@ -164,7 +164,7 @@ class DefaultPomodoroPeriodServiceTest {
         Pomodoro seventhDayPomodoro = mock(Pomodoro.class);
         when(seventhDayPomodoro.getStartTime()).thenReturn(start.plusDays(6).plusHours(4).atZone(CURRENT_ZONE_ID));
 
-        when(pomodoroRepository.findByStartTimeAfterAndEndTimeBefore(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
+        when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(
                         firstDayPomodoro,
                         secondDayPomodoro,

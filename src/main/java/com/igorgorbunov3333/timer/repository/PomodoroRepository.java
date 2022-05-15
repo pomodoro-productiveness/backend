@@ -11,7 +11,7 @@ public interface PomodoroRepository extends JpaRepository<Pomodoro, Long> {
 
     long countByStartTimeAfterAndEndTimeBefore(ZonedDateTime startRange, ZonedDateTime endRange);
 
-    List<Pomodoro> findByStartTimeAfterAndEndTimeBefore(ZonedDateTime startRange, ZonedDateTime endRange);
+    List<Pomodoro> findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(ZonedDateTime startRange, ZonedDateTime endRange);
 
     Optional<Pomodoro> findTopByOrderByEndTimeDesc();
 

@@ -13,6 +13,7 @@ import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroInfoS
 import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroSynchronizerService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerService {
 
@@ -94,10 +96,6 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
 
         List<PomodoroDto> pomodorosToSaveRemotely = getAllSortedDistinctPomodoros(pomodorosFromDataBase, remotePomodoros);
         PomodoroDataDto pomodoroDataToSaveRemotely = new PomodoroDataDto(pomodorosToSaveRemotely);
-        if (remotePomodorosNotContainAnyLocalOrDifferentSize) {
-            googleDriveService.updatePomodoroData(pomodoroDataToSaveRemotely);
-            pomodoroInfoSynchronizationService.save(Boolean.TRUE, SynchronizationResult.UPDATED_REMOTELY, null);
-        }
 
         if (localPomodorosDoesNotContainAllRemotePomodoros) {
             List<Pomodoro> pomodorosToSaveLocally = pomodoroDataToSaveRemotely.getPomodoros().stream()
@@ -116,6 +114,12 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
             pomodoroRepository.saveAll(pomodorosToSaveLocally);
             pomodoroInfoSynchronizationService.save(Boolean.TRUE, SynchronizationResult.UPDATED_LOCALLY, null);
         }
+
+        if (remotePomodorosNotContainAnyLocalOrDifferentSize) {
+            googleDriveService.updatePomodoroData(pomodoroDataToSaveRemotely);
+            pomodoroInfoSynchronizationService.save(Boolean.TRUE, SynchronizationResult.UPDATED_REMOTELY, null);
+        }
+
     }
 
     private List<PomodoroDto> getSortedPomodorosFromDatabase(ZonedDateTime timestamp) {

@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.commandline;
 
 import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
 import com.igorgorbunov3333.timer.service.commandline.impl.DefaultPrinterService;
-import com.igorgorbunov3333.timer.service.exception.PomodoroCrudException;
+import com.igorgorbunov3333.timer.service.exception.PomodoroException;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
@@ -116,7 +116,7 @@ public class CommandLine {
             Long removedPomodoroId;
             try {
                 removedPomodoroId = pomodoroService.removeLatest();
-            } catch (PomodoroCrudException e) {
+            } catch (PomodoroException e) {
                 System.out.println(e.getMessage());
                 return;
             }
@@ -134,7 +134,7 @@ public class CommandLine {
         Long pomodoroId = Long.valueOf(pomodoroIdArgument);
         try {
             pomodoroService.removePomodoro(pomodoroId);
-        } catch (PomodoroCrudException e) {
+        } catch (PomodoroException e) {
             System.out.println(e.getMessage());
         }
         System.out.println("Pomodoro with id [" + pomodoroId + "] removed");
@@ -144,7 +144,7 @@ public class CommandLine {
         PomodoroDto savedPomodoro;
         try {
             savedPomodoro = pomodoroService.saveAutomatically();
-        } catch (PomodoroCrudException e) {
+        } catch (PomodoroException e) {
             System.out.println(e.getMessage());
             return;
         }
