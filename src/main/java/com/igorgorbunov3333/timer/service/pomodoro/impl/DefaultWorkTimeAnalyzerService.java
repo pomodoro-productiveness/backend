@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.AnalyzedWeekDto;
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.exception.NoDataException;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
 import com.igorgorbunov3333.timer.service.pomodoro.WorkTimeAnalyzerService;

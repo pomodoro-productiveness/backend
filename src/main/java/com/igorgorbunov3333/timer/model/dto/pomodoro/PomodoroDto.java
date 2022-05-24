@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.model.dto;
+package com.igorgorbunov3333.timer.model.dto.pomodoro;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,11 +10,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "id")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
+@EqualsAndHashCode(of = {"startTime", "endTime"})
 public class PomodoroDto implements TemporalObject {
 
     @JsonIgnore
@@ -27,6 +28,8 @@ public class PomodoroDto implements TemporalObject {
     private ZonedDateTime endTime;
 
     private boolean savedAutomatically;
+
+    private List<PomodoroPauseDto> pomodoroPauses;
 
     @Override
     public String toString() {

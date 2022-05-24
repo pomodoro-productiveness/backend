@@ -1,12 +1,15 @@
 package com.igorgorbunov3333.timer.service.pomodoro;
 
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroPauseDto;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 public interface PomodoroService {
+
+    PomodoroDto saveByDurationWithPauses(int pomodoroDuration, List<PomodoroPauseDto> pomodoroPauses);
 
     PomodoroDto saveByDuration(int pomodoroDuration);
 

@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.commandline;
 
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.commandline.impl.DefaultPrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;

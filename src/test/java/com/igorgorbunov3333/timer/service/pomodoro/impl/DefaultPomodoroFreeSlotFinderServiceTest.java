@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
 import com.igorgorbunov3333.timer.service.pomodoro.DailyPomodoroService;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;

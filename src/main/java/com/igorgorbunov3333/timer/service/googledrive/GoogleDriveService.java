@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.googledrive;
 
-import com.igorgorbunov3333.timer.model.dto.PomodoroDataDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDataDto;
 
 public interface GoogleDriveService {
 

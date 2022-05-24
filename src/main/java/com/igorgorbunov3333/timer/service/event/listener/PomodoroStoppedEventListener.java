@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.event.listener;
 
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.event.PomodoroStoppedSpringEvent;
 import com.igorgorbunov3333.timer.service.commandline.PrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;

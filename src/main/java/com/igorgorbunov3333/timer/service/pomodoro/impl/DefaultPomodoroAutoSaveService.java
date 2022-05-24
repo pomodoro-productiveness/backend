@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -44,7 +45,7 @@ public class DefaultPomodoroAutoSaveService implements PomodoroAutoSaveService {
                 .truncatedTo(ChronoUnit.SECONDS)
                 .atZone(ZoneId.systemDefault());
 
-        return new Pomodoro(null, pomodoroStartTime, pomodoroEndTime, true);
+        return new Pomodoro(null, pomodoroStartTime, pomodoroEndTime, true, List.of());
     }
 
 }

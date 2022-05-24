@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.model.dto;
+package com.igorgorbunov3333.timer.model.dto.pomodoro;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

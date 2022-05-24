@@ -1,16 +1,23 @@
 package com.igorgorbunov3333.timer.service.pomodoro.engine.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroPauseDto;
 import com.igorgorbunov3333.timer.service.commandline.PrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
+import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroPausesStorage;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,6 +30,7 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
     private final PomodoroEngine pomodoroEngine;
     private final PomodoroProperties pomodoroProperties;
     private final PrinterService printerService;
+    private final PomodoroPausesStorage pomodoroPausesStorage;
 
     @Override
     public void startPomodoro() {
@@ -49,9 +57,15 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
         }
         if (duration <= pomodoroMinimumLifetime) {
             String message = "Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds";
+            pomodoroPausesStorage.evict();
             throw new PomodoroEngineException(message);
         }
-        return pomodoroService.saveByDuration(duration);
+        List<Pair<ZonedDateTime, ZonedDateTime>> pomodoroPausePairs = pomodoroPausesStorage.getPauses();
+        List<PomodoroPauseDto> pomodoroPauses = pomodoroPausePairs.stream()
+                .map(pair -> new PomodoroPauseDto(pair.getFirst(), pair.getSecond()))
+                .collect(Collectors.toList());
+        pomodoroPausesStorage.evict();
+        return pomodoroService.saveByDurationWithPauses(duration, pomodoroPauses);
     }
 
     @Override

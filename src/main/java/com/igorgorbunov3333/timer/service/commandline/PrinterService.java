@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.commandline;
 
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

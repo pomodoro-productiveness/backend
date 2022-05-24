@@ -1,30 +1,24 @@
 package com.igorgorbunov3333.timer.model.entity;
 
-import com.igorgorbunov3333.timer.model.TemporalObject;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 @Entity
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class Pomodoro implements TemporalObject {
+public class PomodoroPause {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,12 +29,7 @@ public class Pomodoro implements TemporalObject {
 
     @Column(nullable = false, updatable = false)
     private ZonedDateTime endTime;
-
-    @Column(nullable = false, updatable = false)
-    private boolean savedAutomatically;
-
-    @JoinColumn(name = "pomodoroId")
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<PomodoroPause> pomodoroPauses;
+    
+    private Long pomodoroId;
 
 }

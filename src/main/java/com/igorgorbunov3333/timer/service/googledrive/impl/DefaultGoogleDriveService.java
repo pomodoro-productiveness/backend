@@ -6,7 +6,7 @@ import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.igorgorbunov3333.timer.config.properties.GoogleDriveProperties;
-import com.igorgorbunov3333.timer.model.dto.PomodoroDataDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDataDto;
 import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveCredentialsProvider;
 import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveService;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @AllArgsConstructor
-public class DefaultGoogleDriveService implements GoogleDriveService {
+public class DefaultGoogleDriveService implements GoogleDriveService {  //TODO: rename
 
     private final GoogleDriveProperties googleDriveProperties;
     private final GoogleDriveCredentialsProvider credentialsProvider;

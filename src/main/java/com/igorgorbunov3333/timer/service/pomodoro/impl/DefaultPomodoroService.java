@@ -1,7 +1,9 @@
 package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroPauseDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
+import com.igorgorbunov3333.timer.model.entity.PomodoroPause;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.exception.NoDataException;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
@@ -39,11 +41,15 @@ public class DefaultPomodoroService implements PomodoroService {
     private final PomodoroAutoSaveService pomodoroAutoSaveService;
 
     @Override
+    public PomodoroDto saveByDurationWithPauses(int pomodoroDuration, List<PomodoroPauseDto> pomodoroPauses) {
+        Pomodoro pomodoro = buildPomodoro(pomodoroDuration, pomodoroPauses);
+        return savePomodoroAndAddSynchronizationJob(pomodoro);
+    }
+
+    @Override
     public PomodoroDto saveByDuration(int pomodoroDuration) {
-        Pomodoro pomodoro = buildPomodoro(pomodoroDuration);
-        Pomodoro savedPomodoro = pomodoroRepository.save(pomodoro);
-        pomodoroSynchronizationScheduler.addUpdateJob(savedPomodoro.getEndTime().toLocalDateTime());
-        return pomodoroMapper.mapToDto(savedPomodoro);
+        Pomodoro pomodoro = buildPomodoro(pomodoroDuration, List.of());
+        return savePomodoroAndAddSynchronizationJob(pomodoro);
     }
 
     @Override
@@ -99,13 +105,25 @@ public class DefaultPomodoroService implements PomodoroService {
         return pomodoroAutoSaveService.save();
     }
 
-    private Pomodoro buildPomodoro(int pomodoroSecondsDuration) {
+    private Pomodoro buildPomodoro(int pomodoroSecondsDuration, List<PomodoroPauseDto> pauses) {
         ZoneId currentZoneId = ZoneId.systemDefault();
         ZonedDateTime endTime = LocalDateTime.now()
                 .truncatedTo(ChronoUnit.SECONDS)
                 .atZone(currentZoneId);
         ZonedDateTime startTime = endTime.minusSeconds(pomodoroSecondsDuration);
-        return new Pomodoro(null, startTime, endTime, false);
+
+        //TODO: add mapper to map dto to entity
+        List<PomodoroPause> pomodoroPauses = pauses.stream()
+                .map(pauseDto -> new PomodoroPause(null, pauseDto.getStartTime(), pauseDto.getEndTime(), null))
+                .collect(Collectors.toList());
+
+        return new Pomodoro(null, startTime, endTime, false, pomodoroPauses);
+    }
+
+    private PomodoroDto savePomodoroAndAddSynchronizationJob(Pomodoro pomodoro) {
+        Pomodoro savedPomodoro = pomodoroRepository.save(pomodoro);
+        pomodoroSynchronizationScheduler.addUpdateJob(savedPomodoro.getEndTime().toLocalDateTime());
+        return pomodoroMapper.mapToDto(savedPomodoro);
     }
 
 }

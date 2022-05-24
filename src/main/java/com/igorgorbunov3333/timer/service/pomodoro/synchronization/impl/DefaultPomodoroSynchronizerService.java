@@ -1,8 +1,9 @@
 package com.igorgorbunov3333.timer.service.pomodoro.synchronization.impl;
 
-import com.igorgorbunov3333.timer.model.dto.PomodoroDataDto;
-import com.igorgorbunov3333.timer.model.dto.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDataDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
+import com.igorgorbunov3333.timer.model.entity.PomodoroPause;
 import com.igorgorbunov3333.timer.model.entity.PomodoroSynchronizationInfo;
 import com.igorgorbunov3333.timer.model.entity.enums.SynchronizationResult;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
@@ -103,13 +104,16 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                                     null,
                                     pomodoroDto.getStartTime().withZoneSameInstant(ZoneOffset.UTC),
                                     pomodoroDto.getEndTime().withZoneSameInstant(ZoneOffset.UTC),
-                                    pomodoroDto.isSavedAutomatically())
-                            )
+                                    pomodoroDto.isSavedAutomatically(),
+                                    pomodoroDto.getPomodoroPauses()
+                            ))
                     ).map(pomodoroDto -> new Pomodoro(
-                            null,
-                            pomodoroDto.getStartTime(),
-                            pomodoroDto.getEndTime(),
-                            pomodoroDto.isSavedAutomatically())
+                                    null,
+                                    pomodoroDto.getStartTime(),
+                                    pomodoroDto.getEndTime(),
+                                    pomodoroDto.isSavedAutomatically(),
+                                    pomodoroDto.getPomodoroPauses().stream().map(pause -> new PomodoroPause(null, pause.getStartTime(), pause.getEndTime(), null)).collect(Collectors.toList())
+                            )
                     ).collect(Collectors.toList());
             pomodoroRepository.saveAll(pomodorosToSaveLocally);
             pomodoroInfoSynchronizationService.save(Boolean.TRUE, SynchronizationResult.UPDATED_LOCALLY, null);
@@ -135,7 +139,8 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                 null,
                 p.getStartTime().withZoneSameInstant(ZoneOffset.UTC),
                 p.getEndTime().withZoneSameInstant(ZoneOffset.UTC),
-                p.isSavedAutomatically()
+                p.isSavedAutomatically(),
+                p.getPomodoroPauses()
         );
     }
 
@@ -152,7 +157,8 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                 null,
                 p.getStartTime().withZoneSameInstant(ZoneOffset.UTC),
                 p.getEndTime().withZoneSameInstant(ZoneOffset.UTC),
-                p.isSavedAutomatically()
+                p.isSavedAutomatically(),
+                p.getPomodoroPauses()
         );
     }
 
@@ -184,7 +190,8 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                 null,
                 p.getStartTime().withZoneSameInstant(ZoneId.systemDefault()),
                 p.getEndTime().withZoneSameInstant(ZoneId.systemDefault()),
-                p.isSavedAutomatically()
+                p.isSavedAutomatically(),
+                p.getPomodoroPauses()
         );
     }
 
