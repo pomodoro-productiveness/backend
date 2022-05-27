@@ -45,7 +45,7 @@ public class DefaultPomodoroAutoSaveService implements PomodoroAutoSaveService {
                 .truncatedTo(ChronoUnit.SECONDS)
                 .atZone(ZoneId.systemDefault());
 
-        return new Pomodoro(null, pomodoroStartTime, pomodoroEndTime, true, List.of());
+        return new Pomodoro(null, pomodoroStartTime, pomodoroEndTime, true, List.of(), null);
     }
 
 }

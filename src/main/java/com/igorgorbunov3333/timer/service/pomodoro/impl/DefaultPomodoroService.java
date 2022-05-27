@@ -4,6 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroPauseDto;
 import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.model.entity.PomodoroPause;
+import com.igorgorbunov3333.timer.model.entity.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.exception.NoDataException;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
@@ -105,6 +106,13 @@ public class DefaultPomodoroService implements PomodoroService {
         return pomodoroAutoSaveService.save();
     }
 
+    @Override
+    public void updatePomodoroWithTag(Long pomodoroId, PomodoroTag tag) {
+        Pomodoro pomodoroWithTag = pomodoroRepository.getById(pomodoroId);
+        pomodoroWithTag.setTag(tag);
+        pomodoroRepository.save(pomodoroWithTag);
+    }
+
     private Pomodoro buildPomodoro(int pomodoroSecondsDuration, List<PomodoroPauseDto> pauses) {
         ZoneId currentZoneId = ZoneId.systemDefault();
         ZonedDateTime endTime = LocalDateTime.now()
@@ -117,7 +125,7 @@ public class DefaultPomodoroService implements PomodoroService {
                 .map(pauseDto -> new PomodoroPause(null, pauseDto.getStartTime(), pauseDto.getEndTime(), null))
                 .collect(Collectors.toList());
 
-        return new Pomodoro(null, startTime, endTime, false, pomodoroPauses);
+        return new Pomodoro(null, startTime, endTime, false, pomodoroPauses, null);
     }
 
     private PomodoroDto savePomodoroAndAddSynchronizationJob(Pomodoro pomodoro) {

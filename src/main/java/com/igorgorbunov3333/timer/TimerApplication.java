@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer;
 
-import com.igorgorbunov3333.timer.service.commandline.CommandLine;
+import com.igorgorbunov3333.timer.service.console.command.line.CommandLineController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TimerApplication implements CommandLineRunner {
 
 	@Autowired
-	private CommandLine commandLine;
+	private CommandLineController commandLineController;
 
 	public static void main(String[] args) {
 		SpringApplication.run(TimerApplication.class, args);
@@ -18,7 +18,7 @@ public class TimerApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		commandLine.start();
+		commandLineController.start();
 	}
 
 }

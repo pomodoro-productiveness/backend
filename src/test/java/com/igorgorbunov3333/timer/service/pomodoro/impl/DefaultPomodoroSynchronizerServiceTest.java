@@ -65,8 +65,8 @@ class DefaultPomodoroSynchronizerServiceTest {
 
         PomodoroDto firstPomodoroDto = new PomodoroDto(null, firstPomodoroStartTime, firstPomodoroStartTime.plusMinutes(20L), false, List.of());
         PomodoroDto secondPomodoroDto = new PomodoroDto(null, secondPomodoroStartTime, secondPomodoroStartTime.plusMinutes(20L), false, List.of());
-        Pomodoro firstPomodoro = new Pomodoro(null, firstPomodoroStartTime, firstPomodoroStartTime.plusMinutes(20L), false, List.of());
-        Pomodoro secondPomodoro = new Pomodoro(null, secondPomodoroStartTime, secondPomodoroStartTime.plusMinutes(20L), false, List.of());
+        Pomodoro firstPomodoro = new Pomodoro(null, firstPomodoroStartTime, firstPomodoroStartTime.plusMinutes(20L), false, List.of(), null);
+        Pomodoro secondPomodoro = new Pomodoro(null, secondPomodoroStartTime, secondPomodoroStartTime.plusMinutes(20L), false, List.of(), null);
         when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstPomodoro, secondPomodoro));
         when(pomodoroMapper.mapToDto(List.of(firstPomodoro, secondPomodoro)))
@@ -147,8 +147,8 @@ class DefaultPomodoroSynchronizerServiceTest {
 
         PomodoroDto firstPomodoro = new PomodoroDto(null, firstPomodoroStartTime, firstPomodoroEndTime, false, List.of());
         PomodoroDto secondPomodoro = new PomodoroDto(null, secondPomodoroStartTime, secondPomodoroEndTime, false, List.of());
-        Pomodoro firstLocalPomodoro = new Pomodoro(null, firstPomodoroStartTime, firstPomodoroEndTime, false, List.of());
-        Pomodoro secondLocalPomodoro = new Pomodoro(null, secondPomodoroStartTime, secondPomodoroEndTime, false, List.of());
+        Pomodoro firstLocalPomodoro = new Pomodoro(null, firstPomodoroStartTime, firstPomodoroEndTime, false, List.of(), null);
+        Pomodoro secondLocalPomodoro = new Pomodoro(null, secondPomodoroStartTime, secondPomodoroEndTime, false, List.of(), null);
         when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstLocalPomodoro, secondLocalPomodoro));
         when(pomodoroMapper.mapToDto(List.of(firstLocalPomodoro, secondLocalPomodoro)))
@@ -194,8 +194,8 @@ class DefaultPomodoroSynchronizerServiceTest {
 
         PomodoroDto firstLocalPomodoro = new PomodoroDto(null, firstPomodoroStartTime, firstPomodoroEndTime, false, List.of());
         PomodoroDto secondLocalPomodoro = new PomodoroDto(null, secondPomodoroStartTime, secondPomodoroEndTime, false, List.of());
-        Pomodoro firstPomodoro = new Pomodoro(null, firstPomodoroStartTime, firstPomodoroStartTime.plusMinutes(20L), false, List.of());
-        Pomodoro secondPomodoro = new Pomodoro(null, secondPomodoroStartTime, secondPomodoroStartTime.plusMinutes(20L), false, List.of());
+        Pomodoro firstPomodoro = new Pomodoro(null, firstPomodoroStartTime, firstPomodoroStartTime.plusMinutes(20L), false, List.of(), null);
+        Pomodoro secondPomodoro = new Pomodoro(null, secondPomodoroStartTime, secondPomodoroStartTime.plusMinutes(20L), false, List.of(), null);
         when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstPomodoro, secondPomodoro));
         when(pomodoroMapper.mapToDto(anyList()))
@@ -245,10 +245,10 @@ class DefaultPomodoroSynchronizerServiceTest {
         PomodoroDto thirdPomodoroDto = new PomodoroDto(null, secondPomodoroStartTime, secondPomodoroEndTime, false, List.of());
         PomodoroDto fourthPomodoroDto = new PomodoroDto(null, nextPomodoroStartTime, nextPomodoroEndTime, false, List.of());
 
-        Pomodoro previousLocalPomodoro = new Pomodoro(null, previousPomodoroStartTime, previousPomodoroEndTime, false, List.of());
-        Pomodoro firstLocalPomodoro = new Pomodoro(null, firstPomodoroStartTime, firstPomodoroEndTime, false, List.of());
-        Pomodoro secondLocalPomodoro = new Pomodoro(null, secondPomodoroStartTime, secondPomodoroEndTime, false, List.of());
-        Pomodoro nextLocalPomodoro = new Pomodoro(null, nextPomodoroStartTime, nextPomodoroEndTime, false, List.of());
+        Pomodoro previousLocalPomodoro = new Pomodoro(null, previousPomodoroStartTime, previousPomodoroEndTime, false, List.of(), null);
+        Pomodoro firstLocalPomodoro = new Pomodoro(null, firstPomodoroStartTime, firstPomodoroEndTime, false, List.of(), null);
+        Pomodoro secondLocalPomodoro = new Pomodoro(null, secondPomodoroStartTime, secondPomodoroEndTime, false, List.of(), null);
+        Pomodoro nextLocalPomodoro = new Pomodoro(null, nextPomodoroStartTime, nextPomodoroEndTime, false, List.of(), null);
         when(pomodoroRepository.findByEndTimeLessThanEqual(SYNCHRONIZATION_BOUND_TIMESTAMP.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(
                         previousLocalPomodoro,

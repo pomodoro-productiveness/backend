@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -39,8 +43,13 @@ public class Pomodoro implements TemporalObject {
     @Column(nullable = false, updatable = false)
     private boolean savedAutomatically;
 
+    @Fetch(FetchMode.SUBSELECT)
     @JoinColumn(name = "pomodoroId")
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<PomodoroPause> pomodoroPauses;
+
+    @Setter
+    @ManyToOne(fetch = FetchType.EAGER)
+    private PomodoroTag tag;
 
 }

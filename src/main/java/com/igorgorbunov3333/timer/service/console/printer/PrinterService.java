@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.service.commandline;
+package com.igorgorbunov3333.timer.service.console.printer;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 

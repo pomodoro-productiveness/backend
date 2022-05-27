@@ -7,7 +7,7 @@ import com.igorgorbunov3333.timer.model.entity.PomodoroPause;
 import com.igorgorbunov3333.timer.model.entity.PomodoroSynchronizationInfo;
 import com.igorgorbunov3333.timer.model.entity.enums.SynchronizationResult;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
-import com.igorgorbunov3333.timer.service.commandline.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveService;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroInfoSynchronizationService;
@@ -112,7 +112,9 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                                     pomodoroDto.getStartTime(),
                                     pomodoroDto.getEndTime(),
                                     pomodoroDto.isSavedAutomatically(),
-                                    pomodoroDto.getPomodoroPauses().stream().map(pause -> new PomodoroPause(null, pause.getStartTime(), pause.getEndTime(), null)).collect(Collectors.toList())
+                                    pomodoroDto.getPomodoroPauses().stream().map(pause -> new PomodoroPause(null, pause.getStartTime(), pause.getEndTime(), null))
+                                            .collect(Collectors.toList()),
+                            null
                             )
                     ).collect(Collectors.toList());
             pomodoroRepository.saveAll(pomodorosToSaveLocally);
@@ -140,7 +142,8 @@ public class DefaultPomodoroSynchronizerService implements PomodoroSynchronizerS
                 p.getStartTime().withZoneSameInstant(ZoneOffset.UTC),
                 p.getEndTime().withZoneSameInstant(ZoneOffset.UTC),
                 p.isSavedAutomatically(),
-                p.getPomodoroPauses()
+                p.getPomodoroPauses(),
+                null
         );
     }
 

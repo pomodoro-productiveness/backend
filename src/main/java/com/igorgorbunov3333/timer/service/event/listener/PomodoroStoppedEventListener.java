@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.event.listener;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.event.PomodoroStoppedSpringEvent;
-import com.igorgorbunov3333.timer.service.commandline.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationListener;
