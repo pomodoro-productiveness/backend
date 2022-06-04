@@ -5,12 +5,21 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.util.CollectionUtils;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,5 +34,24 @@ public class PomodoroTag {
 
     @Column(nullable = false, updatable = false)
     private String name;
+
+    @Setter
+    @ManyToOne
+    private PomodoroTag parent;
+
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<PomodoroTag> children = new ArrayList<>();
+
+    @Setter
+    private boolean removed;
+
+    public void addChildTag(PomodoroTag childTag) {
+        if (CollectionUtils.isEmpty(this.children)) {
+            this.children = new ArrayList<>(List.of(childTag));
+        } else {
+            this.children.add(childTag);
+        }
+        childTag.setParent(this);
+    }
 
 }

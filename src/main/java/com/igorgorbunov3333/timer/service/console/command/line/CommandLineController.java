@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.console.command.line;
 
 import com.igorgorbunov3333.timer.service.console.command.CurrentCommandStorage;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
-import com.igorgorbunov3333.timer.service.console.command.processor.CommandProcessor;
+import com.igorgorbunov3333.timer.service.console.command.CommandCoordinator;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ public class CommandLineController {
     private static final String INVALID_INPUT = "Invalid input, please try again";
 
     private final PrinterService printerService;
-    private final CommandProcessor commandProcessor;
+    private final CommandCoordinator commandCoordinator;
     private final CommandProvider commandProvider;
 
     public void start() {
@@ -35,7 +35,7 @@ public class CommandLineController {
 
     private void gotoChoice(String command) {
         CurrentCommandStorage.currentCommand = command;
-        boolean correctCommand = commandProcessor.process(command);
+        boolean correctCommand = commandCoordinator.coordinate(command);
 
         if (!correctCommand) {
             printerService.print(INVALID_INPUT);

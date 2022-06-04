@@ -3,6 +3,7 @@ package com.igorgorbunov3333.timer.model.dto.pomodoro;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.igorgorbunov3333.timer.model.TemporalObject;
+import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -30,6 +31,8 @@ public class PomodoroDto implements TemporalObject {
     private boolean savedAutomatically;
 
     private List<PomodoroPauseDto> pomodoroPauses;
+
+    private PomodoroTagDto tag;
 
     @Override
     public String toString() {

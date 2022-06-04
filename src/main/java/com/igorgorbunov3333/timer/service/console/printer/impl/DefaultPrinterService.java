@@ -7,6 +7,7 @@ import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -20,10 +21,18 @@ public class DefaultPrinterService implements PrinterService {
 
     public static final String MESSAGE_POMODORO_SAVED = "Pomodoro successfully saved: ";
     public static final String MESSAGE_NO_POMODOROS = "No pomodoros to display!";
+    public static final String TABULATION = "    ";
+    public static final String SPACE = " ";
+    public static final String DOT = ".";
 
     @Override
     public void print(@NonNull String message) {
         System.out.println(message);
+    }
+
+    @Override
+    public void printParagraph() {
+        System.out.println();
     }
 
     @Override
@@ -38,6 +47,7 @@ public class DefaultPrinterService implements PrinterService {
         System.out.println("remove pomodoro by id. For example \"remove 10\"");
         System.out.println("save pomodoro. For example \"save\"");
         System.out.println("list all pomodoros for current week. For example \"week\"");
+        System.out.println("Type \"e\" to exit");
     }
 
     @Override

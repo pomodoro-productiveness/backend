@@ -7,7 +7,6 @@ import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroAutoSaveService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroFreeSlotFinderService;
-import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroSynchronizationScheduler;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,6 @@ public class DefaultPomodoroAutoSaveService implements PomodoroAutoSaveService {
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroFreeSlotFinderService pomodoroFreeSlotFinderService;
-    private final PomodoroSynchronizationScheduler pomodoroSynchronizationScheduler;
     private final PomodoroMapper pomodoroMapper;
 
     @Override
@@ -33,7 +31,6 @@ public class DefaultPomodoroAutoSaveService implements PomodoroAutoSaveService {
         Pomodoro pomodoroToSave = buildPomodoro(latestFreeSlot);
 
         Pomodoro savedPomodoro = pomodoroRepository.save(pomodoroToSave);
-        pomodoroSynchronizationScheduler.addRemovalJob();
         return pomodoroMapper.mapToDto(savedPomodoro);
     }
 

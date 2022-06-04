@@ -7,9 +7,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+//TODO: use separate class with static method to print lines
 public interface PrinterService {
 
     void print(String message);
+
+    void printParagraph();
 
     void printFeaturesList();
 

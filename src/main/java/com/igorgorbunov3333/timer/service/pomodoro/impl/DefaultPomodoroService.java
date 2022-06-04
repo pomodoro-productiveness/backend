@@ -6,13 +6,13 @@ import com.igorgorbunov3333.timer.model.entity.Pomodoro;
 import com.igorgorbunov3333.timer.model.entity.PomodoroPause;
 import com.igorgorbunov3333.timer.model.entity.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
+import com.igorgorbunov3333.timer.repository.TagRepository;
 import com.igorgorbunov3333.timer.service.exception.NoDataException;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.DailyPomodoroService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroAutoSaveService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
-import com.igorgorbunov3333.timer.service.pomodoro.synchronization.PomodoroSynchronizationScheduler;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.util.Pair;
@@ -24,10 +24,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -36,10 +39,10 @@ public class DefaultPomodoroService implements PomodoroService {
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroMapper pomodoroMapper;
-    private final PomodoroSynchronizationScheduler pomodoroSynchronizationScheduler;
     private final CurrentTimeService currentTimeService;
     private final DailyPomodoroService dailyPomodoroService;
     private final PomodoroAutoSaveService pomodoroAutoSaveService;
+    private final TagRepository tagRepository;
 
     @Override
     public PomodoroDto saveByDurationWithPauses(int pomodoroDuration, List<PomodoroPauseDto> pomodoroPauses) {
@@ -84,7 +87,6 @@ public class DefaultPomodoroService implements PomodoroService {
         }
         pomodoroRepository.deleteById(pomodoroId);
         pomodoroRepository.flush();
-        pomodoroSynchronizationScheduler.addRemovalJob();
     }
 
     @Override
@@ -97,7 +99,6 @@ public class DefaultPomodoroService implements PomodoroService {
         Long pomodoroId = latestDto.getId();
         pomodoroRepository.deleteById(pomodoroId);
         pomodoroRepository.flush();
-        pomodoroSynchronizationScheduler.addRemovalJob();
         return pomodoroId;
     }
 
@@ -107,10 +108,60 @@ public class DefaultPomodoroService implements PomodoroService {
     }
 
     @Override
-    public void updatePomodoroWithTag(Long pomodoroId, PomodoroTag tag) {
+    public void updatePomodoroWithTag(Long pomodoroId, String tagName) {
         Pomodoro pomodoroWithTag = pomodoroRepository.getById(pomodoroId);
+        PomodoroTag tag = tagRepository.findByName(tagName).orElse(null);
+
+        if (tag == null) {
+            throw new IllegalArgumentException(String.format("No tag with name %s", tagName)); //TODO: use another exception?
+        }
+
         pomodoroWithTag.setTag(tag);
         pomodoroRepository.save(pomodoroWithTag);
+    }
+
+    @Override
+    public List<PomodoroDto> getAllSortedPomodoros() {
+        List<Pomodoro> pomodoros = pomodoroRepository.findAll().stream()
+                .sorted(Comparator.comparing(Pomodoro::getStartTime))
+                .collect(Collectors.toList());
+        return pomodoroMapper.mapToDto(pomodoros);
+    }
+
+    @Override
+    public void removeAllPomodoros() {
+        pomodoroRepository.deleteAll();
+        pomodoroRepository.flush();
+    }
+
+    @Override
+    public void save(List<PomodoroDto> pomodoros, List<PomodoroTag> savedTags) {
+        List<Pomodoro> pomodorosToSave = pomodoroMapper.mapToEntity(pomodoros);
+
+        List<PomodoroTag> allChildTags = savedTags.stream()
+                .flatMap(tag -> tag.getChildren() == null ? Stream.of() : tag.getChildren().stream())
+                .collect(Collectors.toList());
+        savedTags.addAll(allChildTags);
+        Map<String, PomodoroTag> tagNamesToTags = savedTags.stream()
+                .collect(Collectors.toMap(PomodoroTag::getName, Function.identity()));
+
+        for (Pomodoro pomodoro : pomodorosToSave) {
+            PomodoroTag pomodoroTag = pomodoro.getTag();
+
+            String tagName = null;
+            if (pomodoroTag != null) {
+                tagName = pomodoroTag.getName();
+            }
+
+            PomodoroTag savedTag = null;
+            if (tagName != null) {
+                savedTag = tagNamesToTags.get(tagName);
+            }
+
+            pomodoro.setTag(savedTag);
+        }
+
+        pomodoroRepository.saveAll(pomodorosToSave);
     }
 
     private Pomodoro buildPomodoro(int pomodoroSecondsDuration, List<PomodoroPauseDto> pauses) {
@@ -130,7 +181,6 @@ public class DefaultPomodoroService implements PomodoroService {
 
     private PomodoroDto savePomodoroAndAddSynchronizationJob(Pomodoro pomodoro) {
         Pomodoro savedPomodoro = pomodoroRepository.save(pomodoro);
-        pomodoroSynchronizationScheduler.addUpdateJob(savedPomodoro.getEndTime().toLocalDateTime());
         return pomodoroMapper.mapToDto(savedPomodoro);
     }
 

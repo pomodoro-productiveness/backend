@@ -26,5 +26,11 @@ public interface PomodoroService {
 
     PomodoroDto saveAutomatically();
 
-    void updatePomodoroWithTag(Long pomodoroId, PomodoroTag tag);
+    void updatePomodoroWithTag(Long pomodoroId, String tagName);
+
+    List<PomodoroDto> getAllSortedPomodoros();
+
+    void removeAllPomodoros();
+
+    void save(List<PomodoroDto> pomodoros, List<PomodoroTag> tags);
 }

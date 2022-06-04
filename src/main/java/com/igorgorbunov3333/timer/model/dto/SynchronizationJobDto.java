@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.model.dto;
 
-import com.igorgorbunov3333.timer.service.pomodoro.synchronization.enums.SynchronizationAction;
+import com.igorgorbunov3333.timer.service.synchronization.enums.SynchronizationAction;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
