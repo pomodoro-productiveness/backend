@@ -19,7 +19,7 @@ public class DailyPomodorosExtendedCommandProcessor implements CommandProcessor 
     @Override
     public void process() {
         List<PomodoroDto> pomodoros = pomodoroService.getPomodorosInDayExtended();
-        printerService.printPomodorosWithIds(pomodoros);
+        printerService.printPomodorosWithIdsAndTags(pomodoros);
     }
 
     @Override

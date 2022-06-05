@@ -4,6 +4,7 @@ import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandP
 import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroTagInfo;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagSessionProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.exception.TagOperationException;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -30,9 +31,17 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
             return;
         }
 
-        String savedTagName = tagService.save(tagNameAnswer);
+        String savedTagName = null;
+        try {
+            savedTagName = tagService.save(tagNameAnswer);
+        } catch (TagOperationException e) {
+            printerService.print(e.getMessage());
+        }
 
-        printerService.print(String.format("Tag with name %s successfully saved", savedTagName));
+        if (savedTagName != null) {
+            printerService.print(String.format("Tag with name %s successfully saved", savedTagName));
+        }
+
     }
 
     private String provideAndValidateTagName() {

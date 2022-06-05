@@ -39,7 +39,7 @@ public class PomodoroTag {
     @ManyToOne
     private PomodoroTag parent;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PomodoroTag> children = new ArrayList<>();
 
     @Setter
@@ -52,6 +52,14 @@ public class PomodoroTag {
             this.children.add(childTag);
         }
         childTag.setParent(this);
+    }
+
+    public void removeChild(PomodoroTag childTag) {
+        if (CollectionUtils.isEmpty(this.children)) {
+            return;
+        }
+        childTag.setParent(null);
+        this.children.remove(childTag);
     }
 
 }

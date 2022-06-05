@@ -25,6 +25,10 @@ public class DefaultTagService implements TagService {
 
     @Override
     public String save(String name) {
+        if (pomodoroRepository.existsByTagName(name)) {
+            throw new TagOperationException(String.format("Tag with name %s already marked as deleted", name));
+        }
+
         PomodoroTag tag = new PomodoroTag(null, name, null, Collections.emptyList(), false);
         PomodoroTag savedTag = tagRepository.save(tag);
 
@@ -69,7 +73,13 @@ public class DefaultTagService implements TagService {
             tag.setRemoved(true);
             tagRepository.save(tag);
         } else {
-            tagRepository.deleteByName(tagName);
+            if (tag.getParent() != null) {
+                PomodoroTag parentTag = tag.getParent();
+                parentTag.removeChild(tag);
+                tagRepository.save(parentTag);
+            } else {
+                tagRepository.delete(tag);
+            }
         }
     }
 

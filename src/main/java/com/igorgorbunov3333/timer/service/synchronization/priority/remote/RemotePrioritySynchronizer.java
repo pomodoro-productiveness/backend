@@ -11,6 +11,7 @@ import com.igorgorbunov3333.timer.service.synchronization.Synchronizer;
 import com.igorgorbunov3333.timer.service.synchronization.enums.SynchronizationPriorityType;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -34,7 +35,7 @@ public class RemotePrioritySynchronizer implements Synchronizer {
             synchronizationInfoService.save(Boolean.TRUE, SynchronizationResult.SUCCESSFULLY, null);
         } catch (Exception e) {
             String exceptionName = e.getClass().getName();
-            String causeMessage = e.getCause() != null ? e.getCause().getMessage() : "";
+            String causeMessage = e.getCause() != null ? e.getCause().getMessage() : StringUtils.EMPTY;
             String errorMessage = exceptionName + ": " + e.getMessage() + ". Caused by: " + causeMessage;;
             synchronizationInfoService.save(Boolean.FALSE, SynchronizationResult.FAILED, errorMessage);
             throw e;

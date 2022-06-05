@@ -28,7 +28,7 @@ public abstract class AbstractPomodoroCommandService {
 
     private void getAndPrintDailyPomodoros() {
         List<PomodoroDto> pomodoros = getPomodoroService().getPomodorosInDayExtended();
-        getPrinterService().printPomodorosWithIds(pomodoros);
+        getPrinterService().printPomodorosWithIdsAndTags(pomodoros);
     }
 
 }
