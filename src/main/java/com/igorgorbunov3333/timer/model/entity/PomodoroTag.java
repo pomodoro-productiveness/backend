@@ -18,7 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -39,8 +38,8 @@ public class PomodoroTag {
     @ManyToOne
     private PomodoroTag parent;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PomodoroTag> children = new ArrayList<>();
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<PomodoroTag> children;
 
     @Setter
     private boolean removed;

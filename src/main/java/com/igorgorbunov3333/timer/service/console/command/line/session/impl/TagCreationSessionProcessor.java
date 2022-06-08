@@ -9,6 +9,8 @@ import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
     private final CommandProvider commandProvider;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void process(List<PomodoroTagInfo> tagsWithNumbers) {
         printerService.print("Please provide tag name");
 

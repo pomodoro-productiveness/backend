@@ -8,6 +8,8 @@ import com.igorgorbunov3333.timer.service.exception.TagOperationException;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ public class DefaultTagService implements TagService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void addChildTagForParentTag(String parentTagName, String childTagName) {
         PomodoroTag parentTag = tagRepository.findByName(parentTagName).orElse(null);
         PomodoroTag childTag = tagRepository.findByName(childTagName).orElse(null);
@@ -57,8 +60,6 @@ public class DefaultTagService implements TagService {
         }
 
         parentTag.addChildTag(childTag);
-
-        tagRepository.save(parentTag);
     }
 
     @Override
