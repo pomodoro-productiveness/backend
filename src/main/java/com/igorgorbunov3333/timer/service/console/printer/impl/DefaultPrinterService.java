@@ -82,7 +82,7 @@ public class DefaultPrinterService implements PrinterService {
             System.out.println();
             System.out.println(entry.getKey().toString());
             List<PomodoroDto> dailyPomodoros = entry.getValue();
-            printPomodorosWithIdsAndTags(dailyPomodoros, false);
+            printPomodorosWithIdsAndTags(dailyPomodoros, true);
         }
     }
 
