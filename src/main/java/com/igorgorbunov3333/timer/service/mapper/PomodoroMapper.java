@@ -3,9 +3,9 @@ package com.igorgorbunov3333.timer.service.mapper;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroPauseDto;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.model.entity.Pomodoro;
-import com.igorgorbunov3333.timer.model.entity.PomodoroPause;
-import com.igorgorbunov3333.timer.model.entity.PomodoroTag;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroPause;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 

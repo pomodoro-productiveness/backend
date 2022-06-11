@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.synchronization.priority.remote;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDataDto;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.model.entity.PomodoroTag;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.model.entity.enums.SynchronizationResult;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.pomodoro.RemotePomodoroDataService;

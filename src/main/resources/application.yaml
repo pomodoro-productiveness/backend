@@ -12,9 +12,10 @@ logging.level:
   root: OFF
   org.springframework.boot: OFF
 pomodoro.minimum-lifetime: ${POMODORO_MIN_LIFETIME:}
-google-drive:
+google-services:
   document-id: ${DRIVE_DOCUMENT_ID:}
   credentials-path: ${DRIVE_CREDENTIALS_PATH:}
   file-name: ${DRIVE_FILE_NAME:}
+  calendar-id: ${GOOGLE_CALENDAR_ID:}
 audio-player:
   path: ${AUDIO_PLAYER_PATH:}

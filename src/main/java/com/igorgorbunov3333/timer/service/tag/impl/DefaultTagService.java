@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.service.tag.impl;
 
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.model.entity.PomodoroTag;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.repository.TagRepository;
 import com.igorgorbunov3333.timer.service.exception.TagOperationException;

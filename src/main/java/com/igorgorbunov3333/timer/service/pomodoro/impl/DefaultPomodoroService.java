@@ -2,9 +2,9 @@ package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroPauseDto;
-import com.igorgorbunov3333.timer.model.entity.Pomodoro;
-import com.igorgorbunov3333.timer.model.entity.PomodoroPause;
-import com.igorgorbunov3333.timer.model.entity.PomodoroTag;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroPause;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.repository.TagRepository;
 import com.igorgorbunov3333.timer.service.exception.NoDataException;

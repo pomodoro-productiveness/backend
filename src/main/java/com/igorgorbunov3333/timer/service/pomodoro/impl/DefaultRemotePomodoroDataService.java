@@ -5,9 +5,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
-import com.igorgorbunov3333.timer.config.properties.GoogleDriveProperties;
+import com.igorgorbunov3333.timer.config.properties.GoogleServicesProperties;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDataDto;
-import com.igorgorbunov3333.timer.service.googledrive.GoogleDriveCredentialsProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.RemotePomodoroDataService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -21,23 +20,19 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
+//TODO: use PrinterService
 @Service
 @AllArgsConstructor
 public class DefaultRemotePomodoroDataService implements RemotePomodoroDataService {  //TODO: rename
 
-    private final GoogleDriveProperties googleDriveProperties;
-    private final GoogleDriveCredentialsProvider credentialsProvider;
+    private final GoogleServicesProperties googleServicesProperties;
+    private final Drive service;
 
     @Override
     @SneakyThrows
     public PomodoroDataDto getRemoteData() {
-        String fileId = googleDriveProperties.getDocumentId();
+        String fileId = googleServicesProperties.getDocumentId();
         OutputStream outputStream = new ByteArrayOutputStream();
-        Drive service = credentialsProvider.getAuthorizedGoogleDriveService();
-        if (service == null) {
-            System.out.println("Cannot get google drive service");
-            return PomodoroDataDto.createEmpty();
-        }
         service.files()
                 .get(fileId)
                 .executeMediaAndDownloadTo(outputStream);
@@ -63,12 +58,7 @@ public class DefaultRemotePomodoroDataService implements RemotePomodoroDataServi
             writer.write(newFileContent);
         }
         File googleDocFile = new File();
-        final String documentId = googleDriveProperties.getDocumentId();
-        Drive service = credentialsProvider.getAuthorizedGoogleDriveService();
-        if (service == null) {
-            System.out.println("Cannot get google drive service");
-            return;
-        }
+        final String documentId = googleServicesProperties.getDocumentId();
         File oldFile = service.files().get(documentId).execute();
         FileContent mediaContent = new FileContent(oldFile.getMimeType(), file);
         googleDocFile.setName(oldFile.getName());

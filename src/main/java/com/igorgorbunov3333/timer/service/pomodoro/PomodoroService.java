@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.pomodoro;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroPauseDto;
-import com.igorgorbunov3333.timer.model.entity.PomodoroTag;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 
 import java.time.LocalDate;
 import java.util.List;

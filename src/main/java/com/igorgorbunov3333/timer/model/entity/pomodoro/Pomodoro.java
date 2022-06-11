@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.model.entity;
+package com.igorgorbunov3333.timer.model.entity.pomodoro;
 
 import com.igorgorbunov3333.timer.model.TemporalObject;
 import lombok.AccessLevel;

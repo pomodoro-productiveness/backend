@@ -10,8 +10,8 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Getter
 @Component
-@ConfigurationProperties(prefix = "google-drive")
-public class GoogleDriveProperties {
+@ConfigurationProperties(prefix = "google-services")
+public class GoogleServicesProperties {
 
     @NotBlank
     private String documentId;
@@ -19,5 +19,7 @@ public class GoogleDriveProperties {
     private String credentialsPath;
     @NotBlank
     private String fileName;
+    @NotBlank
+    private String calendarId;
 
 }

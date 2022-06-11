@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.repository;
 
-import com.igorgorbunov3333.timer.model.entity.PomodoroTag;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.igorgorbunov3333</groupId>
 	<artifactId>timer</artifactId>
-	<version>1.4.2</version>
+	<version>1.5.0</version>
 	<name>timer</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -50,6 +50,11 @@
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-drive</artifactId>
 			<version>v3-rev20211107-1.32.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-calendar</artifactId>
+			<version>v3-rev20211026-1.32.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.service.tag;
 
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.model.entity.PomodoroTag;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 
 import java.util.List;
 
