@@ -5,8 +5,8 @@ import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodoroSessionMapper;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
+import com.igorgorbunov3333.timer.service.pomodoro.impl.PomodoroFacade;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroCommandService
     @Getter
     private final PrinterService printerService;
     @Getter
-    private final PomodoroService pomodoroService;
+    private final PomodoroFacade pomodoroFacade;
     @Getter
     private final TagPomodoroSessionMapper tagPomodoroSessionMapper;
 

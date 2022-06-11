@@ -4,8 +4,8 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDataDto;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.model.entity.enums.SynchronizationResult;
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
 import com.igorgorbunov3333.timer.service.pomodoro.RemotePomodoroDataService;
+import com.igorgorbunov3333.timer.service.pomodoro.impl.PomodoroFacade;
 import com.igorgorbunov3333.timer.service.synchronization.Synchronizer;
 import com.igorgorbunov3333.timer.service.synchronization.enums.SynchronizationPriorityType;
 import com.igorgorbunov3333.timer.service.synchronization.info.SynchronizationInfoService;
@@ -24,7 +24,7 @@ import java.util.List;
 public class RemotePrioritySynchronizer implements Synchronizer {
 
     private final RemotePomodoroDataService remotePomodoroDataService;
-    private final PomodoroService pomodoroService;
+    private final PomodoroFacade pomodoroFacade;
     private final TagService tagService;
     private final SynchronizationInfoService synchronizationInfoService;
 
@@ -51,12 +51,12 @@ public class RemotePrioritySynchronizer implements Synchronizer {
     void saveRemoteDataLocally() {
         PomodoroDataDto remotePomodoroDataDto = remotePomodoroDataService.getRemoteData();
 
-        pomodoroService.removeAllPomodoros();
+        pomodoroFacade.removeAll();
         tagService.removeAllTags();
 
         List<PomodoroTagDto> tags = remotePomodoroDataDto.getPomodoroTags();
         List<PomodoroTag> savedTags = saveTags(tags);
-        pomodoroService.save(remotePomodoroDataDto.getPomodoros(), savedTags);
+        pomodoroFacade.save(remotePomodoroDataDto.getPomodoros(), savedTags);
     }
 
     private List<PomodoroTag> saveTags(List<PomodoroTagDto> tags) {

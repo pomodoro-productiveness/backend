@@ -1,13 +1,13 @@
-package com.igorgorbunov3333.timer.service.pomodoro.impl;
+package com.igorgorbunov3333.timer.service.pomodoro.provider;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroPeriodService;
+import com.igorgorbunov3333.timer.service.pomodoro.period.CurrentWeekDaysProvidable;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+import lombok.Getter;
+import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -20,51 +20,54 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-@Service
+@Component
 @AllArgsConstructor
-public class DefaultPomodoroPeriodService implements PomodoroPeriodService {
+public class WeeklyLocalPomodoroProvider extends LocalPomodoroProvider implements CurrentWeekDaysProvidable {
 
+    @Getter
     private final PomodoroRepository pomodoroRepository;
+    @Getter
     private final PomodoroMapper pomodoroMapper;
+    @Getter
     private final CurrentTimeService currentTimeService;
 
-    @Override
-    public Map<DayOfWeek, List<PomodoroDto>> getCurrentWeekPomodoros() {
+    public List<PomodoroDto> provideCurrentWeekPomodoros(String pomodoroTag) {
         LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();
         int currentDayOfWeek = currentDay.getDayOfWeek().getValue();
         LocalDate dayAtStartOfWeek = currentDay.minusDays(currentDayOfWeek - 1);
         ZoneId currentZoneId = ZoneId.systemDefault();
         ZonedDateTime start = dayAtStartOfWeek.atStartOfDay().atZone(currentZoneId);
         ZonedDateTime end = currentDay.atTime(LocalTime.MAX).atZone(currentZoneId);
-        List<Pomodoro> weeklyPomodoros = pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start, end);
+
+        return provide(start, end, pomodoroTag);
+    }
+
+    public Map<DayOfWeek, List<PomodoroDto>> provideCurrentWeekPomodorosByDays() {
+        List<PomodoroDto> weeklyPomodoros = provideCurrentWeekPomodoros(null);
         if (weeklyPomodoros.isEmpty()) {
             return Map.of();
         }
-        Map<DayOfWeek, List<PomodoroDto>> daysOfWeekToPomodoros = getDaysOfWeekToPomodoros(currentDayOfWeek, weeklyPomodoros);
+        Map<DayOfWeek, List<PomodoroDto>> daysOfWeekToPomodoros = getDaysOfWeekToPomodoros(weeklyPomodoros);
         return new TreeMap<>(daysOfWeekToPomodoros);
     }
 
-    private Map<DayOfWeek, List<PomodoroDto>> getDaysOfWeekToPomodoros(int currentDayOfWeek,
-                                                                       List<Pomodoro> weeklyPomodoros) {
-        Map<DayOfWeek, List<Pomodoro>> dayOfWeekToPomodoros = weeklyPomodoros.stream()
+    private Map<DayOfWeek, List<PomodoroDto>> getDaysOfWeekToPomodoros(List<PomodoroDto> weeklyPomodoros) {
+        List<DayOfWeek> daysOfWeek = provideDaysOfCurrentWeek();
+
+        Map<DayOfWeek, List<PomodoroDto>> dayOfWeekToPomodoros = weeklyPomodoros.stream()
                 .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().getDayOfWeek()));
-        return IntStream.range(DayOfWeek.MONDAY.getValue(), currentDayOfWeek + 1)
-                .boxed()
-                .map(DayOfWeek::of)
+
+        return daysOfWeek.stream()
                 .map(dayOfWeek -> new AbstractMap.SimpleEntry<>(
                         dayOfWeek,
                         getDailyPomodoros(dayOfWeekToPomodoros, dayOfWeek)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private List<PomodoroDto> getDailyPomodoros(Map<DayOfWeek, List<Pomodoro>> dayOfWeekToPomodoros,
+    private List<PomodoroDto> getDailyPomodoros(Map<DayOfWeek, List<PomodoroDto>> dayOfWeekToPomodoros,
                                                 DayOfWeek dayOfWeek) {
-        List<Pomodoro> dailyPomodoros = dayOfWeekToPomodoros.computeIfAbsent(dayOfWeek, k -> new ArrayList<>());
-        return dailyPomodoros.stream()
-                .map(pomodoroMapper::mapToDto)
-                .collect(Collectors.toList());
+        return dayOfWeekToPomodoros.computeIfAbsent(dayOfWeek, k -> new ArrayList<>());
     }
 
 }

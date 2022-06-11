@@ -1,13 +1,14 @@
-package com.igorgorbunov3333.timer.service.pomodoro.impl;
+package com.igorgorbunov3333.timer.service.pomodoro.saver;
 
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroAutoSaveService;
 import com.igorgorbunov3333.timer.service.pomodoro.PomodoroFreeSlotFinderService;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.DailyLocalPomodoroProvider;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,20 +19,22 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class DefaultPomodoroAutoSaveService implements PomodoroAutoSaveService {
+public class PomodoroAutoSaver implements SinglePomodoroSavable{
 
+    @Getter
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroFreeSlotFinderService pomodoroFreeSlotFinderService;
+    @Getter
     private final PomodoroMapper pomodoroMapper;
+    private final DailyLocalPomodoroProvider dailyLocalPomodoroProvider;
 
-    @Override
     @Transactional
     public PomodoroDto save() {
-        PeriodDto latestFreeSlot = pomodoroFreeSlotFinderService.findFreeSlotInCurrentDay();
+        List<PomodoroDto> dailyPomodoros = dailyLocalPomodoroProvider.provideDailyLocalPomodoros();
+        PeriodDto latestFreeSlot = pomodoroFreeSlotFinderService.findFreeSlotInCurrentDay(dailyPomodoros);
         Pomodoro pomodoroToSave = buildPomodoro(latestFreeSlot);
 
-        Pomodoro savedPomodoro = pomodoroRepository.save(pomodoroToSave);
-        return pomodoroMapper.mapToDto(savedPomodoro);
+        return save(pomodoroToSave);
     }
 
     private Pomodoro buildPomodoro(PeriodDto latestFreeSlot) {

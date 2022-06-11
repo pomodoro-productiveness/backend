@@ -11,7 +11,14 @@ spring:
 logging.level:
   root: OFF
   org.springframework.boot: OFF
-pomodoro.minimum-lifetime: ${POMODORO_MIN_LIFETIME:}
+pomodoro:
+  minimum-lifetime: ${POMODORO_MIN_LIFETIME:}
+  amount:
+    work: ${POMODORO_DAILY_AMOUNT_WORK:11}
+    education: ${POMODORO_DAILY_AMOUNT_EDUCATION:3}
+  tag:
+    work: work
+    education: education
 google-services:
   document-id: ${DRIVE_DOCUMENT_ID:}
   credentials-path: ${DRIVE_CREDENTIALS_PATH:}

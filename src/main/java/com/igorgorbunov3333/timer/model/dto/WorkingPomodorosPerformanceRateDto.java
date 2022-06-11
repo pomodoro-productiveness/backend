@@ -5,9 +5,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class AnalyzedWeekDto {
+public class WorkingPomodorosPerformanceRateDto {
 
-    private final int pomodorosToFinalize;
-    private final int pomodorosOverworked;
+    private final int balance;
 
 }

@@ -4,6 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.WeeklyLocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DefaultPomodoroPeriodServiceTest {
+class WeeklyLocalPomodoroProviderTest {
 
     private static final ZoneId CURRENT_ZONE_ID = ZoneId.of("Europe/Kiev");
 
@@ -38,7 +39,7 @@ class DefaultPomodoroPeriodServiceTest {
     private CurrentTimeService currentTimeService;
 
     @InjectMocks
-    private DefaultPomodoroPeriodService testee;
+    private WeeklyLocalPomodoroProvider testee;
 
     @Test
     void getCurrentWeekPomodoros_WhenNoWeeklyPomodoros_ThenReturnEmptyMap() {
@@ -50,7 +51,7 @@ class DefaultPomodoroPeriodServiceTest {
         ZonedDateTime end = currentDayTime.toLocalDate().atTime(LocalTime.MAX).atZone(CURRENT_ZONE_ID);
         when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start, end)).thenReturn(List.of());
 
-        Map<DayOfWeek, List<PomodoroDto>> actual = testee.getCurrentWeekPomodoros();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodorosByDays();
 
         assertThat(actual).isEmpty();
     }
@@ -63,17 +64,17 @@ class DefaultPomodoroPeriodServiceTest {
         LocalDateTime end = localDateTime.toLocalDate().atTime(LocalTime.MAX);
 
         Pomodoro firstPomodoro = mock(Pomodoro.class);
-        when(firstPomodoro.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
         Pomodoro secondPomodoro = mock(Pomodoro.class);
-        when(secondPomodoro.getStartTime()).thenReturn(start.plusHours(4).atZone(CURRENT_ZONE_ID));
         when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstPomodoro, secondPomodoro));
         PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
+        when(firstPomodoroDto.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
         PomodoroDto secondPomodoroDto = mock(PomodoroDto.class);
+        when(secondPomodoroDto.getStartTime()).thenReturn(start.plusHours(4).atZone(CURRENT_ZONE_ID));
         when(pomodoroMapper.mapToDto(firstPomodoro)).thenReturn(firstPomodoroDto);
         when(pomodoroMapper.mapToDto(secondPomodoro)).thenReturn(secondPomodoroDto);
 
-        Map<DayOfWeek, List<PomodoroDto>> actual = testee.getCurrentWeekPomodoros();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodorosByDays();
 
         assertThat(actual)
                 .containsExactlyEntriesOf(Map.of(DayOfWeek.MONDAY, List.of(firstPomodoroDto, secondPomodoroDto)));
@@ -87,22 +88,22 @@ class DefaultPomodoroPeriodServiceTest {
         LocalDateTime end = localDateTime.toLocalDate().atTime(LocalTime.MAX);
 
         Pomodoro firstDayPomodoro = mock(Pomodoro.class);
-        when(firstDayPomodoro.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
         Pomodoro secondDayPomodoro = mock(Pomodoro.class);
-        when(secondDayPomodoro.getStartTime()).thenReturn(start.plusDays(1).plusHours(4).atZone(CURRENT_ZONE_ID));
         Pomodoro thirdDayPomodoro = mock(Pomodoro.class);
-        when(thirdDayPomodoro.getStartTime()).thenReturn(start.plusDays(2).plusHours(4).atZone(CURRENT_ZONE_ID));
 
         when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstDayPomodoro, secondDayPomodoro, thirdDayPomodoro));
         PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
+        when(firstPomodoroDto.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
         PomodoroDto secondPomodoroDto = mock(PomodoroDto.class);
+        when(secondPomodoroDto.getStartTime()).thenReturn(start.plusDays(1).plusHours(4).atZone(CURRENT_ZONE_ID));
         PomodoroDto thirdPomodoroDto = mock(PomodoroDto.class);
+        when(thirdPomodoroDto.getStartTime()).thenReturn(start.plusDays(2).plusHours(4).atZone(CURRENT_ZONE_ID));
         when(pomodoroMapper.mapToDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
         when(pomodoroMapper.mapToDto(secondDayPomodoro)).thenReturn(secondPomodoroDto);
         when(pomodoroMapper.mapToDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
 
-        Map<DayOfWeek, List<PomodoroDto>> actual = testee.getCurrentWeekPomodoros();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodorosByDays();
 
         Map<DayOfWeek, List<PomodoroDto>> expected = Map.of(
                 DayOfWeek.MONDAY, List.of(firstPomodoroDto),
@@ -121,18 +122,18 @@ class DefaultPomodoroPeriodServiceTest {
         LocalDateTime end = localDateTime.toLocalDate().atTime(LocalTime.MAX);
 
         Pomodoro firstDayPomodoro = mock(Pomodoro.class);
-        when(firstDayPomodoro.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
         Pomodoro thirdDayPomodoro = mock(Pomodoro.class);
-        when(thirdDayPomodoro.getStartTime()).thenReturn(start.plusDays(2).plusHours(4).atZone(CURRENT_ZONE_ID));
 
         when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(firstDayPomodoro, thirdDayPomodoro));
         PomodoroDto firstPomodoroDto = mock(PomodoroDto.class);
+        when(firstPomodoroDto.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
         PomodoroDto thirdPomodoroDto = mock(PomodoroDto.class);
+        when(thirdPomodoroDto.getStartTime()).thenReturn(start.plusDays(2).plusHours(4).atZone(CURRENT_ZONE_ID));
         when(pomodoroMapper.mapToDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
         when(pomodoroMapper.mapToDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
 
-        Map<DayOfWeek, List<PomodoroDto>> actual = testee.getCurrentWeekPomodoros();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodorosByDays();
 
         Map<DayOfWeek, List<PomodoroDto>> expected = Map.of(
                 DayOfWeek.MONDAY, List.of(firstPomodoroDto),
@@ -150,19 +151,12 @@ class DefaultPomodoroPeriodServiceTest {
         LocalDateTime end = localDateTime.toLocalDate().atTime(LocalTime.MAX);
 
         Pomodoro firstDayPomodoro = mock(Pomodoro.class);
-        when(firstDayPomodoro.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
         Pomodoro secondDayPomodoro = mock(Pomodoro.class);
-        when(secondDayPomodoro.getStartTime()).thenReturn(start.plusDays(1).plusHours(4).atZone(CURRENT_ZONE_ID));
         Pomodoro thirdDayPomodoro = mock(Pomodoro.class);
-        when(thirdDayPomodoro.getStartTime()).thenReturn(start.plusDays(2).plusHours(4).atZone(CURRENT_ZONE_ID));
         Pomodoro fourthDayPomodoro = mock(Pomodoro.class);
-        when(fourthDayPomodoro.getStartTime()).thenReturn(start.plusDays(3).plusHours(4).atZone(CURRENT_ZONE_ID));
         Pomodoro fifthDayPomodoro = mock(Pomodoro.class);
-        when(fifthDayPomodoro.getStartTime()).thenReturn(start.plusDays(4).plusHours(4).atZone(CURRENT_ZONE_ID));
         Pomodoro sixthDayPomodoro = mock(Pomodoro.class);
-        when(sixthDayPomodoro.getStartTime()).thenReturn(start.plusDays(5).plusHours(4).atZone(CURRENT_ZONE_ID));
         Pomodoro seventhDayPomodoro = mock(Pomodoro.class);
-        when(seventhDayPomodoro.getStartTime()).thenReturn(start.plusDays(6).plusHours(4).atZone(CURRENT_ZONE_ID));
 
         when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start.atZone(CURRENT_ZONE_ID), end.atZone(CURRENT_ZONE_ID)))
                 .thenReturn(List.of(
@@ -181,6 +175,13 @@ class DefaultPomodoroPeriodServiceTest {
         PomodoroDto fifthPomodoroDto = mock(PomodoroDto.class);
         PomodoroDto sixthPomodoroDto = mock(PomodoroDto.class);
         PomodoroDto seventhPomodoroDto = mock(PomodoroDto.class);
+        when(firstPomodoroDto.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
+        when(secondPomodoroDto.getStartTime()).thenReturn(start.plusDays(1).plusHours(4).atZone(CURRENT_ZONE_ID));
+        when(thirdPomodoroDto.getStartTime()).thenReturn(start.plusDays(2).plusHours(4).atZone(CURRENT_ZONE_ID));
+        when(fourthPomodoroDto.getStartTime()).thenReturn(start.plusDays(3).plusHours(4).atZone(CURRENT_ZONE_ID));
+        when(fifthPomodoroDto.getStartTime()).thenReturn(start.plusDays(4).plusHours(4).atZone(CURRENT_ZONE_ID));
+        when(sixthPomodoroDto.getStartTime()).thenReturn(start.plusDays(5).plusHours(4).atZone(CURRENT_ZONE_ID));
+        when(seventhPomodoroDto.getStartTime()).thenReturn(start.plusDays(6).plusHours(4).atZone(CURRENT_ZONE_ID));
         when(pomodoroMapper.mapToDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
         when(pomodoroMapper.mapToDto(secondDayPomodoro)).thenReturn(secondPomodoroDto);
         when(pomodoroMapper.mapToDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
@@ -189,7 +190,7 @@ class DefaultPomodoroPeriodServiceTest {
         when(pomodoroMapper.mapToDto(sixthDayPomodoro)).thenReturn(sixthPomodoroDto);
         when(pomodoroMapper.mapToDto(seventhDayPomodoro)).thenReturn(seventhPomodoroDto);
 
-        Map<DayOfWeek, List<PomodoroDto>> actual = testee.getCurrentWeekPomodoros();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodorosByDays();
 
         Map<DayOfWeek, List<PomodoroDto>> expected = Map.of(
                 DayOfWeek.MONDAY, List.of(firstPomodoroDto),

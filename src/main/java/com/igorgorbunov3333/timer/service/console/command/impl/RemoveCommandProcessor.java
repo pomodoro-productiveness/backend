@@ -5,17 +5,18 @@ import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.CurrentCommandStorage;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroService;
+import com.igorgorbunov3333.timer.service.pomodoro.impl.PomodoroFacade;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+//TODO: refactor
 @Service
 @AllArgsConstructor
 public class RemoveCommandProcessor implements CommandProcessor {
 
-    private final PomodoroService pomodoroService;
+    private final PomodoroFacade pomodoroFacade;
     private final PrinterService printerService;
 
     @Override
@@ -23,14 +24,14 @@ public class RemoveCommandProcessor implements CommandProcessor {
         String input = CurrentCommandStorage.currentCommand;
         char[] inputChars = input.toCharArray();
         if (inputChars.length == "remove".length()) {
-            List<PomodoroDto> dailyPomodoros = pomodoroService.getPomodorosInDayExtended();
+            List<PomodoroDto> dailyPomodoros = pomodoroFacade.getPomodorosInDayExtended();
             if (dailyPomodoros.isEmpty()) {
                 printerService.print("Unable to remove latest pomodoro as no daily pomodoros");
                 return;
             }
             Long removedPomodoroId;
             try {
-                removedPomodoroId = pomodoroService.removeLatest();
+                removedPomodoroId = pomodoroFacade.removeLatest();
             } catch (PomodoroException e) {
                 printerService.print(e.getMessage());
                 return;
@@ -48,7 +49,7 @@ public class RemoveCommandProcessor implements CommandProcessor {
         String pomodoroIdArgument = getArgumentString(input, inputChars, index);
         Long pomodoroId = Long.valueOf(pomodoroIdArgument);
         try {
-            pomodoroService.removePomodoro(pomodoroId);
+            pomodoroFacade.remove(pomodoroId);
         } catch (PomodoroException e) {
             printerService.print(e.getMessage());
         }

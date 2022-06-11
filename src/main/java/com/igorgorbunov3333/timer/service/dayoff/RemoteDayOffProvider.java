@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class DayOffProvider {
+public class RemoteDayOffProvider {
 
     private static final String DAY_OFF_SUMMARY = "DAY_OFF";
 

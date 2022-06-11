@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class DayOffSynchronizer {
 
-    private final DayOffProvider dayOffProvider;
+    private final RemoteDayOffProvider remoteDayOffProvider;
     private final DayOffRepository dayOffRepository;
 
     @Transactional
@@ -20,7 +20,7 @@ public class DayOffSynchronizer {
         dayOffRepository.deleteAll();
         dayOffRepository.flush();
 
-        List<DayOff> dayOffList = dayOffProvider.provide();
+        List<DayOff> dayOffList = remoteDayOffProvider.provide();
         dayOffRepository.saveAll(dayOffList);
     }
 
