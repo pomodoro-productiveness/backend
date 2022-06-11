@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Component
 @AllArgsConstructor
-public class DefaultPomodoroProvider extends LocalPomodoroProvider {
+public class DefaultLocalPomodoroProvider extends LocalPomodoroProvider {
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroMapper pomodoroMapper;

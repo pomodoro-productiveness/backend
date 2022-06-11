@@ -3,10 +3,8 @@ package com.igorgorbunov3333.timer.service.pomodoro.impl;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroPauseDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
-import com.igorgorbunov3333.timer.repository.TagRepository;
-import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.DailyLocalPomodoroProvider;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.DefaultPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.DefaultLocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.MonthlyLocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.remover.LocalPomodoroRemover;
 import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroAutoSaver;
@@ -27,12 +25,10 @@ public class PomodoroFacade {
 
     //TODO: create one bean instead of using different kind of local pomodoro providers
     private final LocalPomodoroRemover localPomodoroRemover;
-    private final PomodoroMapper pomodoroMapper;
-    private final DefaultPomodoroProvider defaultPomodoroProvider;
+    private final DefaultLocalPomodoroProvider defaultLocalPomodoroProvider;
     private final DailyLocalPomodoroProvider dailyLocalPomodoroProvider;
     private final PomodoroAutoSaver pomodoroAutoSaver;
     private final PomodoroSaver pomodoroSaver;
-    private final TagRepository tagRepository;
     private final MonthlyLocalPomodoroProvider monthlyLocalPomodoroProvider;
     private final LocalPomodoroUpdater localPomodoroUpdater;
 
@@ -73,7 +69,7 @@ public class PomodoroFacade {
     }
 
     public List<PomodoroDto> getAllSortedPomodoros() {
-        return defaultPomodoroProvider.provide(null, null, null);
+        return defaultLocalPomodoroProvider.provide(null, null, null);
     }
 
     public void removeAll() {
