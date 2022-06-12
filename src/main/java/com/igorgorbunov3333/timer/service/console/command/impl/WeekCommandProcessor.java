@@ -2,10 +2,13 @@ package com.igorgorbunov3333.timer.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
+import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.WorkTimeCalculationPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.WeeklyWorkingTimeStandardCalculator;
+import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.WorkTimeStandardCalculatorCoordinator;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.WeeklyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.enums.CalculationPeriod;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -14,11 +17,13 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
-public class WeekCommandProcessor implements CommandProcessor {
+public class WeekCommandProcessor extends WorkTimeCalculationPrinter implements CommandProcessor {
 
     private final WeeklyLocalPomodoroProvider weeklyLocalPomodoroProvider;
+    @Getter
     private final PrinterService printerService;
-    private final WeeklyWorkingTimeStandardCalculator weeklyWorkingTimeStandardCalculator;
+    @Getter
+    private final WorkTimeStandardCalculatorCoordinator workTimeStandardCalculatorCoordinator;
 
     @Override
     public void process() {
@@ -28,9 +33,7 @@ public class WeekCommandProcessor implements CommandProcessor {
         }
         printerService.printDayOfWeekToPomodoros(weeklyPomodoros);
 
-        printerService.printParagraph();
-        int balance = weeklyWorkingTimeStandardCalculator.calculate().getBalance();
-        printerService.print(String.format("Work performance: %s", balance));
+        printWorkTimeCalculation(CalculationPeriod.WEEK);
     }
 
     @Override

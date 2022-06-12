@@ -2,6 +2,7 @@ package com.igorgorbunov3333.timer.service.pomodoro.work.calculator;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.WorkingPomodorosPerformanceRateDto;
+import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.enums.CalculationPeriod;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import org.springframework.util.CollectionUtils;
 
@@ -10,12 +11,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class WorkingTimeStandardCalculator {
+public interface WorkTimeStandardCalculator {
 
-    public abstract CurrentTimeService getCurrentTimeService();
-    public abstract PomodoroProperties getPomodoroProperties();
+    CurrentTimeService getCurrentTimeService();
+    PomodoroProperties getPomodoroProperties();
+    CalculationPeriod period();
+    WorkingPomodorosPerformanceRateDto calculate();
 
-    public WorkingPomodorosPerformanceRateDto calculate(LocalDate startDate,
+    default WorkingPomodorosPerformanceRateDto calculate(LocalDate startDate,
                                                         List<LocalDate> dayOffs,
                                                         int workedPomodoro) {
         LocalDate today = getCurrentTimeService().getCurrentDateTime().toLocalDate();

@@ -1,10 +1,12 @@
-package com.igorgorbunov3333.timer.service.pomodoro.work.calculator;
+package com.igorgorbunov3333.timer.service.pomodoro.work.calculator.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.WorkingPomodorosPerformanceRateDto;
 import com.igorgorbunov3333.timer.model.entity.dayoff.DayOff;
 import com.igorgorbunov3333.timer.repository.DayOffRepository;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.MonthlyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.WorkTimeStandardCalculator;
+import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.enums.CalculationPeriod;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class MonthlyWorkingTimeStandardCalculator extends WorkingTimeStandardCalculator {
+public class MonthlyWorkTimeStandardCalculator implements WorkTimeStandardCalculator {
 
     @Getter
     private final CurrentTimeService currentTimeService;
@@ -26,7 +28,7 @@ public class MonthlyWorkingTimeStandardCalculator extends WorkingTimeStandardCal
     private final PomodoroProperties pomodoroProperties;
     private final MonthlyLocalPomodoroProvider monthlyLocalPomodoroProvider;
 
-
+    @Override
     public WorkingPomodorosPerformanceRateDto calculate() {
         LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();
 
@@ -41,6 +43,11 @@ public class MonthlyWorkingTimeStandardCalculator extends WorkingTimeStandardCal
                 .size();
 
         return calculate(startMonthDay, dayOffs, workedPomodoroAmount);
+    }
+
+    @Override
+    public CalculationPeriod period() {
+        return CalculationPeriod.MONTH;
     }
 
 }

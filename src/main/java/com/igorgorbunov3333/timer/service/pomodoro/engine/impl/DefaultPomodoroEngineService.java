@@ -8,7 +8,7 @@ import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroPausesStorage;
-import com.igorgorbunov3333.timer.service.pomodoro.impl.PomodoroFacade;
+import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroSaver;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -26,7 +26,7 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
     private static final String MESSAGE_POMODORO_PAUSED = "Pomodoro is paused now: ";
     private static final String MESSAGE_POMODORO_NOT_STARTED = "Pomodoro did not started!";
 
-    private final PomodoroFacade pomodoroFacade;
+    private final PomodoroSaver pomodoroSaver;
     private final PomodoroEngine pomodoroEngine;
     private final PomodoroProperties pomodoroProperties;
     private final PrinterService printerService;
@@ -65,7 +65,7 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
                 .map(pair -> new PomodoroPauseDto(pair.getFirst(), pair.getSecond()))
                 .collect(Collectors.toList());
         pomodoroPausesStorage.evict();
-        return pomodoroFacade.save(duration, pomodoroPauses);
+        return pomodoroSaver.save(duration, pomodoroPauses);
     }
 
     @Override

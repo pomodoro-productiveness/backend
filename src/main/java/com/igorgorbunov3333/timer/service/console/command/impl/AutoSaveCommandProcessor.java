@@ -5,25 +5,29 @@ import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodoroSessionMapper;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
-import com.igorgorbunov3333.timer.service.pomodoro.impl.PomodoroFacade;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.DailyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroAutoSaver;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
-@Getter
 @Service
 @AllArgsConstructor
 public class AutoSaveCommandProcessor extends AbstractPomodoroCommandService implements CommandProcessor {
 
-    private final PomodoroFacade pomodoroFacade;
+    private final PomodoroAutoSaver pomodoroAutoSaver;
+    @Getter
+    private final DailyLocalPomodoroProvider dailyLocalPomodoroProvider;
+    @Getter
     private final PrinterService printerService;
+    @Getter
     private final TagPomodoroSessionMapper tagPomodoroSessionMapper;
 
     @Override
     public void process() {
         PomodoroDto savedPomodoro;
         try {
-            savedPomodoro = pomodoroFacade.saveAutomatically();
+            savedPomodoro = pomodoroAutoSaver.save();
         } catch (PomodoroException e) {
             String errorMessage = e.getMessage();
             printerService.print(errorMessage);

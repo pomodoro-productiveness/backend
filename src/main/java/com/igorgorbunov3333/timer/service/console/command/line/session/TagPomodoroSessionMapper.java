@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.console.command.line.session;
 
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.pomodoro.impl.PomodoroFacade;
+import com.igorgorbunov3333.timer.service.pomodoro.updater.LocalPomodoroUpdater;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TagPomodoroSessionMapper implements TagsProvidable, TagsPrintable, TagAnswerProvider {
 
-    private final PomodoroFacade pomodoroFacade;
+    private final LocalPomodoroUpdater localPomodoroUpdater;
     @Getter
     private final TagService tagService;
     @Getter
@@ -33,7 +33,7 @@ public class TagPomodoroSessionMapper implements TagsProvidable, TagsPrintable, 
             return;
         }
 
-        pomodoroFacade.updatePomodoroWithTag(pomodoroId, tagToMap.getTagName());
+        localPomodoroUpdater.updatePomodoroWithTag(pomodoroId, tagToMap.getTagName());
     }
 
 }

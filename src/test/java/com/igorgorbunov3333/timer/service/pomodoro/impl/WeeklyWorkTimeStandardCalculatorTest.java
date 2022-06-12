@@ -6,7 +6,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.dayoff.DayOff;
 import com.igorgorbunov3333.timer.repository.DayOffRepository;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.WeeklyLocalPomodoroProvider;
-import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.WeeklyWorkingTimeStandardCalculator;
+import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.impl.WeeklyWorkTimeStandardCalculator;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,13 +24,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class WeeklyWorkingTimeStandardCalculatorTest {
+class WeeklyWorkTimeStandardCalculatorTest {
 
     private static final LocalDate WEEK_START_DAY = LocalDate.of(2022, 6, 6);
     private static final String POMODORO_WORK_TAG = "work";
 
     @InjectMocks
-    private WeeklyWorkingTimeStandardCalculator testee;
+    private WeeklyWorkTimeStandardCalculator testee;
 
     @Mock
     private WeeklyLocalPomodoroProvider weeklyLocalPomodoroProvider;

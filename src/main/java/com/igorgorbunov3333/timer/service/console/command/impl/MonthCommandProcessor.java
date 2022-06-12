@@ -2,9 +2,13 @@ package com.igorgorbunov3333.timer.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
+import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.WorkTimeCalculationPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.pomodoro.impl.PomodoroFacade;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.MonthlyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.WorkTimeStandardCalculatorCoordinator;
+import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.enums.CalculationPeriod;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -15,14 +19,17 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class MonthlyPomodorosCommandProcessor implements CommandProcessor {
+public class MonthCommandProcessor extends WorkTimeCalculationPrinter implements CommandProcessor {
 
-    private final PomodoroFacade pomodoroFacade;
+    private final MonthlyLocalPomodoroProvider monthlyLocalPomodoroProvider;
+    @Getter
     private final PrinterService printerService;
+    @Getter
+    private final WorkTimeStandardCalculatorCoordinator workTimeStandardCalculatorCoordinator;
 
     @Override
     public void process() {
-        List<PomodoroDto> monthlyPomodoros = pomodoroFacade.getMonthlyPomodoros();
+        List<PomodoroDto> monthlyPomodoros = monthlyLocalPomodoroProvider.provide(null);
         Map<LocalDate, List<PomodoroDto>> datesToPomadoros = monthlyPomodoros.stream()
                 .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().toLocalDate()));
         Map<LocalDate, List<PomodoroDto>> sortedPomodoros = new TreeMap<>(datesToPomadoros);
@@ -30,6 +37,8 @@ public class MonthlyPomodorosCommandProcessor implements CommandProcessor {
             printerService.print("No monthly pomodoros");
         }
         printerService.printLocalDatePomodoros(sortedPomodoros);
+
+        printWorkTimeCalculation(CalculationPeriod.MONTH);
     }
 
     @Override

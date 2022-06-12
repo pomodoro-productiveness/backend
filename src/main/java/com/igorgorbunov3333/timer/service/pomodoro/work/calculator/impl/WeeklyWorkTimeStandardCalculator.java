@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.service.pomodoro.work.calculator;
+package com.igorgorbunov3333.timer.service.pomodoro.work.calculator.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.WorkingPomodorosPerformanceRateDto;
@@ -7,6 +7,8 @@ import com.igorgorbunov3333.timer.model.entity.dayoff.DayOff;
 import com.igorgorbunov3333.timer.repository.DayOffRepository;
 import com.igorgorbunov3333.timer.service.pomodoro.period.CurrentWeekDaysProvidable;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.WeeklyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.WorkTimeStandardCalculator;
+import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.enums.CalculationPeriod;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class WeeklyWorkingTimeStandardCalculator extends WorkingTimeStandardCalculator implements CurrentWeekDaysProvidable  {
+public class WeeklyWorkTimeStandardCalculator implements CurrentWeekDaysProvidable, WorkTimeStandardCalculator {
 
     private final WeeklyLocalPomodoroProvider weeklyLocalPomodoroProvider;
 
@@ -30,6 +32,7 @@ public class WeeklyWorkingTimeStandardCalculator extends WorkingTimeStandardCalc
     private final CurrentTimeService currentTimeService;
     private final DayOffRepository dayOffRepository;
 
+    @Override
     public WorkingPomodorosPerformanceRateDto calculate() {
         LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();
         LocalDate startOfWeek = currentDay.with(DayOfWeek.MONDAY);
@@ -51,6 +54,11 @@ public class WeeklyWorkingTimeStandardCalculator extends WorkingTimeStandardCalc
         }
 
         return weeklyPomodoros.size();
+    }
+
+    @Override
+    public CalculationPeriod period() {
+        return CalculationPeriod.WEEK;
     }
 
 }

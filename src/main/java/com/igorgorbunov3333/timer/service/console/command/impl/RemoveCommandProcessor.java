@@ -5,7 +5,8 @@ import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.CurrentCommandStorage;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
-import com.igorgorbunov3333.timer.service.pomodoro.impl.PomodoroFacade;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.DailyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.remover.LocalPomodoroRemover;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,22 +17,23 @@ import java.util.List;
 @AllArgsConstructor
 public class RemoveCommandProcessor implements CommandProcessor {
 
-    private final PomodoroFacade pomodoroFacade;
+    private final DailyLocalPomodoroProvider dailyLocalPomodoroProvider;
     private final PrinterService printerService;
+    private final LocalPomodoroRemover localPomodoroRemover;
 
     @Override
     public void process() {
         String input = CurrentCommandStorage.currentCommand;
         char[] inputChars = input.toCharArray();
         if (inputChars.length == "remove".length()) {
-            List<PomodoroDto> dailyPomodoros = pomodoroFacade.getPomodorosInDayExtended();
+            List<PomodoroDto> dailyPomodoros = dailyLocalPomodoroProvider.provideDailyLocalPomodoros();
             if (dailyPomodoros.isEmpty()) {
                 printerService.print("Unable to remove latest pomodoro as no daily pomodoros");
                 return;
             }
             Long removedPomodoroId;
             try {
-                removedPomodoroId = pomodoroFacade.removeLatest();
+                removedPomodoroId = localPomodoroRemover.removeLatest();
             } catch (PomodoroException e) {
                 printerService.print(e.getMessage());
                 return;
@@ -49,7 +51,7 @@ public class RemoveCommandProcessor implements CommandProcessor {
         String pomodoroIdArgument = getArgumentString(input, inputChars, index);
         Long pomodoroId = Long.valueOf(pomodoroIdArgument);
         try {
-            pomodoroFacade.remove(pomodoroId);
+            localPomodoroRemover.remove(pomodoroId);
         } catch (PomodoroException e) {
             printerService.print(e.getMessage());
         }

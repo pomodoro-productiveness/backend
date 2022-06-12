@@ -3,7 +3,8 @@ package com.igorgorbunov3333.timer.service.event.listener;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.event.PomodoroStoppedSpringEvent;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.pomodoro.impl.PomodoroFacade;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.DailyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroSaver;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -14,14 +15,15 @@ import java.util.List;
 @AllArgsConstructor
 public class PomodoroStoppedEventListener implements ApplicationListener<PomodoroStoppedSpringEvent> {
 
-    private final PomodoroFacade pomodoroFacade;
+    private final DailyLocalPomodoroProvider dailyLocalPomodoroProvider;
+    private final PomodoroSaver pomodoroSaver;
     private final PrinterService printerService;
 
     @Override
     public void onApplicationEvent(PomodoroStoppedSpringEvent event) {
         int pomodoroDuration = event.getPomodoroDuration();
-        PomodoroDto savedPomodoro = pomodoroFacade.save(pomodoroDuration);
-        List<PomodoroDto> dailyPomodoros = pomodoroFacade.getPomodorosInDayExtended();
+        PomodoroDto savedPomodoro = pomodoroSaver.save(pomodoroDuration);
+        List<PomodoroDto> dailyPomodoros = dailyLocalPomodoroProvider.provideDailyLocalPomodoros();
         printerService.printSavedAndDailyPomodorosAfterStoppingPomodoro(savedPomodoro, dailyPomodoros);
     }
 
