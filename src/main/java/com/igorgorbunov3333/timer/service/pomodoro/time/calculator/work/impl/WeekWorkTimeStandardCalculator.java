@@ -1,30 +1,29 @@
-package com.igorgorbunov3333.timer.service.pomodoro.work.calculator.impl;
+package com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
-import com.igorgorbunov3333.timer.model.dto.WorkingPomodorosPerformanceRateDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.dayoff.DayOff;
 import com.igorgorbunov3333.timer.repository.DayOffRepository;
 import com.igorgorbunov3333.timer.service.pomodoro.period.CurrentWeekDaysProvidable;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.WeeklyLocalPomodoroProvider;
-import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.WorkTimeStandardCalculator;
-import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.enums.CalculationPeriod;
+import com.igorgorbunov3333.timer.service.pomodoro.period.WeekStartDayProvidable;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.WeekLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTimeStandardCalculator;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.CalculationPeriod;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class WeeklyWorkTimeStandardCalculator implements CurrentWeekDaysProvidable, WorkTimeStandardCalculator {
+public class WeekWorkTimeStandardCalculator implements CurrentWeekDaysProvidable, WeekStartDayProvidable, WorkTimeStandardCalculator {
 
-    private final WeeklyLocalPomodoroProvider weeklyLocalPomodoroProvider;
+    private final WeekLocalPomodoroProvider weekLocalPomodoroProvider;
 
     @Getter
     private final PomodoroProperties pomodoroProperties;
@@ -33,9 +32,8 @@ public class WeeklyWorkTimeStandardCalculator implements CurrentWeekDaysProvidab
     private final DayOffRepository dayOffRepository;
 
     @Override
-    public WorkingPomodorosPerformanceRateDto calculate() {
-        LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();
-        LocalDate startOfWeek = currentDay.with(DayOfWeek.MONDAY);
+    public int calculate() {
+        LocalDate startOfWeek = provideStartDayOfWeek();
 
         List<LocalDate> currentWeekDayOffList = dayOffRepository.findByDayGreaterThanEqualOrderByDay(startOfWeek).stream()
                 .map(DayOff::getDay)
@@ -47,7 +45,7 @@ public class WeeklyWorkTimeStandardCalculator implements CurrentWeekDaysProvidab
     }
 
     private int getWeeklyWorkedPomodorosAmount() {
-        List<PomodoroDto> weeklyPomodoros = weeklyLocalPomodoroProvider.provideCurrentWeekPomodoros(pomodoroProperties.getTag().getWork());
+        List<PomodoroDto> weeklyPomodoros = weekLocalPomodoroProvider.provideCurrentWeekPomodoros(pomodoroProperties.getTag().getWork());
 
         if (CollectionUtils.isEmpty(weeklyPomodoros)) {
             return 0;

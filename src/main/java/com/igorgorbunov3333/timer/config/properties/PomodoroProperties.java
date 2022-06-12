@@ -24,14 +24,14 @@ public class PomodoroProperties {
     private Integer pomodorosPerDay;
 
     @NotNull
-    private Amount amount;
+    private Standard standard;
 
     @NotNull
     private Tag tag;
 
     @Setter
     @Getter
-    public static class Amount {
+    public static class Standard {
 
         @NotNull
         @Positive

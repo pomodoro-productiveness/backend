@@ -1,12 +1,11 @@
 package com.igorgorbunov3333.timer.service.pomodoro.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
-import com.igorgorbunov3333.timer.model.dto.WorkingPomodorosPerformanceRateDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.dayoff.DayOff;
 import com.igorgorbunov3333.timer.repository.DayOffRepository;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.WeeklyLocalPomodoroProvider;
-import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.impl.WeeklyWorkTimeStandardCalculator;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.WeekLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.impl.WeekWorkTimeStandardCalculator;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,16 +23,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class WeeklyWorkTimeStandardCalculatorTest {
+class WeekWorkTimeStandardCalculatorTest {
 
     private static final LocalDate WEEK_START_DAY = LocalDate.of(2022, 6, 6);
     private static final String POMODORO_WORK_TAG = "work";
 
     @InjectMocks
-    private WeeklyWorkTimeStandardCalculator testee;
+    private WeekWorkTimeStandardCalculator testee;
 
     @Mock
-    private WeeklyLocalPomodoroProvider weeklyLocalPomodoroProvider;
+    private WeekLocalPomodoroProvider weekLocalPomodoroProvider;
     @Mock
     private PomodoroProperties pomodoroProperties;
     @Mock
@@ -47,9 +46,9 @@ class WeeklyWorkTimeStandardCalculatorTest {
         when(dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDateTime.toLocalDate())).thenReturn(List.of());
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(-55);
+        assertThat(actual).isEqualTo(-55);
     }
 
     @Test
@@ -58,9 +57,9 @@ class WeeklyWorkTimeStandardCalculatorTest {
         when(dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDateTime.toLocalDate())).thenReturn(List.of());
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(-11);
+        assertThat(actual).isEqualTo(-11);
     }
 
     @Test
@@ -69,45 +68,45 @@ class WeeklyWorkTimeStandardCalculatorTest {
         when(dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDateTime.toLocalDate())).thenReturn(List.of());
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(-33);
+        assertThat(actual).isEqualTo(-33);
     }
 
     @Test
     void calculate_WhenEndOfWeekAndAllDaysAreDayOffsAndNoWorkedPomodoro_ThenCalculate() {
         LocalDateTime startDateTime = mockCurrentTimeAtEndOfWeek();
         mockLocalDayOffs(5, startDateTime);
-        when(weeklyLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(List.of());
+        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(List.of());
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(0);
+        assertThat(actual).isEqualTo(0);
     }
 
     @Test
     void calculate_WhenStartOfWeekAndAllDaysAreDayOffsAndNoWorkedPomodoro_ThenCalculate() {
         LocalDateTime startDateTime = mockCurrentTimeAtStartOfWeek();
         mockLocalDayOffs(5, startDateTime);
-        when(weeklyLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(List.of());
+        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(List.of());
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(0);
+        assertThat(actual).isEqualTo(0);
     }
 
     @Test
     void calculate_WhenMiddleOfWeekAndAllDaysAreDayOffsAndNoWorkedPomodoro_ThenCalculate() {
         LocalDateTime startTime = mockCurrentTimeInMiddleOfWeek();
         mockLocalDayOffs(5, startTime);
-        when(weeklyLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(List.of());
+        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(List.of());
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(0);
+        assertThat(actual).isEqualTo(0);
     }
 
     @Test
@@ -115,12 +114,12 @@ class WeeklyWorkTimeStandardCalculatorTest {
         LocalDateTime startTime = mockCurrentTimeAtEndOfWeek();
         mockLocalDayOffs(1, startTime);
         List<PomodoroDto> pomodoros = mockPomodoros(61);
-        when(weeklyLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(17);
+        assertThat(actual).isEqualTo(17);
     }
 
     @Test
@@ -128,12 +127,12 @@ class WeeklyWorkTimeStandardCalculatorTest {
         LocalDateTime startDateTime = mockCurrentTimeAtStartOfWeek();
         when(dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDateTime.toLocalDate())).thenReturn(List.of());
         List<PomodoroDto> pomodoros = mockPomodoros(13);
-        when(weeklyLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(2);
+        assertThat(actual).isEqualTo(2);
     }
 
     @Test
@@ -141,12 +140,12 @@ class WeeklyWorkTimeStandardCalculatorTest {
         LocalDateTime startDateTime = mockCurrentTimeInMiddleOfWeek();
         mockLocalDayOffs(1, startDateTime);
         List<PomodoroDto> pomodoros = mockPomodoros(35);
-        when(weeklyLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(13);
+        assertThat(actual).isEqualTo(13);
     }
 
     @Test
@@ -154,12 +153,12 @@ class WeeklyWorkTimeStandardCalculatorTest {
         LocalDateTime startDateTime = mockCurrentTimeAtEndOfWeek();
         when(dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDateTime.toLocalDate())).thenReturn(List.of());
         List<PomodoroDto> pomodoros = mockPomodoros(50);
-        when(weeklyLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(-5);
+        assertThat(actual).isEqualTo(-5);
     }
 
     @Test
@@ -167,12 +166,12 @@ class WeeklyWorkTimeStandardCalculatorTest {
         LocalDateTime startDateTime = mockCurrentTimeAtStartOfWeek();
         when(dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDateTime.toLocalDate())).thenReturn(List.of());
         List<PomodoroDto> pomodoros = mockPomodoros(8);
-        when(weeklyLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(-3);
+        assertThat(actual).isEqualTo(-3);
     }
 
     @Test
@@ -180,12 +179,12 @@ class WeeklyWorkTimeStandardCalculatorTest {
         LocalDateTime startDateTime = mockCurrentTimeInMiddleOfWeek();
         when(dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDateTime.toLocalDate())).thenReturn(List.of());
         List<PomodoroDto> pomodoros = mockPomodoros(5);
-        when(weeklyLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
-        WorkingPomodorosPerformanceRateDto actual = testee.calculate();
+        int actual = testee.calculate();
 
-        assertThat(actual.getBalance()).isEqualTo(-28);
+        assertThat(actual).isEqualTo(-28);
     }
 
     private void mockLocalDayOffs(long amountInWeek, LocalDateTime startTime) {
@@ -227,10 +226,10 @@ class WeeklyWorkTimeStandardCalculatorTest {
     }
 
     private void mockPomodoroProperties() {
-        PomodoroProperties.Amount amount = mock(PomodoroProperties.Amount.class);
-        when(amount.getWork()).thenReturn(11);
+        PomodoroProperties.Standard standard = mock(PomodoroProperties.Standard.class);
+        when(standard.getWork()).thenReturn(11);
 
-        when(pomodoroProperties.getAmount()).thenReturn(amount);
+        when(pomodoroProperties.getStandard()).thenReturn(standard);
 
         PomodoroProperties.Tag tag = mock(PomodoroProperties.Tag.class);
         when(tag.getWork()).thenReturn("work");

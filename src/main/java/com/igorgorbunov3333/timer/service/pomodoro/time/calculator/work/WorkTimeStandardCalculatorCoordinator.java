@@ -1,7 +1,6 @@
-package com.igorgorbunov3333.timer.service.pomodoro.work.calculator;
+package com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work;
 
-import com.igorgorbunov3333.timer.model.dto.WorkingPomodorosPerformanceRateDto;
-import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.enums.CalculationPeriod;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.CalculationPeriod;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,7 @@ public class WorkTimeStandardCalculatorCoordinator {
                 .collect(Collectors.toMap(WorkTimeStandardCalculator::period, Function.identity()));
     }
 
-    public WorkingPomodorosPerformanceRateDto calculate(CalculationPeriod period) {
+    public int calculate(CalculationPeriod period) {
         WorkTimeStandardCalculator calculator = calculatorsByPeriod.get(period);
         if (calculator == null) {
             throw new IllegalArgumentException(String.format("Wrong period: %s", period.name())); //TODO: handle this exception

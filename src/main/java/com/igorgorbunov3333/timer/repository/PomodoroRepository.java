@@ -10,10 +10,6 @@ public interface PomodoroRepository extends JpaRepository<Pomodoro, Long> {
 
     List<Pomodoro> findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(ZonedDateTime startRange, ZonedDateTime endRange);
 
-    List<Pomodoro> findByStartTimeAfterAndEndTimeBeforeAndTagNameOrderByStartTime(ZonedDateTime startRange,
-                                                                                  ZonedDateTime endRange,
-                                                                                  String tag);
-
     boolean existsByTagName(String tagName);
 
 }

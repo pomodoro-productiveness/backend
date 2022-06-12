@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class WeeklyLocalPomodoroProviderTest {
+class WeekLocalPomodoroProviderTest {
 
     private static final ZoneId CURRENT_ZONE_ID = ZoneId.of("Europe/Kiev");
 
@@ -38,7 +38,7 @@ class WeeklyLocalPomodoroProviderTest {
     private CurrentTimeService currentTimeService;
 
     @InjectMocks
-    private WeeklyLocalPomodoroProvider testee;
+    private WeekLocalPomodoroProvider testee;
 
     @Test
     void getCurrentWeekPomodoros_WhenNoWeeklyPomodoros_ThenReturnEmptyMap() {

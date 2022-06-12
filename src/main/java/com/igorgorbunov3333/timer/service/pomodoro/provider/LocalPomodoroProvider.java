@@ -1,6 +1,8 @@
 package com.igorgorbunov3333.timer.service.pomodoro.provider;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 public abstract class LocalPomodoroProvider {
 
     public abstract PomodoroRepository getPomodoroRepository();
+
     public abstract PomodoroMapper getPomodoroMapper();
 
     public List<PomodoroDto> provide(ZonedDateTime startRange, ZonedDateTime endRange, String tagName) {
@@ -30,10 +33,25 @@ public abstract class LocalPomodoroProvider {
                     .collect(Collectors.toList());
         }
 
-        return getPomodoroRepository().findByStartTimeAfterAndEndTimeBeforeAndTagNameOrderByStartTime(startRange, endRange, tagName).stream()
+        return getPomodoroRepository().findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(startRange, endRange).stream()
+                .filter(pomodoro -> filterByTag(pomodoro, tagName))
                 .map(getPomodoroMapper()::mapToDto)
                 .sorted(Comparator.comparing(PomodoroDto::getStartTime))
                 .collect(Collectors.toList());
+    }
+
+    private boolean filterByTag(Pomodoro pomodoro, String tagName) {
+        PomodoroTag tag = pomodoro.getTag();
+
+        if (tag == null) {
+            return false;
+        }
+
+        return tagName.equals(tag.getName()) || pomodoroParentTagEqualToTag(tag.getParent(), tagName);
+    }
+
+    private boolean pomodoroParentTagEqualToTag(PomodoroTag parentTag, String tagName) {
+        return parentTag != null && tagName.equals(parentTag.getName());
     }
 
 }

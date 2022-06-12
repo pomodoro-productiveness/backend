@@ -1,25 +1,24 @@
-package com.igorgorbunov3333.timer.service.pomodoro.work.calculator.impl;
+package com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
-import com.igorgorbunov3333.timer.model.dto.WorkingPomodorosPerformanceRateDto;
 import com.igorgorbunov3333.timer.model.entity.dayoff.DayOff;
 import com.igorgorbunov3333.timer.repository.DayOffRepository;
+import com.igorgorbunov3333.timer.service.pomodoro.period.MonthStartDayProvidable;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.MonthlyLocalPomodoroProvider;
-import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.WorkTimeStandardCalculator;
-import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.enums.CalculationPeriod;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTimeStandardCalculator;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.CalculationPeriod;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 @AllArgsConstructor
-public class MonthlyWorkTimeStandardCalculator implements WorkTimeStandardCalculator {
+public class MonthWorkTimeStandardCalculator implements WorkTimeStandardCalculator, MonthStartDayProvidable {
 
     @Getter
     private final CurrentTimeService currentTimeService;
@@ -29,20 +28,17 @@ public class MonthlyWorkTimeStandardCalculator implements WorkTimeStandardCalcul
     private final MonthlyLocalPomodoroProvider monthlyLocalPomodoroProvider;
 
     @Override
-    public WorkingPomodorosPerformanceRateDto calculate() {
-        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();
+    public int calculate() {
+        LocalDate startDayOfMonth = provideStartDayOfMonth();
 
-        YearMonth yearMonth = YearMonth.from(today);
-        LocalDate startMonthDay = yearMonth.atDay(1);
-
-        List<LocalDate> dayOffs = dayOffRepository.findByDayGreaterThanEqualOrderByDay(startMonthDay).stream()
+        List<LocalDate> dayOffs = dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDayOfMonth).stream()
                 .map(DayOff::getDay)
                 .collect(Collectors.toList());
 
         int workedPomodoroAmount = monthlyLocalPomodoroProvider.provide(pomodoroProperties.getTag().getWork())
                 .size();
 
-        return calculate(startMonthDay, dayOffs, workedPomodoroAmount);
+        return calculate(startDayOfMonth, dayOffs, workedPomodoroAmount);
     }
 
     @Override

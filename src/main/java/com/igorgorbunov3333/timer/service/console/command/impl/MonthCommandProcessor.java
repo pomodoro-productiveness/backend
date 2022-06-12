@@ -2,11 +2,12 @@ package com.igorgorbunov3333.timer.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.WorkTimeCalculationPrinter;
+import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.MonthlyLocalPomodoroProvider;
-import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.WorkTimeStandardCalculatorCoordinator;
-import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.enums.CalculationPeriod;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculatorCoordinator;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTimeStandardCalculatorCoordinator;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.CalculationPeriod;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,11 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class MonthCommandProcessor extends WorkTimeCalculationPrinter implements CommandProcessor {
+public class MonthCommandProcessor extends CompletedStandardPrinter implements CommandProcessor {
 
     private final MonthlyLocalPomodoroProvider monthlyLocalPomodoroProvider;
+    @Getter
+    private final EducationTimeStandardCalculatorCoordinator educationTimeStandardCalculatorCoordinator;
     @Getter
     private final PrinterService printerService;
     @Getter
@@ -38,7 +41,7 @@ public class MonthCommandProcessor extends WorkTimeCalculationPrinter implements
         }
         printerService.printLocalDatePomodoros(sortedPomodoros);
 
-        printWorkTimeCalculation(CalculationPeriod.MONTH);
+        printCompletedStandard(CalculationPeriod.MONTH);
     }
 
     @Override

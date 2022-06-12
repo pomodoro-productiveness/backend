@@ -4,6 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.period.CurrentWeekDaysProvidable;
+import com.igorgorbunov3333.timer.service.pomodoro.period.WeekStartDayProvidable;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class WeeklyLocalPomodoroProvider extends LocalPomodoroProvider implements CurrentWeekDaysProvidable {
+public class WeekLocalPomodoroProvider extends LocalPomodoroProvider implements CurrentWeekDaysProvidable, WeekStartDayProvidable {
 
     @Getter
     private final PomodoroRepository pomodoroRepository;
@@ -33,12 +34,14 @@ public class WeeklyLocalPomodoroProvider extends LocalPomodoroProvider implement
     private final CurrentTimeService currentTimeService;
 
     public List<PomodoroDto> provideCurrentWeekPomodoros(String pomodoroTag) {
-        LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate(); //TODO: extract this common code
-        LocalDate dayAtStartOfWeek = currentDay.with(DayOfWeek.MONDAY); // TODO: extract this common code
+        LocalDate startDayOfWeek = provideStartDayOfWeek();
 
         ZoneId currentZoneId = ZoneId.systemDefault();
-        ZonedDateTime start = dayAtStartOfWeek.atStartOfDay().atZone(currentZoneId);
-        ZonedDateTime end = currentDay.atTime(LocalTime.MAX).atZone(currentZoneId);
+        ZonedDateTime start = startDayOfWeek.atStartOfDay().atZone(currentZoneId);
+        ZonedDateTime end = currentTimeService.getCurrentDateTime()
+                .toLocalDate()
+                .atTime(LocalTime.MAX)
+                .atZone(currentZoneId);
 
         return provide(start, end, pomodoroTag);
     }

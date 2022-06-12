@@ -13,7 +13,7 @@ logging.level:
   org.springframework.boot: OFF
 pomodoro:
   minimum-lifetime: ${POMODORO_MIN_LIFETIME:}
-  amount:
+  standard:
     work: ${POMODORO_DAILY_AMOUNT_WORK:11}
     education: ${POMODORO_DAILY_AMOUNT_EDUCATION:3}
   tag:
