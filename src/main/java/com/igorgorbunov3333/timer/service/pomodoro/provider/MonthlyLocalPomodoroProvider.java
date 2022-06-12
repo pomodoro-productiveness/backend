@@ -6,15 +6,13 @@ import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.LocalTime;
+import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -26,13 +24,14 @@ public class MonthlyLocalPomodoroProvider extends LocalPomodoroProvider {
     @Getter
     private final PomodoroMapper pomodoroMapper;
 
-    public Map<LocalDate, List<PomodoroDto>> provide() {
-        Pair<ZonedDateTime, ZonedDateTime> startEndTimePair = currentTimeService.getCurrentDayPeriod();
-        List<PomodoroDto> pomodoros = provide(startEndTimePair.getFirst().minusMonths(1), startEndTimePair.getSecond(), null);
-        Map<LocalDate, List<PomodoroDto>> pomodorosByDates = pomodoros.stream()
-                .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().toLocalDate()));
+    public List<PomodoroDto> provide(String pomodoroTag) {
+        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate(); //TODO: extract common code
 
-        return new TreeMap<>(pomodorosByDates);
+        YearMonth yearMonth = YearMonth.from(today); //TODO: extract common code
+        LocalDate startDayOfMonth = yearMonth.atDay(1); //TODO: extract common code
+
+        return provide(startDayOfMonth.atStartOfDay().atZone(ZoneId.systemDefault()),
+                today.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()), pomodoroTag);
     }
 
 }

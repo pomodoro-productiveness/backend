@@ -3,7 +3,7 @@ package com.igorgorbunov3333.timer.service.console.command.impl;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.pomodoro.impl.WorkingTimeStandardCalculator;
+import com.igorgorbunov3333.timer.service.pomodoro.work.calculator.WeeklyWorkingTimeStandardCalculator;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.WeeklyLocalPomodoroProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class WeekCommandProcessor implements CommandProcessor {
 
     private final WeeklyLocalPomodoroProvider weeklyLocalPomodoroProvider;
     private final PrinterService printerService;
-    private final WorkingTimeStandardCalculator workingTimeStandardCalculator;
+    private final WeeklyWorkingTimeStandardCalculator weeklyWorkingTimeStandardCalculator;
 
     @Override
     public void process() {
@@ -29,7 +29,7 @@ public class WeekCommandProcessor implements CommandProcessor {
         printerService.printDayOfWeekToPomodoros(weeklyPomodoros);
 
         printerService.printParagraph();
-        int balance = workingTimeStandardCalculator.calculate().getBalance();
+        int balance = weeklyWorkingTimeStandardCalculator.calculate().getBalance();
         printerService.print(String.format("Work performance: %s", balance));
     }
 

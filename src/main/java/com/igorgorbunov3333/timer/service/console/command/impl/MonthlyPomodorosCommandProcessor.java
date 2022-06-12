@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -20,11 +22,14 @@ public class MonthlyPomodorosCommandProcessor implements CommandProcessor {
 
     @Override
     public void process() {
-        Map<LocalDate, List<PomodoroDto>> datesToPomadoros = pomodoroFacade.getMonthlyPomodoros();
-        if (datesToPomadoros.isEmpty()) {
+        List<PomodoroDto> monthlyPomodoros = pomodoroFacade.getMonthlyPomodoros();
+        Map<LocalDate, List<PomodoroDto>> datesToPomadoros = monthlyPomodoros.stream()
+                .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().toLocalDate()));
+        Map<LocalDate, List<PomodoroDto>> sortedPomodoros = new TreeMap<>(datesToPomadoros);
+        if (sortedPomodoros.isEmpty()) {
             printerService.print("No monthly pomodoros");
         }
-        printerService.printLocalDatePomodoros(datesToPomadoros);
+        printerService.printLocalDatePomodoros(sortedPomodoros);
     }
 
     @Override

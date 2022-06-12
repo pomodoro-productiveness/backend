@@ -14,9 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional
@@ -48,8 +46,8 @@ public class PomodoroFacade {
         return dailyLocalPomodoroProvider.provideDailyLocalPomodoros();
     }
 
-    public Map<LocalDate, List<PomodoroDto>> getMonthlyPomodoros() {
-        return monthlyLocalPomodoroProvider.provide();
+    public List<PomodoroDto> getMonthlyPomodoros() {
+        return monthlyLocalPomodoroProvider.provide(null);
     }
 
     public void remove(Long pomodoroId) {

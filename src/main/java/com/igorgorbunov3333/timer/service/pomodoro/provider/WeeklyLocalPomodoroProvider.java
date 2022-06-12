@@ -33,9 +33,9 @@ public class WeeklyLocalPomodoroProvider extends LocalPomodoroProvider implement
     private final CurrentTimeService currentTimeService;
 
     public List<PomodoroDto> provideCurrentWeekPomodoros(String pomodoroTag) {
-        LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();
-        int currentDayOfWeek = currentDay.getDayOfWeek().getValue();
-        LocalDate dayAtStartOfWeek = currentDay.minusDays(currentDayOfWeek - 1);
+        LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate(); //TODO: extract this common code
+        LocalDate dayAtStartOfWeek = currentDay.with(DayOfWeek.MONDAY); // TODO: extract this common code
+
         ZoneId currentZoneId = ZoneId.systemDefault();
         ZonedDateTime start = dayAtStartOfWeek.atStartOfDay().atZone(currentZoneId);
         ZonedDateTime end = currentDay.atTime(LocalTime.MAX).atZone(currentZoneId);
