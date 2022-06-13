@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.synchronization.priority.local.LocalPrioritySynchronizationToggler;
+import com.igorgorbunov3333.timer.service.synchronization.toggler.LocalPrioritySynchronizationToggler;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class ExitCommandProcessor implements CommandProcessor {
     @Override
     @SneakyThrows
     public void process() {
-        if (!localPrioritySynchronizationToggler.needToSynchronize()) {
+        if (!localPrioritySynchronizationToggler.isNeedToSynchronize()) {
             printerService.print("Closing the application");
             Thread.sleep(1000);
             System.exit(0);

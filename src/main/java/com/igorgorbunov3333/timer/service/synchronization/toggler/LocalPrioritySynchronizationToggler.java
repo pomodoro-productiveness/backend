@@ -1,25 +1,23 @@
-package com.igorgorbunov3333.timer.service.synchronization.priority.local;
+package com.igorgorbunov3333.timer.service.synchronization.toggler;
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
-@AllArgsConstructor
 public class LocalPrioritySynchronizationToggler {
 
     private final AtomicBoolean flag = new AtomicBoolean(Boolean.FALSE);
 
-    public void toggleToSynchronize() {
+    public void synchronize() {
         flag.set(true);
     }
 
-    public void toggleToSynchronizationStarted() {
+    public void synchronizationStarted() {
         flag.set(false);
     }
 
-    public boolean needToSynchronize() {
+    public boolean isNeedToSynchronize() {
         return flag.get();
     }
 

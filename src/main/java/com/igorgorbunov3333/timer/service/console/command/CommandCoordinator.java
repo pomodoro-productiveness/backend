@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.console.command;
 
-import com.igorgorbunov3333.timer.service.synchronization.priority.local.LocalPrioritySynchronizationToggler;
+import com.igorgorbunov3333.timer.service.synchronization.toggler.LocalPrioritySynchronizationToggler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +31,7 @@ public class CommandCoordinator {
             return false;
         }
         commandProcessor.process();
-        toggler.toggleToSynchronize();
+        toggler.synchronize();
         return true;
     }
 

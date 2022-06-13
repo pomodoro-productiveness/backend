@@ -47,6 +47,7 @@ public class DefaultPrinterService implements PrinterService {
         System.out.println("Type \"save\" for saving pomodoro automatically");
         System.out.println("Type \"week\" to list all pomodoros for current week");
         System.out.println("Type \"tag\" to enter tag menu");
+        System.out.println("Type \"sync\" to synchronize local data");
         System.out.println("Type \"e\" to exit");
     }
 

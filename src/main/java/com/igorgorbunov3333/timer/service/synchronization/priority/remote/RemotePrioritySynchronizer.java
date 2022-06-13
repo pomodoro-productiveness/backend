@@ -4,11 +4,10 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDataDto;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.model.entity.enums.SynchronizationResult;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
+import com.igorgorbunov3333.timer.service.dayoff.DayOffSynchronizer;
 import com.igorgorbunov3333.timer.service.pomodoro.RemotePomodoroDataService;
 import com.igorgorbunov3333.timer.service.pomodoro.remover.LocalPomodoroRemover;
 import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroSaver;
-import com.igorgorbunov3333.timer.service.synchronization.Synchronizer;
-import com.igorgorbunov3333.timer.service.synchronization.enums.SynchronizationPriorityType;
 import com.igorgorbunov3333.timer.service.synchronization.info.SynchronizationInfoService;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
@@ -22,20 +21,21 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class RemotePrioritySynchronizer implements Synchronizer {
+public class RemotePrioritySynchronizer {
 
     private final RemotePomodoroDataService remotePomodoroDataService;
     private final LocalPomodoroRemover localPomodoroRemover;
     private final TagService tagService;
     private final SynchronizationInfoService synchronizationInfoService;
     private final PomodoroSaver pomodoroSaver;
+    private final DayOffSynchronizer dayOffSynchronizer;
 
-    @Override
     @Transactional
     public void synchronize() {
         try {
             saveRemoteDataLocally();
             synchronizationInfoService.save(Boolean.TRUE, SynchronizationResult.SUCCESSFULLY, null);
+            dayOffSynchronizer.synchronize();
         } catch (Exception e) {
             String exceptionName = e.getClass().getName();
             String causeMessage = e.getCause() != null ? e.getCause().getMessage() : StringUtils.EMPTY;
@@ -43,11 +43,6 @@ public class RemotePrioritySynchronizer implements Synchronizer {
             synchronizationInfoService.save(Boolean.FALSE, SynchronizationResult.FAILED, errorMessage);
             throw e;
         }
-    }
-
-    @Override
-    public SynchronizationPriorityType synchronizationType() {
-        return SynchronizationPriorityType.REMOTE;
     }
 
     void saveRemoteDataLocally() {
