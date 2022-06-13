@@ -7,6 +7,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.igorgorbunov3333.timer.config.properties.GoogleServicesProperties;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDataDto;
+import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.RemotePomodoroDataService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -27,6 +28,7 @@ public class DefaultRemotePomodoroDataService implements RemotePomodoroDataServi
 
     private final GoogleServicesProperties googleServicesProperties;
     private final Drive service;
+    private final PrinterService printerService;
 
     @Override
     @SneakyThrows
@@ -51,7 +53,7 @@ public class DefaultRemotePomodoroDataService implements RemotePomodoroDataServi
         java.io.File file = new java.io.File("pomodoros.json");
         boolean created = file.createNewFile();
         if (!created) {
-            System.out.println("file didn't created");
+            printerService.print("file didn't created");
         }
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream("pomodoros.json"), StandardCharsets.UTF_8))) {
@@ -67,7 +69,7 @@ public class DefaultRemotePomodoroDataService implements RemotePomodoroDataServi
                 .execute();
         boolean deleted = file.delete();
         if (!deleted) {
-            System.out.println("Pomodoro file wasn't deleted");
+            printerService.print("Pomodoro file wasn't deleted");
         }
     }
 

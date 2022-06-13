@@ -53,7 +53,7 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
         int duration = pomodoroEngine.stopPomodoro();
         long pomodoroMinimumLifetime = pomodoroProperties.getMinimumLifetime();
         if (pomodoroMinimumLifetime == 0) {
-            System.out.println("Pomodoro lifetime didn't set. Please configure");
+            printerService.print("Pomodoro lifetime didn't set. Please configure");
         }
         if (duration <= pomodoroMinimumLifetime) {
             String message = "Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds";

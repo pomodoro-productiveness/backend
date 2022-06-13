@@ -21,7 +21,7 @@ public class CommandLineController {
 
     public void start() {
         Scanner sc = new Scanner(System.in);
-        System.out.println();
+        printerService.printParagraph();
         printerService.printFeaturesList();
         while (true) {
             String command = commandProvider.provideLine();
