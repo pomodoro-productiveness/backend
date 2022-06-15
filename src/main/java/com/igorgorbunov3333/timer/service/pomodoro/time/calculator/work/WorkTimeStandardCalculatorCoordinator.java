@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work;
 
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.CalculationPeriod;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class WorkTimeStandardCalculatorCoordinator {
 
-    private final Map<CalculationPeriod, WorkTimeStandardCalculator> calculatorsByPeriod;
+    private final Map<PomodoroPeriod, WorkTimeStandardCalculator> calculatorsByPeriod;
 
     @Autowired
     public WorkTimeStandardCalculatorCoordinator(List<WorkTimeStandardCalculator> calculators) {
@@ -22,7 +22,7 @@ public class WorkTimeStandardCalculatorCoordinator {
                 .collect(Collectors.toMap(WorkTimeStandardCalculator::period, Function.identity()));
     }
 
-    public int calculate(CalculationPeriod period) {
+    public int calculate(PomodoroPeriod period) {
         WorkTimeStandardCalculator calculator = calculatorsByPeriod.get(period);
         if (calculator == null) {
             throw new IllegalArgumentException(String.format("Wrong period: %s", period.name())); //TODO: handle this exception

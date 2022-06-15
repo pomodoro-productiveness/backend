@@ -4,44 +4,40 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyLocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculatorCoordinator;
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTimeStandardCalculatorCoordinator;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.WeeklyLocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTimeStandardCalculatorCoordinator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
-public class WeekCommandProcessor extends CompletedStandardPrinter implements CommandProcessor {
+public class DailyPomodoroExtendedCommandProcessor extends CompletedStandardPrinter implements CommandProcessor {
 
-    private final WeeklyLocalPomodoroProvider weeklyLocalPomodoroProvider;
-    @Getter
-    private final EducationTimeStandardCalculatorCoordinator educationTimeStandardCalculatorCoordinator;
+    private final DailyLocalPomodoroProvider dailyLocalPomodoroProvider;
     @Getter
     private final PrinterService printerService;
     @Getter
     private final WorkTimeStandardCalculatorCoordinator workTimeStandardCalculatorCoordinator;
+    @Getter
+    private final EducationTimeStandardCalculatorCoordinator educationTimeStandardCalculatorCoordinator;
 
     @Override
     public void process() {
-        Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoros = weeklyLocalPomodoroProvider.provideCurrentWeekPomodorosByDays();
-        if (weeklyPomodoros.isEmpty()) {
-            printerService.print("No weekly pomodoros");
-        }
-        printerService.printDayOfWeekToPomodoros(weeklyPomodoros);
+        List<PomodoroDto> pomodoros = dailyLocalPomodoroProvider.provide(null);
 
-        printCompletedStandard(PomodoroPeriod.WEEK);
+        printerService.printPomodorosWithIdsAndTags(pomodoros);
+
+        printCompletedStandard(PomodoroPeriod.DAY);
     }
 
     @Override
     public String command() {
-        return "week";
+        return "5";
     }
 
 }

@@ -1,8 +1,10 @@
-package com.igorgorbunov3333.timer.service.pomodoro.provider;
+package com.igorgorbunov3333.timer.service.pomodoro.provider.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.LocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +17,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class DailyLocalPomodoroProvider extends LocalPomodoroProvider {
+public class DailyLocalPomodoroProvider implements LocalPomodoroProvider {
 
     @Getter
     private final PomodoroRepository pomodoroRepository;
@@ -23,11 +25,17 @@ public class DailyLocalPomodoroProvider extends LocalPomodoroProvider {
     @Getter
     private final PomodoroMapper pomodoroMapper;
 
-    @Transactional(readOnly = true)
-    public List<PomodoroDto> provideDailyLocalPomodoros() {
+    @Override
+    @Transactional(readOnly = true) //TODO: is it needed here?
+    public List<PomodoroDto> provide(String tag) {
         Pair<ZonedDateTime, ZonedDateTime> startEndTimePair = currentTimeService.getCurrentDayPeriod();
 
-        return provide(startEndTimePair.getFirst(), startEndTimePair.getSecond(), null);
+        return provide(startEndTimePair.getFirst(), startEndTimePair.getSecond(), tag);
+    }
+
+    @Override
+    public PomodoroPeriod pomodoroPeriod() {
+        return PomodoroPeriod.DAY;
     }
 
 }

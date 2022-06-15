@@ -1,7 +1,6 @@
 package com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.impl;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
-import com.igorgorbunov3333.timer.service.pomodoro.period.WeekStartDayProvidable;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.LocalPomodoroProviderCoordinator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
@@ -15,7 +14,7 @@ import java.time.LocalDate;
 @Getter
 @Service
 @AllArgsConstructor
-public class WeekEducationTimeStandardCalculator implements WeekStartDayProvidable, EducationTimeStandardCalculator {
+public class DayEducationTimeStandardCalculator implements EducationTimeStandardCalculator {
 
     private final CurrentTimeService currentTimeService;
     private final PomodoroProperties pomodoroProperties;
@@ -23,14 +22,14 @@ public class WeekEducationTimeStandardCalculator implements WeekStartDayProvidab
 
     @Override
     public int calculate() {
-        LocalDate startOfWeek = provideStartDayOfWeek();
+        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();
 
-        return calculate(PomodoroPeriod.WEEK, startOfWeek);
+        return calculate(PomodoroPeriod.DAY, today);
     }
 
     @Override
     public PomodoroPeriod period() {
-        return PomodoroPeriod.WEEK;
+        return PomodoroPeriod.DAY;
     }
 
 }

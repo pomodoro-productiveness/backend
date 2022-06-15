@@ -1,7 +1,8 @@
 package com.igorgorbunov3333.timer.service.pomodoro.time.calculator;
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.CalculationPeriod;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.LocalPomodoroProviderCoordinator;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 
 public interface BaseTimeStandardCalculator {
@@ -10,8 +11,10 @@ public interface BaseTimeStandardCalculator {
 
     PomodoroProperties getPomodoroProperties();
 
-    CalculationPeriod period();
+    PomodoroPeriod period();
 
     int calculate();
+
+    LocalPomodoroProviderCoordinator getLocalPomodoroProviderCoordinator();
 
 }

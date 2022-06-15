@@ -1,6 +1,8 @@
 package com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education;
 
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.BaseTimeStandardCalculator;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -9,7 +11,12 @@ import java.util.List;
 
 public interface EducationTimeStandardCalculator extends BaseTimeStandardCalculator {
 
-    default int calculate(LocalDate startDate, int actualAmount) {
+    default int calculate(PomodoroPeriod period, LocalDate startDate) { //TODO: move common code to BaseTimeStandardCalculator
+        List<PomodoroDto> pomodoroDtos = getLocalPomodoroProviderCoordinator()
+                .provide(period, getPomodoroProperties().getTag().getEducation());
+
+        int actualAmount = pomodoroDtos.size();
+
         LocalDate today = getCurrentTimeService().getCurrentDateTime().toLocalDate();
 
         List<LocalDate> days = new ArrayList<>();

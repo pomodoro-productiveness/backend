@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.exception.NoDataException;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.DailyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyLocalPomodoroProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -27,7 +27,7 @@ public class LocalPomodoroRemover {
     }
 
     public Long removeLatest() {
-        List<PomodoroDto> dailyPomodoros = dailyLocalPomodoroProvider.provideDailyLocalPomodoros();
+        List<PomodoroDto> dailyPomodoros = dailyLocalPomodoroProvider.provide(null);
         if (CollectionUtils.isEmpty(dailyPomodoros)) {
             throw new NoDataException("No daily pomodoros");
         }

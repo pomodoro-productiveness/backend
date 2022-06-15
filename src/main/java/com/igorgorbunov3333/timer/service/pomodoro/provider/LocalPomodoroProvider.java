@@ -5,6 +5,7 @@ import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 
 import java.time.ZonedDateTime;
 import java.util.Comparator;
@@ -12,20 +13,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 //TODO: refactor
-public abstract class LocalPomodoroProvider {
+public interface LocalPomodoroProvider {
 
-    public abstract PomodoroRepository getPomodoroRepository();
+    PomodoroRepository getPomodoroRepository();
+    PomodoroMapper getPomodoroMapper();
+    PomodoroPeriod pomodoroPeriod();
 
-    public abstract PomodoroMapper getPomodoroMapper();
+    List<PomodoroDto> provide(String tag);
 
-    public List<PomodoroDto> provide(ZonedDateTime startRange, ZonedDateTime endRange, String tagName) {
-        if (startRange == null && endRange == null) {
-            return getPomodoroRepository().findAll().stream()
-                    .map(getPomodoroMapper()::mapToDto)
-                    .sorted(Comparator.comparing(PomodoroDto::getStartTime))
-                    .collect(Collectors.toList());
-        }
-
+    default List<PomodoroDto> provide(ZonedDateTime startRange, ZonedDateTime endRange, String tagName) { //TODO: move this method to another class to not expose it as it used only by providers
         if (tagName == null) {
             return getPomodoroRepository().findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(startRange, endRange).stream()
                     .map(getPomodoroMapper()::mapToDto)

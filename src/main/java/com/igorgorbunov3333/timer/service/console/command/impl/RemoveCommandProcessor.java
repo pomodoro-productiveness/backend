@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.CurrentCommandStorage;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.DailyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyLocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.remover.LocalPomodoroRemover;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class RemoveCommandProcessor implements CommandProcessor {
         String input = CurrentCommandStorage.currentCommand;
         char[] inputChars = input.toCharArray();
         if (inputChars.length == "remove".length()) {
-            List<PomodoroDto> dailyPomodoros = dailyLocalPomodoroProvider.provideDailyLocalPomodoros();
+            List<PomodoroDto> dailyPomodoros = dailyLocalPomodoroProvider.provide(null);
             if (dailyPomodoros.isEmpty()) {
                 printerService.print("Unable to remove latest pomodoro as no daily pomodoros");
                 return;

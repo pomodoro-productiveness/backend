@@ -1,12 +1,14 @@
-package com.igorgorbunov3333.timer.service.pomodoro.provider;
+package com.igorgorbunov3333.timer.service.pomodoro.provider.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.LocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,9 +16,9 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.List;
 
-@Component
+@Service
 @AllArgsConstructor
-public class MonthlyLocalPomodoroProvider extends LocalPomodoroProvider {
+public class MonthlyLocalPomodoroProvider implements LocalPomodoroProvider {
 
     private final CurrentTimeService currentTimeService;
     @Getter
@@ -24,6 +26,7 @@ public class MonthlyLocalPomodoroProvider extends LocalPomodoroProvider {
     @Getter
     private final PomodoroMapper pomodoroMapper;
 
+    @Override
     public List<PomodoroDto> provide(String pomodoroTag) {
         LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate(); //TODO: extract common code
 
@@ -32,6 +35,11 @@ public class MonthlyLocalPomodoroProvider extends LocalPomodoroProvider {
 
         return provide(startDayOfMonth.atStartOfDay().atZone(ZoneId.systemDefault()),
                 today.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()), pomodoroTag);
+    }
+
+    @Override
+    public PomodoroPeriod pomodoroPeriod() {
+        return PomodoroPeriod.MONTH;
     }
 
 }

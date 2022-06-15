@@ -1,14 +1,16 @@
-package com.igorgorbunov3333.timer.service.pomodoro.provider;
+package com.igorgorbunov3333.timer.service.pomodoro.provider.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.period.CurrentWeekDaysProvidable;
 import com.igorgorbunov3333.timer.service.pomodoro.period.WeekStartDayProvidable;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.LocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -22,9 +24,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 @AllArgsConstructor
-public class WeekLocalPomodoroProvider extends LocalPomodoroProvider implements CurrentWeekDaysProvidable, WeekStartDayProvidable {
+public class WeeklyLocalPomodoroProvider implements LocalPomodoroProvider, CurrentWeekDaysProvidable, WeekStartDayProvidable {
 
     @Getter
     private final PomodoroRepository pomodoroRepository;
@@ -33,7 +35,8 @@ public class WeekLocalPomodoroProvider extends LocalPomodoroProvider implements 
     @Getter
     private final CurrentTimeService currentTimeService;
 
-    public List<PomodoroDto> provideCurrentWeekPomodoros(String pomodoroTag) {
+    @Override
+    public List<PomodoroDto> provide(String pomodoroTag) {
         LocalDate startDayOfWeek = provideStartDayOfWeek();
 
         ZoneId currentZoneId = ZoneId.systemDefault();
@@ -47,7 +50,7 @@ public class WeekLocalPomodoroProvider extends LocalPomodoroProvider implements 
     }
 
     public Map<DayOfWeek, List<PomodoroDto>> provideCurrentWeekPomodorosByDays() {
-        List<PomodoroDto> weeklyPomodoros = provideCurrentWeekPomodoros(null);
+        List<PomodoroDto> weeklyPomodoros = provide(null);
         if (weeklyPomodoros.isEmpty()) {
             return Map.of();
         }
@@ -71,6 +74,11 @@ public class WeekLocalPomodoroProvider extends LocalPomodoroProvider implements 
     private List<PomodoroDto> getDailyPomodoros(Map<DayOfWeek, List<PomodoroDto>> dayOfWeekToPomodoros,
                                                 DayOfWeek dayOfWeek) {
         return dayOfWeekToPomodoros.computeIfAbsent(dayOfWeek, k -> new ArrayList<>());
+    }
+
+    @Override
+    public PomodoroPeriod pomodoroPeriod() {
+        return PomodoroPeriod.WEEK;
     }
 
 }

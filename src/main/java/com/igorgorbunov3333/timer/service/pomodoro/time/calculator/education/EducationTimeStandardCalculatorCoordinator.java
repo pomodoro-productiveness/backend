@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education;
 
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.CalculationPeriod;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class EducationTimeStandardCalculatorCoordinator {
 
-    private final Map<CalculationPeriod, EducationTimeStandardCalculator> calculatorsByPeriods;
+    private final Map<PomodoroPeriod, EducationTimeStandardCalculator> calculatorsByPeriods;
 
     @Autowired
     public EducationTimeStandardCalculatorCoordinator(List<EducationTimeStandardCalculator> calculators) {
@@ -22,7 +22,7 @@ public class EducationTimeStandardCalculatorCoordinator {
                 .collect(Collectors.toMap(EducationTimeStandardCalculator::period, Function.identity()));
     }
 
-    public int calculate(CalculationPeriod period) {
+    public int calculate(PomodoroPeriod period) {
         EducationTimeStandardCalculator calculator = calculatorsByPeriods.get(period);
 
         if (calculator == null) {

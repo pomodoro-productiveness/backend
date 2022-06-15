@@ -4,10 +4,10 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.MonthlyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.MonthlyLocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculatorCoordinator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTimeStandardCalculatorCoordinator;
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.CalculationPeriod;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class MonthCommandProcessor extends CompletedStandardPrinter implements C
         }
         printerService.printLocalDatePomodoros(sortedPomodoros);
 
-        printCompletedStandard(CalculationPeriod.MONTH);
+        printCompletedStandard(PomodoroPeriod.MONTH);
     }
 
     @Override

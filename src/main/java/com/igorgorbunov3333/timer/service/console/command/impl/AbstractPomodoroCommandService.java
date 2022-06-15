@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodoroSessionMapper;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.impl.DefaultPrinterService;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.DailyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyLocalPomodoroProvider;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public abstract class AbstractPomodoroCommandService {
     }
 
     private void getAndPrintDailyPomodoros() {
-        List<PomodoroDto> pomodoros = getDailyLocalPomodoroProvider().provideDailyLocalPomodoros();
+        List<PomodoroDto> pomodoros = getDailyLocalPomodoroProvider().provide(null);
         getPrinterService().printPomodorosWithIdsAndTags(pomodoros);
     }
 

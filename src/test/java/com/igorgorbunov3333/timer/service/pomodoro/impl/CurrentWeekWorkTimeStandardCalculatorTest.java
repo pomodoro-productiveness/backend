@@ -4,8 +4,9 @@ import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.dayoff.DayOff;
 import com.igorgorbunov3333.timer.repository.DayOffRepository;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.WeekLocalPomodoroProvider;
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.impl.WeekWorkTimeStandardCalculator;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.LocalPomodoroProviderCoordinator;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
+import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.impl.CurrentWeekWorkTimeStandardCalculator;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,16 +24,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class WeekWorkTimeStandardCalculatorTest {
+class CurrentWeekWorkTimeStandardCalculatorTest {
 
     private static final LocalDate WEEK_START_DAY = LocalDate.of(2022, 6, 6);
     private static final String POMODORO_WORK_TAG = "work";
 
     @InjectMocks
-    private WeekWorkTimeStandardCalculator testee;
+    private CurrentWeekWorkTimeStandardCalculator testee;
 
     @Mock
-    private WeekLocalPomodoroProvider weekLocalPomodoroProvider;
+    private LocalPomodoroProviderCoordinator localPomodoroProviderCoordinator;
     @Mock
     private PomodoroProperties pomodoroProperties;
     @Mock
@@ -77,7 +78,7 @@ class WeekWorkTimeStandardCalculatorTest {
     void calculate_WhenEndOfWeekAndAllDaysAreDayOffsAndNoWorkedPomodoro_ThenCalculate() {
         LocalDateTime startDateTime = mockCurrentTimeAtEndOfWeek();
         mockLocalDayOffs(5, startDateTime);
-        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(List.of());
+        when(localPomodoroProviderCoordinator.provide(PomodoroPeriod.WEEK, POMODORO_WORK_TAG)).thenReturn(List.of());
         mockPomodoroProperties();
 
         int actual = testee.calculate();
@@ -89,7 +90,7 @@ class WeekWorkTimeStandardCalculatorTest {
     void calculate_WhenStartOfWeekAndAllDaysAreDayOffsAndNoWorkedPomodoro_ThenCalculate() {
         LocalDateTime startDateTime = mockCurrentTimeAtStartOfWeek();
         mockLocalDayOffs(5, startDateTime);
-        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(List.of());
+        when(localPomodoroProviderCoordinator.provide(PomodoroPeriod.WEEK, POMODORO_WORK_TAG)).thenReturn(List.of());
         mockPomodoroProperties();
 
         int actual = testee.calculate();
@@ -101,7 +102,7 @@ class WeekWorkTimeStandardCalculatorTest {
     void calculate_WhenMiddleOfWeekAndAllDaysAreDayOffsAndNoWorkedPomodoro_ThenCalculate() {
         LocalDateTime startTime = mockCurrentTimeInMiddleOfWeek();
         mockLocalDayOffs(5, startTime);
-        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(List.of());
+        when(localPomodoroProviderCoordinator.provide(PomodoroPeriod.WEEK, POMODORO_WORK_TAG)).thenReturn(List.of());
         mockPomodoroProperties();
 
         int actual = testee.calculate();
@@ -114,7 +115,7 @@ class WeekWorkTimeStandardCalculatorTest {
         LocalDateTime startTime = mockCurrentTimeAtEndOfWeek();
         mockLocalDayOffs(1, startTime);
         List<PomodoroDto> pomodoros = mockPomodoros(61);
-        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(localPomodoroProviderCoordinator.provide(PomodoroPeriod.WEEK, POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
         int actual = testee.calculate();
@@ -127,7 +128,7 @@ class WeekWorkTimeStandardCalculatorTest {
         LocalDateTime startDateTime = mockCurrentTimeAtStartOfWeek();
         when(dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDateTime.toLocalDate())).thenReturn(List.of());
         List<PomodoroDto> pomodoros = mockPomodoros(13);
-        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(localPomodoroProviderCoordinator.provide(PomodoroPeriod.WEEK, POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
         int actual = testee.calculate();
@@ -140,7 +141,7 @@ class WeekWorkTimeStandardCalculatorTest {
         LocalDateTime startDateTime = mockCurrentTimeInMiddleOfWeek();
         mockLocalDayOffs(1, startDateTime);
         List<PomodoroDto> pomodoros = mockPomodoros(35);
-        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(localPomodoroProviderCoordinator.provide(PomodoroPeriod.WEEK, POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
         int actual = testee.calculate();
@@ -153,7 +154,7 @@ class WeekWorkTimeStandardCalculatorTest {
         LocalDateTime startDateTime = mockCurrentTimeAtEndOfWeek();
         when(dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDateTime.toLocalDate())).thenReturn(List.of());
         List<PomodoroDto> pomodoros = mockPomodoros(50);
-        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(localPomodoroProviderCoordinator.provide(PomodoroPeriod.WEEK, POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
         int actual = testee.calculate();
@@ -166,7 +167,7 @@ class WeekWorkTimeStandardCalculatorTest {
         LocalDateTime startDateTime = mockCurrentTimeAtStartOfWeek();
         when(dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDateTime.toLocalDate())).thenReturn(List.of());
         List<PomodoroDto> pomodoros = mockPomodoros(8);
-        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(localPomodoroProviderCoordinator.provide(PomodoroPeriod.WEEK, POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
         int actual = testee.calculate();
@@ -179,7 +180,7 @@ class WeekWorkTimeStandardCalculatorTest {
         LocalDateTime startDateTime = mockCurrentTimeInMiddleOfWeek();
         when(dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDateTime.toLocalDate())).thenReturn(List.of());
         List<PomodoroDto> pomodoros = mockPomodoros(5);
-        when(weekLocalPomodoroProvider.provideCurrentWeekPomodoros(POMODORO_WORK_TAG)).thenReturn(pomodoros);
+        when(localPomodoroProviderCoordinator.provide(PomodoroPeriod.WEEK, POMODORO_WORK_TAG)).thenReturn(pomodoros);
         mockPomodoroProperties();
 
         int actual = testee.calculate();
