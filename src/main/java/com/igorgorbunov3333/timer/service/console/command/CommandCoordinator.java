@@ -3,7 +3,6 @@ package com.igorgorbunov3333.timer.service.console.command;
 import com.igorgorbunov3333.timer.service.synchronization.toggler.LocalPrioritySynchronizationToggler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ public class CommandCoordinator {
         this.toggler = toggler;
     }
 
-    @Transactional
     public boolean coordinate(String command) {
         String commandFirstWord = getFirstCommandFirstWord(command);
         CommandProcessor commandProcessor = commandByService.get(commandFirstWord);

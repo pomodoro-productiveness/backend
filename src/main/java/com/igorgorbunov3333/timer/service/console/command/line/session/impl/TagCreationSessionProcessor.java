@@ -47,6 +47,7 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
 
     }
 
+    //TODO: refactor
     private String provideAndValidateTagName() {
         do {
             String tagNameAnswer = commandProvider.provideLine();
@@ -60,6 +61,8 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
                 printerService.print(String.format("Tag name size must not be more then %d characters", TAG_MAX_LENGTH));
             } else if (StringUtils.isEmpty(tagNameAnswer)) {
                 printerService.print("Tag must not be empty, please try again or press \"e\" to exit");
+            } else if (tagService.exists(tagNameAnswer)) {
+                printerService.print(String.format("Tag with name %s already exists", tagNameAnswer));
             } else {
                 return tagNameAnswer;
             }

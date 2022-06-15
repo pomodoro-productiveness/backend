@@ -10,8 +10,8 @@ public interface TagRepository extends JpaRepository<PomodoroTag, Long> {
 
     List<PomodoroTag> findByParentIsNull();
 
-    void deleteByName(String tagName);
-
     Optional<PomodoroTag> findByName(String parentTagName);
+
+    boolean existsByName(String tagName);
 
 }

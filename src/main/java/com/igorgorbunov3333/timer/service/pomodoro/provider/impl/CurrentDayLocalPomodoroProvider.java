@@ -8,38 +8,34 @@ import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.Pomodor
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.YearMonth;
-import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class MonthlyLocalPomodoroProvider implements LocalPomodoroProvider {
+public class CurrentDayLocalPomodoroProvider implements LocalPomodoroProvider {
 
-    private final CurrentTimeService currentTimeService;
     @Getter
     private final PomodoroRepository pomodoroRepository;
+    private final CurrentTimeService currentTimeService;
     @Getter
     private final PomodoroMapper pomodoroMapper;
 
     @Override
-    public List<PomodoroDto> provide(String pomodoroTag) {
-        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate(); //TODO: extract common code
+    @Transactional(readOnly = true) //TODO: is it needed here?
+    public List<PomodoroDto> provide(String tag) {
+        Pair<ZonedDateTime, ZonedDateTime> startEndTimePair = currentTimeService.getCurrentDayPeriod();
 
-        YearMonth yearMonth = YearMonth.from(today); //TODO: extract common code
-        LocalDate startDayOfMonth = yearMonth.atDay(1); //TODO: extract common code
-
-        return provide(startDayOfMonth.atStartOfDay().atZone(ZoneId.systemDefault()),
-                today.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()), pomodoroTag);
+        return provide(startEndTimePair.getFirst(), startEndTimePair.getSecond(), tag);
     }
 
     @Override
     public PomodoroPeriod pomodoroPeriod() {
-        return PomodoroPeriod.MONTH;
+        return PomodoroPeriod.DAY;
     }
 
 }

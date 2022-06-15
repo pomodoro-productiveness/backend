@@ -18,4 +18,6 @@ public interface TagService {
     void removeAllTags();
 
     List<PomodoroTag> save(List<PomodoroTagDto> tags);
+
+    boolean exists(String tagName);
 }

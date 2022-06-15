@@ -8,7 +8,6 @@ import com.igorgorbunov3333.timer.service.exception.TagOperationException;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -40,6 +39,7 @@ public class DefaultTagService implements TagService {
     //TODO: use mapper
 
     @Override
+    @Transactional(readOnly = true)
     public List<PomodoroTagDto> getSortedTags(boolean withRemoved) {
         return tagRepository.findByParentIsNull().stream()
                 .filter(tag -> filterTag(tag, withRemoved))
@@ -50,7 +50,7 @@ public class DefaultTagService implements TagService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void addChildTagForParentTag(String parentTagName, String childTagName) {
         PomodoroTag parentTag = tagRepository.findByName(parentTagName).orElse(null);
         PomodoroTag childTag = tagRepository.findByName(childTagName).orElse(null);
@@ -63,6 +63,7 @@ public class DefaultTagService implements TagService {
     }
 
     @Override
+    @Transactional
     public void removeTag(String tagName) {
         PomodoroTag tag = tagRepository.findByName(tagName).orElse(null);
 
@@ -95,6 +96,11 @@ public class DefaultTagService implements TagService {
         List<PomodoroTag> tagsToSave = toEntities(tags);
 
         return tagRepository.saveAll(tagsToSave);
+    }
+
+    @Override
+    public boolean exists(String tagName) {
+        return tagRepository.existsByName(tagName);
     }
 
     private PomodoroTag filterChildTags(PomodoroTag parentTag, boolean withRemoved) {

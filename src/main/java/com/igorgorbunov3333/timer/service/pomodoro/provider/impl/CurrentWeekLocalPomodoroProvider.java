@@ -24,15 +24,13 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+@Getter
 @Service
 @AllArgsConstructor
-public class WeeklyLocalPomodoroProvider implements LocalPomodoroProvider, CurrentWeekDaysProvidable, WeekStartDayProvidable {
+public class CurrentWeekLocalPomodoroProvider implements LocalPomodoroProvider, CurrentWeekDaysProvidable, WeekStartDayProvidable {
 
-    @Getter
     private final PomodoroRepository pomodoroRepository;
-    @Getter
     private final PomodoroMapper pomodoroMapper;
-    @Getter
     private final CurrentTimeService currentTimeService;
 
     @Override

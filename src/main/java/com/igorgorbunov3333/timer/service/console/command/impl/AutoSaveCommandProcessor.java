@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodoroSessionMapper;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayLocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroAutoSaver;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +17,7 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroCommandService imp
 
     private final PomodoroAutoSaver pomodoroAutoSaver;
     @Getter
-    private final DailyLocalPomodoroProvider dailyLocalPomodoroProvider;
+    private final CurrentDayLocalPomodoroProvider currentDayLocalPomodoroProvider;
     @Getter
     private final PrinterService printerService;
     @Getter

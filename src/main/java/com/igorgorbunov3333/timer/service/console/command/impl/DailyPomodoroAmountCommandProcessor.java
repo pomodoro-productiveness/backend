@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayLocalPomodoroProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class DailyPomodoroAmountCommandProcessor implements CommandProcessor {
 
-    private final DailyLocalPomodoroProvider dailyLocalPomodoroProvider;
+    private final CurrentDayLocalPomodoroProvider currentDayLocalPomodoroProvider;
     private final PrinterService printerService;
 
     @Override
     public void process() {
-        long dailyPomodorosAmount = dailyLocalPomodoroProvider.provide(null).size();
+        long dailyPomodorosAmount = currentDayLocalPomodoroProvider.provide(null).size();
         printerService.print(String.valueOf(dailyPomodorosAmount));
     }
 

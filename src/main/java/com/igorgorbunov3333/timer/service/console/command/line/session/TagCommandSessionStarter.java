@@ -6,7 +6,6 @@ import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class TagCommandSessionStarter implements TagsProvidable, TagsPrintable {
     private final CommandProvider commandProvider;
     private final TagCommandSessionCoordinator tagCommandSessionCoordinator;
 
-    @Transactional
     public boolean startSession() {
         List<PomodoroTagInfo> tagsWithNumbers = provideTags();
         printTags(tagsWithNumbers);
@@ -32,7 +30,7 @@ public class TagCommandSessionStarter implements TagsProvidable, TagsPrintable {
         printerService.print("Press 1 to create new tag");
         printerService.print("Press 2 to remove a tag");
         printerService.print("Press 3 to set the relationship of the child tag to the parent tag");
-        printerService.print("You may exit by pressing \"e\"");
+        printerService.print("You may exit by pressing \"e\" to save current changes");
 
         answer = commandProvider.provideLine();
         if (answer.startsWith("e")) {

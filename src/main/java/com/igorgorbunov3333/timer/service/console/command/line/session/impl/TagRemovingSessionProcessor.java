@@ -9,8 +9,6 @@ import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,7 +23,6 @@ public class TagRemovingSessionProcessor implements TagSessionProcessor, TagAnsw
     private final CommandProvider commandProvider;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void process(List<PomodoroTagInfo> tags) {
         printerService.print("Enter the tag number to remove tag or press \"e\" to exit");
 
