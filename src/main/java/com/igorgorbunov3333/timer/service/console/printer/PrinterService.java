@@ -12,6 +12,8 @@ public interface PrinterService {
 
     void print(String message);
 
+    void printWithCarriage(String message);
+
     void printParagraph();
 
     void printFeaturesList();
@@ -24,4 +26,5 @@ public interface PrinterService {
 
     void printDayOfWeekToPomodoros(Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoros);
 
+    void printPomodoro(PomodoroDto pomodoro, boolean withIdAndTag, boolean withCarriageOffset);
 }

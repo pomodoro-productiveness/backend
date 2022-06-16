@@ -12,7 +12,7 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class TagPomodoroSessionMapper implements TagsProvidable, TagsPrintable, TagAnswerProvider {
+public class TagPomodoroSessionMapper implements TagsProvidable, TagsPrintable, TagAnswerProvidable {
 
     private final LocalPomodoroUpdater localPomodoroUpdater;
     @Getter
@@ -28,7 +28,7 @@ public class TagPomodoroSessionMapper implements TagsProvidable, TagsPrintable, 
         printerService.print("Choose tag to map to saved pomodoro or press \"e\" to exit");
         printTags(tags);
 
-        PomodoroTagInfo tagToMap = getTagAnswer(tags, null);
+        PomodoroTagInfo tagToMap = provideTagAnswer(tags, null);
         if (tagToMap == null) {
             return;
         }

@@ -6,6 +6,7 @@ import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.repository.TagRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @AllArgsConstructor
@@ -14,6 +15,7 @@ public class LocalPomodoroUpdater {
     private final PomodoroRepository pomodoroRepository;
     private final TagRepository tagRepository;
 
+    @Transactional
     public void updatePomodoroWithTag(Long pomodoroId, String tagName) {
         Pomodoro pomodoroWithTag = pomodoroRepository.getById(pomodoroId);
         PomodoroTag tag = tagRepository.findByName(tagName).orElse(null);
