@@ -5,13 +5,14 @@ import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.Edu
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTimeStandardCalculatorCoordinator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 
-public abstract class CompletedStandardPrinter {
+//TODO: consider make it separate bean an autowire it as usual as needed
+public interface CompletedStandardPrintable {
 
-    public abstract PrinterService getPrinterService();
-    public abstract WorkTimeStandardCalculatorCoordinator getWorkTimeStandardCalculatorCoordinator();
-    public abstract EducationTimeStandardCalculatorCoordinator getEducationTimeStandardCalculatorCoordinator();
+    PrinterService getPrinterService();
+    WorkTimeStandardCalculatorCoordinator getWorkTimeStandardCalculatorCoordinator();
+    EducationTimeStandardCalculatorCoordinator getEducationTimeStandardCalculatorCoordinator();
 
-    public void printCompletedStandard(PomodoroPeriod period) {
+    default void printCompletedStandard(PomodoroPeriod period) {
         getPrinterService().printParagraph();
         int workBalance = getWorkTimeStandardCalculatorCoordinator()
                 .calculate(period);

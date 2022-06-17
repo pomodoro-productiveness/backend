@@ -14,6 +14,7 @@ public class ResumeCommandProcessor implements CommandProcessor {
     @Override
     public void process() {
         pomodoroEngineService.resumePomodoro();
+        pomodoroEngineService.printThreeSecondsOfPomodoroExecution();
     }
 
     @Override

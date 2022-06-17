@@ -16,7 +16,7 @@ public class PauseCommandProcessor implements CommandProcessor {
     @Override
     public void process() {
         pomodoroEngineService.pausePomodoro();
-        printerService.print("Pomodoro paused!");
+        printerService.print(String.format("Pomodoro paused at %s", pomodoroEngineService.getPomodoroCurrentDuration()));
     }
 
     @Override

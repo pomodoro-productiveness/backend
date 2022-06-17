@@ -94,7 +94,7 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
 
     @Override
     @SneakyThrows
-    public void printFirstThreeFirstPomodoroSecondsDuration() {
+    public void printThreeSecondsOfPomodoroExecution() {
         for (int i = 0; i < 3; i++) {
             Thread.sleep(1100);
             String formattedTime = getPomodoroCurrentDurationInString();

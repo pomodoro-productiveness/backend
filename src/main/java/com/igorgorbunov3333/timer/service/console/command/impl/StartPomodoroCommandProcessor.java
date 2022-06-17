@@ -23,7 +23,7 @@ public class StartPomodoroCommandProcessor implements CommandProcessor {
             return;
         }
         printerService.print("Pomodoro has started");
-        pomodoroEngineService.printFirstThreeFirstPomodoroSecondsDuration();
+        pomodoroEngineService.printThreeSecondsOfPomodoroExecution();
     }
 
     @Override
