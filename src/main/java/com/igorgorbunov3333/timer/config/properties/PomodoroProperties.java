@@ -61,7 +61,7 @@ public class PomodoroProperties {
         private String name;
 
         @NotBlank
-        private String calendarColorId;
+        private String calendarIdColor;
 
     }
 

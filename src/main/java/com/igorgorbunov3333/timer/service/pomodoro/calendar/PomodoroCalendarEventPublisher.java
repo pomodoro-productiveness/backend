@@ -56,8 +56,8 @@ public class PomodoroCalendarEventPublisher {
             summary += StringUtils.SPACE + "with tag" + StringUtils.SPACE + tagName;
         }
 
-        String educationColorId = pomodoroProperties.getTag().getEducation().getCalendarColorId();
-        String workColorId = pomodoroProperties.getTag().getWork().getCalendarColorId();
+        String educationColorId = pomodoroProperties.getTag().getEducation().getCalendarIdColor();
+        String workColorId = pomodoroProperties.getTag().getWork().getCalendarIdColor();
 
         String workTagName = pomodoroProperties.getTag().getWork().getName();
         String educationTagName = pomodoroProperties.getTag().getEducation().getName();

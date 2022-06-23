@@ -21,7 +21,6 @@ public class WarmUpper {
 
     private final RemotePrioritySynchronizer synchronizer;
     private final RemotePomodoroDataService remotePomodoroDataService;
-
     private final PomodoroCalendarEventProcessor pomodoroCalendarEventProcessor;
 
     @EventListener({ContextRefreshedEvent.class})
