@@ -1,12 +1,13 @@
-package com.igorgorbunov3333.timer.service.pomodoro.provider.impl;
+package com.igorgorbunov3333.timer.service.pomodoro.provider.local.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.period.CurrentWeekDaysProvidable;
 import com.igorgorbunov3333.timer.service.pomodoro.period.WeekStartDayProvidable;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.LocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.local.LocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
+import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +33,7 @@ public class CurrentWeekLocalPomodoroProvider implements LocalPomodoroProvider, 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroMapper pomodoroMapper;
     private final CurrentTimeService currentTimeService;
+    private final TagService tagService;
 
     @Override
     public List<PomodoroDto> provide(String pomodoroTag) {

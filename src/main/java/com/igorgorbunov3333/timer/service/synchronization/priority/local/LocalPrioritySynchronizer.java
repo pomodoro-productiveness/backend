@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.service.synchronization.priority.local;
 
-import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDataDto;
-import com.igorgorbunov3333.timer.service.pomodoro.RemotePomodoroDataService;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroMetadataDto;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.remote.RemotePomodoroDataService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ public class LocalPrioritySynchronizer {
 
     public void synchronize() {
         try {
-            PomodoroDataDto data = localSynchronizationDataProvider.validatePreviousRemotePrioritySynchronizationAndProvide();
+            PomodoroMetadataDto data = localSynchronizationDataProvider.validatePreviousRemotePrioritySynchronizationAndProvide();
             remotePomodoroDataService.updateRemoteData(data);
         } catch (Exception e) {
             e.printStackTrace();

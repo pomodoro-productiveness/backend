@@ -45,7 +45,9 @@ public interface WorkTimeStandardCalculator extends BaseTimeStandardCalculator {
     }
 
     private String getPomodoroWorkTag() {
-        return getPomodoroProperties().getTag().getWork();
+        return getPomodoroProperties().getTag()
+                .getWork()
+                .getName();
     }
 
 }

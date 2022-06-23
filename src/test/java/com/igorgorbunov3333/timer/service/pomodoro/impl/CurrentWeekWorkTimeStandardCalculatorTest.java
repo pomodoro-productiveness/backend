@@ -233,7 +233,9 @@ class CurrentWeekWorkTimeStandardCalculatorTest {
         when(pomodoroProperties.getStandard()).thenReturn(standard);
 
         PomodoroProperties.Tag tag = mock(PomodoroProperties.Tag.class);
-        when(tag.getWork()).thenReturn("work");
+        PomodoroProperties.TagDescription work = mock(PomodoroProperties.TagDescription.class);
+        when(tag.getWork()).thenReturn(work);
+        when(work.getName()).thenReturn("work");
 
         when(pomodoroProperties.getTag()).thenReturn(tag);
     }

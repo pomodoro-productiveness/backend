@@ -5,7 +5,8 @@ import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentMonthLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.local.impl.CurrentMonthLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,8 @@ class CurrentMonthLocalPomodoroProviderTest {
     private PomodoroRepository pomodoroRepository;
     @Mock
     private PomodoroMapper pomodoroMapper;
+    @Mock
+    private TagService tagService;
 
     @InjectMocks
     private CurrentMonthLocalPomodoroProvider testee;
@@ -89,13 +92,15 @@ class CurrentMonthLocalPomodoroProviderTest {
         ZonedDateTime end = currentDayTime.toLocalDate().atTime(LocalTime.MAX).atZone(CURRENT_ZONE_ID);
 
         PomodoroTag parentTag = mock(PomodoroTag.class);
-        when(parentTag.getName()).thenReturn(parentTagName);
 
         PomodoroTag childTag = null;
         if (childTagName != null) {
+            when(tagService.isRelative(childTagName, parentTagName)).thenReturn(true);
             childTag = mock(PomodoroTag.class);
             when(childTag.getName()).thenReturn(childTagName);
-            when(childTag.getParent()).thenReturn(parentTag);
+        } else {
+            when(parentTag.getName()).thenReturn(parentTagName);
+            when(tagService.isRelative(parentTagName, parentTagName)).thenReturn(true);
         }
 
         Pomodoro firsPomodoro = mock(Pomodoro.class);

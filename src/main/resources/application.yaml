@@ -8,21 +8,28 @@ spring:
     username: postgres
     password: root
   jpa.show-sql: false
-logging.level:
-  root: OFF
-  org.springframework.boot: OFF
 pomodoro:
   minimum-lifetime: ${POMODORO_MIN_LIFETIME:}
   standard:
     work: ${POMODORO_DAILY_AMOUNT_WORK:11}
     education: ${POMODORO_DAILY_AMOUNT_EDUCATION:3}
   tag:
-    work: work
-    education: education
+    work:
+      name: work
+      calendar-id-color: 11
+    education:
+      name: education
+      calendar-id-color: 5
 google-services:
   document-id: ${DRIVE_DOCUMENT_ID:}
   credentials-path: ${DRIVE_CREDENTIALS_PATH:}
   file-name: ${DRIVE_FILE_NAME:}
-  calendar-id: ${GOOGLE_CALENDAR_ID:}
+  calendar:
+    id:
+      day-off: ${GOOGLE_CALENDAR_DAY_OFF_ID:}
+      pomodoro: ${GOOGLE_CALENDAR_POMODORO_ID:}
+    summary:
+      day-off: ${GOOGLE_CALENDAR_DAY_OFF_SUMMARY:DayOff}
+      pomodoro: ${GOOGLE_CALENDAR_POMODORO_SUMMARY:Pomodoro}
 audio-player:
   path: ${AUDIO_PLAYER_PATH:}

@@ -20,4 +20,6 @@ public interface TagService {
     List<PomodoroTag> save(List<PomodoroTagDto> tags);
 
     boolean exists(String tagName);
+
+    boolean isRelative(String child, String parent);
 }

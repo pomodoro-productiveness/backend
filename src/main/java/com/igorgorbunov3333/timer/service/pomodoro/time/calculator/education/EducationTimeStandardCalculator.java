@@ -13,7 +13,12 @@ public interface EducationTimeStandardCalculator extends BaseTimeStandardCalcula
 
     default int calculate(PomodoroPeriod period, LocalDate startDate) { //TODO: move common code to BaseTimeStandardCalculator
         List<PomodoroDto> pomodoroDtos = getLocalPomodoroProviderCoordinator()
-                .provide(period, getPomodoroProperties().getTag().getEducation());
+                .provide(
+                        period,
+                        getPomodoroProperties().getTag()
+                                .getEducation()
+                                .getName()
+                );
 
         int actualAmount = pomodoroDtos.size();
 

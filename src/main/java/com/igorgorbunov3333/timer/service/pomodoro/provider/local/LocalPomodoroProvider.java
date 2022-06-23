@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.service.pomodoro.provider;
+package com.igorgorbunov3333.timer.service.pomodoro.provider.local;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
@@ -6,6 +6,7 @@ import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
+import com.igorgorbunov3333.timer.service.tag.TagService;
 
 import java.time.ZonedDateTime;
 import java.util.Comparator;
@@ -18,6 +19,7 @@ public interface LocalPomodoroProvider {
     PomodoroRepository getPomodoroRepository();
     PomodoroMapper getPomodoroMapper();
     PomodoroPeriod pomodoroPeriod();
+    TagService getTagService();
 
     List<PomodoroDto> provide(String tag);
 
@@ -30,24 +32,20 @@ public interface LocalPomodoroProvider {
         }
 
         return getPomodoroRepository().findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(startRange, endRange).stream()
-                .filter(pomodoro -> filterByTag(pomodoro, tagName))
+                .filter(pomodoro -> filterByTagAndAllChildTags(pomodoro, tagName))
                 .map(getPomodoroMapper()::mapToDto)
                 .sorted(Comparator.comparing(PomodoroDto::getStartTime))
                 .collect(Collectors.toList());
     }
 
-    private boolean filterByTag(Pomodoro pomodoro, String tagName) {
+    private boolean filterByTagAndAllChildTags(Pomodoro pomodoro, String tagName) {
         PomodoroTag tag = pomodoro.getTag();
 
         if (tag == null) {
             return false;
         }
 
-        return tagName.equals(tag.getName()) || pomodoroParentTagEqualToTag(tag.getParent(), tagName);
-    }
-
-    private boolean pomodoroParentTagEqualToTag(PomodoroTag parentTag, String tagName) {
-        return parentTag != null && tagName.equals(parentTag.getName());
+        return getTagService().isRelative(tag.getName(), tagName);
     }
 
 }

@@ -1,16 +1,17 @@
 package com.igorgorbunov3333.timer.service.synchronization.priority.remote;
 
-import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDataDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroMetadataDto;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.model.entity.enums.SynchronizationResult;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.service.dayoff.DayOffSynchronizer;
-import com.igorgorbunov3333.timer.service.pomodoro.RemotePomodoroDataService;
 import com.igorgorbunov3333.timer.service.pomodoro.remover.LocalPomodoroRemover;
 import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroSaver;
 import com.igorgorbunov3333.timer.service.synchronization.info.SynchronizationInfoService;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,6 @@ import java.util.List;
 @AllArgsConstructor
 public class RemotePrioritySynchronizer {
 
-    private final RemotePomodoroDataService remotePomodoroDataService;
     private final LocalPomodoroRemover localPomodoroRemover;
     private final TagService tagService;
     private final SynchronizationInfoService synchronizationInfoService;
@@ -31,9 +31,9 @@ public class RemotePrioritySynchronizer {
     private final DayOffSynchronizer dayOffSynchronizer;
 
     @Transactional
-    public void synchronize() {
+    public void synchronize(@NonNull PomodoroMetadataDto remoteData) {
         try {
-            saveRemoteDataLocally();
+            saveRemoteDataLocally(remoteData);
             synchronizationInfoService.save(Boolean.TRUE, SynchronizationResult.SUCCESSFULLY, null);
             dayOffSynchronizer.synchronize();
         } catch (Exception e) {
@@ -45,15 +45,14 @@ public class RemotePrioritySynchronizer {
         }
     }
 
-    void saveRemoteDataLocally() {
-        PomodoroDataDto remotePomodoroDataDto = remotePomodoroDataService.getRemoteData();
-
+    private void saveRemoteDataLocally(PomodoroMetadataDto remotePomodoroMetadataDto) {
         localPomodoroRemover.removeAll();
         tagService.removeAllTags();
 
-        List<PomodoroTagDto> tags = remotePomodoroDataDto.getPomodoroTags();
+        List<PomodoroTagDto> tags = remotePomodoroMetadataDto.getPomodoroTags();
         List<PomodoroTag> savedTags = saveTags(tags);
-        pomodoroSaver.save(remotePomodoroDataDto.getPomodoros(), savedTags);
+        List<PomodoroDto> pomodoroDtoToSave = remotePomodoroMetadataDto.getPomodoros();
+        pomodoroSaver.save(pomodoroDtoToSave, savedTags);
     }
 
     private List<PomodoroTag> saveTags(List<PomodoroTagDto> tags) {

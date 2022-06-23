@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.service.synchronization.scheduler;
+package com.igorgorbunov3333.timer.service.scheduler;
 
 import com.igorgorbunov3333.timer.service.synchronization.priority.local.LocalPrioritySynchronizer;
 import com.igorgorbunov3333.timer.service.synchronization.toggler.LocalPrioritySynchronizationToggler;
@@ -13,7 +13,7 @@ public class LocalPrioritySynchronizationScheduler {
     private final LocalPrioritySynchronizationToggler localPrioritySynchronizationToggler;
     private final LocalPrioritySynchronizer synchronizer;
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 1000) //TODO: remove this scheduler and use something else instead
     public void checkTaskForLocalPrioritySynchronization() {
         if (localPrioritySynchronizationToggler.isNeedToSynchronize()) {
             localPrioritySynchronizationToggler.synchronizationStarted();

@@ -36,7 +36,7 @@ public class GoogleOauth2CredetialFactoryConfig {
         InputStream in = new FileInputStream(credetialsFilePath);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(GoogleServiceUtil.JSON_FACTORY, new InputStreamReader(in));
 
-        Set<String> scopes = Set.of(DriveScopes.DRIVE, CalendarScopes.CALENDAR_EVENTS_READONLY);
+        Set<String> scopes = Set.of(DriveScopes.DRIVE, CalendarScopes.CALENDAR);
 
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(), GoogleServiceUtil.JSON_FACTORY, clientSecrets, scopes)

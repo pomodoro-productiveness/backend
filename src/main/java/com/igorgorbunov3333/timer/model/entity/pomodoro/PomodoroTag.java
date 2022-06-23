@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -59,6 +60,26 @@ public class PomodoroTag {
         }
         childTag.setParent(null);
         this.children.remove(childTag);
+    }
+
+    public boolean isRelative(String tagName) {
+        List<PomodoroTag> allTags = new ArrayList<>();
+
+        collectAllTagsIncludingChildren(this, allTags);
+
+        return allTags.stream()
+                .map(PomodoroTag::getName)
+                .collect(Collectors.toList())
+                .contains(tagName);
+    }
+
+    private void collectAllTagsIncludingChildren(PomodoroTag tag, List<PomodoroTag> tags) {
+        tags.add(tag);
+        tags.addAll(tag.getChildren());
+
+        for (PomodoroTag current : tag.getChildren()) {
+            collectAllTagsIncludingChildren(current, tags);
+        }
     }
 
 }

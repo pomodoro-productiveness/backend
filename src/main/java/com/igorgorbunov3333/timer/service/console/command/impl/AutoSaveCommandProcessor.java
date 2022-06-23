@@ -6,7 +6,7 @@ import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodo
 import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardPrintable;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.local.impl.CurrentDayLocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroAutoSaver;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculatorCoordinator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;

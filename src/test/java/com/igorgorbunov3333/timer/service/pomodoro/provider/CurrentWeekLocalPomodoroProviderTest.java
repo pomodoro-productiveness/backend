@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentWeekLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.local.impl.CurrentWeekLocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

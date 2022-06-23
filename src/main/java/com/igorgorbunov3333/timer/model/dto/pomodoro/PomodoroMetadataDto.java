@@ -11,13 +11,13 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class PomodoroDataDto {
+public class PomodoroMetadataDto {
 
     private List<PomodoroDto> pomodoros;
     private List<PomodoroTagDto> pomodoroTags;
 
-    public static PomodoroDataDto createEmpty() {
-        return new PomodoroDataDto(List.of(), List.of());
+    public static PomodoroMetadataDto createEmpty() {
+        return new PomodoroMetadataDto(List.of(), List.of());
     }
 
 }

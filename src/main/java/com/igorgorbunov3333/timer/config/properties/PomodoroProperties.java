@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.config.properties;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -29,8 +30,7 @@ public class PomodoroProperties {
     @NotNull
     private Tag tag;
 
-    @Setter
-    @Getter
+    @Data
     public static class Standard {
 
         @NotNull
@@ -43,15 +43,25 @@ public class PomodoroProperties {
 
     }
 
-    @Setter
-    @Getter
+    @Data
     public static class Tag {
 
         @NotBlank
-        private String work;
+        private TagDescription work;
 
         @NotBlank
-        private String education;
+        private TagDescription education;
+
+    }
+
+    @Data
+    public static class TagDescription {
+
+        @NotBlank
+        private String name;
+
+        @NotBlank
+        private String calendarColorId;
 
     }
 

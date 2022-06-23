@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.synchronization.priority.local;
 
-import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDataDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroMetadataDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
@@ -22,7 +22,7 @@ public class LocalSynchronizationDataProvider {
     private final TagService tagService;
     private final PomodoroMapper pomodoroMapper;
 
-    public PomodoroDataDto validatePreviousRemotePrioritySynchronizationAndProvide() {
+    public PomodoroMetadataDto validatePreviousRemotePrioritySynchronizationAndProvide() {
         localPomodorosSynchronizationValidator.validatePomodoroSynchronizationInfo();
         List<PomodoroDto> pomodoros = pomodoroRepository.findAll().stream()
                 .map(pomodoroMapper::mapToDto)
@@ -30,7 +30,7 @@ public class LocalSynchronizationDataProvider {
                 .collect(Collectors.toList());
         List<PomodoroTagDto> tags = tagService.getSortedTags(true);
 
-        return new PomodoroDataDto(pomodoros, tags);
+        return new PomodoroMetadataDto(pomodoros, tags);
     }
 
 }

@@ -37,7 +37,6 @@ public class DefaultTagService implements TagService {
     }
 
     //TODO: use mapper
-
     @Override
     @Transactional(readOnly = true)
     public List<PomodoroTagDto> getSortedTags(boolean withRemoved) {
@@ -101,6 +100,17 @@ public class DefaultTagService implements TagService {
     @Override
     public boolean exists(String tagName) {
         return tagRepository.existsByName(tagName);
+    }
+
+    @Override
+    public boolean isRelative(String tagToCheck, String tag) {
+        PomodoroTag parentTag = tagRepository.findByName(tag).orElse(null);
+
+        if (parentTag != null) {
+            return parentTag.isRelative(tagToCheck);
+        }
+
+        return false;
     }
 
     private PomodoroTag filterChildTags(PomodoroTag parentTag, boolean withRemoved) {
