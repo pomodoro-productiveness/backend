@@ -6,20 +6,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.util.CollectionUtils;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -36,50 +28,6 @@ public class PomodoroTag {
     private String name;
 
     @Setter
-    @ManyToOne
-    private PomodoroTag parent;
-
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<PomodoroTag> children;
-
-    @Setter
     private boolean removed;
-
-    public void addChildTag(PomodoroTag childTag) {
-        if (CollectionUtils.isEmpty(this.children)) {
-            this.children = new ArrayList<>(List.of(childTag));
-        } else {
-            this.children.add(childTag);
-        }
-        childTag.setParent(this);
-    }
-
-    public void removeChild(PomodoroTag childTag) {
-        if (CollectionUtils.isEmpty(this.children)) {
-            return;
-        }
-        childTag.setParent(null);
-        this.children.remove(childTag);
-    }
-
-    public boolean isRelative(String tagName) {
-        List<PomodoroTag> allTags = new ArrayList<>();
-
-        collectAllTagsIncludingChildren(this, allTags);
-
-        return allTags.stream()
-                .map(PomodoroTag::getName)
-                .collect(Collectors.toList())
-                .contains(tagName);
-    }
-
-    private void collectAllTagsIncludingChildren(PomodoroTag tag, List<PomodoroTag> tags) {
-        tags.add(tag);
-        tags.addAll(tag.getChildren());
-
-        for (PomodoroTag current : tag.getChildren()) {
-            collectAllTagsIncludingChildren(current, tags);
-        }
-    }
 
 }

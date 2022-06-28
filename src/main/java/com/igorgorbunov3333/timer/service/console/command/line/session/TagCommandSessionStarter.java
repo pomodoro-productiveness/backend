@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class TagCommandSessionStarter implements TagsProvidable, TagsPrintable {
+public class TagCommandSessionStarter implements TagsWithNestingAndNumberingProvidable, TagsPrintable {
 
     @Getter
     private final TagService tagService;
@@ -27,10 +27,8 @@ public class TagCommandSessionStarter implements TagsProvidable, TagsPrintable {
         boolean successfullyChosen;
         String answer;
         printerService.print("Chose an option:");
-        printerService.print("Press 1 to create new tag");
+        printerService.print("Press 1 to create a new tag");
         printerService.print("Press 2 to remove a tag");
-        printerService.print("Press 3 to set the relationship of the child tag to the parent tag");
-        printerService.print("Press 4 to remap a pomodoro tag to another");
         printerService.print("You may exit by pressing \"e\" to save current changes");
 
         answer = commandProvider.provideLine();

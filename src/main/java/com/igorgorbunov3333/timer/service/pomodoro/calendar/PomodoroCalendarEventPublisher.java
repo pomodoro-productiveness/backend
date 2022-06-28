@@ -10,8 +10,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.time.ZoneId;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -47,13 +50,16 @@ public class PomodoroCalendarEventPublisher {
     }
 
     private void publishPomodoro(PomodoroDto pomodoro) {
-        PomodoroTagDto pomodoroTag = pomodoro.getTag();
+        List<PomodoroTagDto> pomodoroTags = pomodoro.getTags();
+        List<String> pomodoroTagNames = pomodoroTags.stream()
+                .map(PomodoroTagDto::getName)
+                .collect(Collectors.toList());
 
         String summary = "Pomodoro";
-        String tagName = StringUtils.EMPTY;
-        if (pomodoroTag != null) {
-            tagName = pomodoro.getTag().getName();
-            summary += StringUtils.SPACE + "with tag" + StringUtils.SPACE + tagName;
+        String tagTitle = StringUtils.EMPTY;
+        if (!CollectionUtils.isEmpty(pomodoroTags)) {
+            tagTitle = "#" + pomodoroTags.stream().map(PomodoroTagDto::getName).collect(Collectors.joining("#"));
+            summary += StringUtils.SPACE + "with tag" + StringUtils.SPACE + tagTitle;
         }
 
         String educationColorId = pomodoroProperties.getTag().getEducation().getCalendarIdColor();
@@ -63,9 +69,9 @@ public class PomodoroCalendarEventPublisher {
         String educationTagName = pomodoroProperties.getTag().getEducation().getName();
 
         String colorId;
-        if (tagService.isRelative(tagName, workTagName)) {
+        if (pomodoroTagNames.contains(workTagName)) {
             colorId = workColorId;
-        } else if (tagService.isRelative(tagName, educationTagName)) {
+        } else if (pomodoroTagNames.contains(educationTagName)) {
             colorId = educationColorId;
         } else {
             colorId = COLOR_ID_DEFAULT;

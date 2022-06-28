@@ -6,16 +6,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
+@EqualsAndHashCode
 @AllArgsConstructor
-@EqualsAndHashCode(of = "name")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class PomodoroTagDto {
 
     private String name;
-    private List<PomodoroTagDto> children;
+
     private boolean removed;
 
 }

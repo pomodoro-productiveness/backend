@@ -18,7 +18,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -49,7 +50,8 @@ public class Pomodoro implements TemporalObject {
     private List<PomodoroPause> pomodoroPauses;
 
     @Setter
-    @ManyToOne(fetch = FetchType.EAGER)
-    private PomodoroTag tag;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "pomodoro_pomodoro_tag", joinColumns = {@JoinColumn(name = "pomodoro_id")}, inverseJoinColumns = {@JoinColumn(name = "tag_id")})
+    private List<PomodoroTag> tags;
 
 }

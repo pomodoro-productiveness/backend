@@ -1,6 +1,7 @@
 package com.igorgorbunov3333.timer.service.console.printer.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
@@ -8,12 +9,14 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -105,12 +108,18 @@ public class DefaultPrinterService implements PrinterService {
         String pomodoroRow;
         if (withIdAndTag) {
             String pomodoroId = pomodoro.getId().toString();
+
+            String tagLine = StringUtils.EMPTY;
+            if (!CollectionUtils.isEmpty(pomodoro.getTags())) {
+                tagLine = "#" + pomodoro.getTags().stream().map(PomodoroTagDto::getName).collect(Collectors.joining(" #"));
+            }
+
             pomodoroRow = "id - ".concat(pomodoroId)
                     .concat(" | ")
                     .concat(formattedPomodoroPeriodAndDuration)
                     .concat(" | ")
                     .concat("tag: ")
-                    .concat(pomodoro.getTag() == null ? StringUtils.EMPTY : pomodoro.getTag().getName());
+                    .concat(tagLine);
         } else {
             pomodoroRow = formattedPomodoroPeriodAndDuration;
         }

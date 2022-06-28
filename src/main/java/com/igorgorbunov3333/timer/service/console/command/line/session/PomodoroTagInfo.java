@@ -1,14 +1,15 @@
 package com.igorgorbunov3333.timer.service.console.command.line.session;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode
 @AllArgsConstructor
 public class PomodoroTagInfo {
 
-    private int tagNumber;
-    private String tagName;
-    private boolean childTag;
+    private final int tagNumber;
+    private final String tagName;
 
 }

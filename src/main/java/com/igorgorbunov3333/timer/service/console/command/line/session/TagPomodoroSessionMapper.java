@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.service.console.command.line.session;
 
+import com.igorgorbunov3333.timer.service.console.command.line.provider.AbstractLineProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.updater.LocalPomodoroUpdater;
@@ -8,11 +9,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
-public class TagPomodoroSessionMapper implements TagsProvidable, TagsPrintable, TagAnswerProvidable {
+public class TagPomodoroSessionMapper extends AbstractLineProvider implements TagsWithNestingAndNumberingProvidable, TagsPrintable, TagAnswerProvidable {
 
     private final LocalPomodoroUpdater localPomodoroUpdater;
     @Getter
@@ -23,17 +26,31 @@ public class TagPomodoroSessionMapper implements TagsProvidable, TagsPrintable, 
     private final CommandProvider commandProvider;
 
     public void mapTagToPomodoro(Long pomodoroId) {
-        List<PomodoroTagInfo> tags = provideTags();
+        List<PomodoroTagInfo> tagInfos = provideTags();
 
-        printerService.print("Choose tag to map to saved pomodoro or press \"e\" to exit");
-        printTags(tags);
+        Set<String> tags = new HashSet<>();
+        while (true) {
+            printerService.print("Choose tag to map to saved pomodoro or press \"e\" to finish");
+            printTags(tagInfos);
 
-        PomodoroTagInfo tagToMap = provideTagAnswer(tags, null);
-        if (tagToMap == null) {
-            return;
+            PomodoroTagInfo tagToMap = provideTagAnswer(tagInfos, null);
+            if (tagToMap == null) {
+                break;
+            }
+
+            tags.add(tagToMap.getTagName());
+            tagInfos.remove(tagToMap);
         }
 
-        localPomodoroUpdater.updatePomodoroWithTag(pomodoroId, tagToMap.getTagName());
+        printerService.print("Following tags [" + tags + "] will be mapped to pomodoro. Do you confirm?");
+        printerService.print("Yes (y), No");
+
+        String answer = provideLine();
+
+        if (answer.startsWith("y")) {
+            localPomodoroUpdater.updatePomodoroWithTag(pomodoroId, tags);
+        }
+
     }
 
 }

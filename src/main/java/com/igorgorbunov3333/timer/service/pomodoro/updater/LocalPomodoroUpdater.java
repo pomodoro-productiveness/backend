@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Set;
+
 @Component
 @AllArgsConstructor
 public class LocalPomodoroUpdater {
@@ -16,15 +19,11 @@ public class LocalPomodoroUpdater {
     private final TagRepository tagRepository;
 
     @Transactional
-    public void updatePomodoroWithTag(Long pomodoroId, String tagName) {
+    public void updatePomodoroWithTag(Long pomodoroId, Set<String> tagNames) {
         Pomodoro pomodoroWithTag = pomodoroRepository.getById(pomodoroId);
-        PomodoroTag tag = tagRepository.findByName(tagName).orElse(null);
+        List<PomodoroTag> tags = tagRepository.findByNameIn(tagNames);
 
-        if (tag == null) {
-            throw new IllegalArgumentException(String.format("No tag with name %s", tagName)); //TODO: use another exception?
-        }
-
-        pomodoroWithTag.setTag(tag);
+        pomodoroWithTag.setTags(tags);
         pomodoroRepository.save(pomodoroWithTag);
     }
 

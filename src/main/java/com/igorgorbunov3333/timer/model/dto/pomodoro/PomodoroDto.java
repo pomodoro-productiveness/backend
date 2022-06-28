@@ -32,7 +32,7 @@ public class PomodoroDto implements TemporalObject {
 
     private List<PomodoroPauseDto> pomodoroPauses;
 
-    private PomodoroTagDto tag;
+    private List<PomodoroTagDto> tags;
 
     @Override
     public String toString() {

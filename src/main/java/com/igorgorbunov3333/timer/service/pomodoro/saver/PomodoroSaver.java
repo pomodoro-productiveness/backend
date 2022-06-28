@@ -10,16 +10,17 @@ import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Getter
 @Component
@@ -32,27 +33,24 @@ public class PomodoroSaver implements SinglePomodoroSavable {
     public void save(List<PomodoroDto> pomodoros, List<PomodoroTag> savedTags) {
         List<Pomodoro> pomodorosToSave = pomodoroMapper.mapToEntity(pomodoros);
 
-        List<PomodoroTag> allChildTags = savedTags.stream()
-                .flatMap(tag -> tag.getChildren() == null ? Stream.of() : tag.getChildren().stream())
-                .collect(Collectors.toList());
-        savedTags.addAll(allChildTags);
         Map<String, PomodoroTag> tagNamesToTags = savedTags.stream()
                 .collect(Collectors.toMap(PomodoroTag::getName, Function.identity()));
 
         for (Pomodoro pomodoro : pomodorosToSave) {
-            PomodoroTag pomodoroTag = pomodoro.getTag();
+            List<PomodoroTag> pomodoroTags = pomodoro.getTags();
 
-            String tagName = null;
-            if (pomodoroTag != null) {
-                tagName = pomodoroTag.getName();
+            List<PomodoroTag> pomodoroSavedTags = new ArrayList<>();
+            if (!CollectionUtils.isEmpty(pomodoroTags)) {
+                for (PomodoroTag tag : pomodoroTags) {
+                    PomodoroTag tagToMap = tagNamesToTags.get(tag.getName());
+
+                    if (tagToMap != null) {
+                        pomodoroSavedTags.add(tagToMap);
+                    }
+                }
             }
 
-            PomodoroTag savedTag = null;
-            if (tagName != null) {
-                savedTag = tagNamesToTags.get(tagName);
-            }
-
-            pomodoro.setTag(savedTag);
+            pomodoro.setTags(pomodoroSavedTags);
         }
 
         pomodoroRepository.saveAll(pomodorosToSave);

@@ -2,11 +2,11 @@ package com.igorgorbunov3333.timer.service.pomodoro.provider.local;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
-import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import com.igorgorbunov3333.timer.service.tag.TagService;
+import org.springframework.util.CollectionUtils;
 
 import java.time.ZonedDateTime;
 import java.util.Comparator;
@@ -39,13 +39,12 @@ public interface LocalPomodoroProvider {
     }
 
     private boolean filterByTagAndAllChildTags(Pomodoro pomodoro, String tagName) {
-        PomodoroTag tag = pomodoro.getTag();
-
-        if (tag == null) {
-            return false;
+        if (!CollectionUtils.isEmpty(pomodoro.getTags())) {
+            return pomodoro.getTags().stream()
+                    .anyMatch(p -> tagName.equals(p.getName()));
         }
 
-        return getTagService().isRelative(tag.getName(), tagName);
+        return false;
     }
 
 }

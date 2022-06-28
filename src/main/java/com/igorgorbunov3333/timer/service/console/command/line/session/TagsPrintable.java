@@ -15,15 +15,8 @@ public interface TagsPrintable {
 
         getPrinterService().print("Current tags:");
 
-        getPrinterService().printParagraph();
+        tags.forEach(t -> getPrinterService().print(t.getTagNumber() + DefaultPrinterService.DOT + StringUtils.SPACE + t.getTagName()));
 
-        for (PomodoroTagInfo tag : tags) {
-            if (!tag.isChildTag()) {
-                getPrinterService().print(tag.getTagNumber() + DefaultPrinterService.DOT + StringUtils.SPACE + tag.getTagName());
-            } else {
-                getPrinterService().print(DefaultPrinterService.TABULATION + tag.getTagNumber() + DefaultPrinterService.DOT + tag.getTagName());
-            }
-        }
         if (!tags.isEmpty()) {
             getPrinterService().printParagraph();
         }

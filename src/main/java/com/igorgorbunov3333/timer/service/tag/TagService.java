@@ -9,9 +9,7 @@ public interface TagService {
 
     String save(String name);
 
-    List<PomodoroTagDto> getSortedTags(boolean withRemoved);
-
-    void addChildTagForParentTag(String parentPomodoroTag, String childPomodoroTag);
+    List<PomodoroTagDto> getSortedTags(boolean includeRemoved);
 
     void removeTag(String tagName);
 
@@ -21,5 +19,4 @@ public interface TagService {
 
     boolean exists(String tagName);
 
-    boolean isRelative(String child, String parent);
 }
