@@ -24,7 +24,6 @@ public class DefaultPrinterService implements PrinterService {
 
     public static final String MESSAGE_POMODORO_SAVED = "Pomodoro successfully saved: ";
     public static final String MESSAGE_NO_POMODOROS = "No pomodoros to display!";
-    public static final String TABULATION = "    ";
     public static final String DOT = ".";
 
     @Override
@@ -81,7 +80,7 @@ public class DefaultPrinterService implements PrinterService {
             System.out.println();
             System.out.println(entry.getKey());
             System.out.println("pomodoros in day - " + entry.getValue().size());
-            printPomodoroWithIdsAndTags(entry.getValue(), false);
+            printPomodoroWithIdsAndTags(entry.getValue(), true);
         }
     }
 

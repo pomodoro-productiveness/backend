@@ -38,6 +38,7 @@ public class MonthCommandProcessor implements CommandProcessor, CompletedStandar
         Map<LocalDate, List<PomodoroDto>> sortedPomodoros = new TreeMap<>(datesToPomadoros);
         if (sortedPomodoros.isEmpty()) {
             printerService.print("No monthly pomodoros");
+            return;
         }
         printerService.printLocalDatePomodoros(sortedPomodoros);
 
