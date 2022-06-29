@@ -9,18 +9,18 @@ public interface NumberProvidable {
 
     PrinterService getPrinterService();
 
-    default Integer provideNumber() {
-        try {
-            String tagNumberAnswer = getCommandProvider().provideLine();
-            if (tagNumberAnswer.toLowerCase().startsWith("e")) {
-                return -1;
+    default int provideNumber() {
+        while (true) {
+            try {
+                String tagNumberAnswer = getCommandProvider().provideLine();
+                if (tagNumberAnswer.toLowerCase().startsWith("e")) {
+                    return -1;
+                }
+
+                return Integer.parseInt(tagNumberAnswer);
+            } catch (NumberFormatException e) {
+                getPrinterService().print("Incorrect format, please enter a number again or press \"e\" to exit");
             }
-
-            return Integer.parseInt(tagNumberAnswer);
-
-        } catch (NumberFormatException e) {
-            getPrinterService().print("Incorrect format, please enter a number again or press \"e\" to exit");
-            return null;
         }
     }
 

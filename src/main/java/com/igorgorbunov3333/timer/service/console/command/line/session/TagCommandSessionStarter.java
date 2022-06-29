@@ -2,33 +2,26 @@ package com.igorgorbunov3333.timer.service.console.command.line.session;
 
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class TagCommandSessionStarter implements TagsWithNestingAndNumberingProvidable, TagsPrintable {
+public class TagCommandSessionStarter {
 
-    @Getter
-    private final TagService tagService;
-    @Getter
     private final PrinterService printerService;
     private final CommandProvider commandProvider;
     private final TagCommandSessionCoordinator tagCommandSessionCoordinator;
 
-    public boolean startSession() {
-        List<PomodoroTagInfo> tagsWithNumbers = provideTags();
-        printTags(tagsWithNumbers);
-
+    public boolean startSession(List<PomodoroTagInfo> tagsWithNumbers) {
         boolean successfullyChosen;
         String answer;
         printerService.print("Chose an option:");
         printerService.print("Press 1 to create a new tag");
         printerService.print("Press 2 to remove a tag");
+        printerService.print("Press 3 to remap tags for pomodoro");
         printerService.print("You may exit by pressing \"e\" to save current changes");
 
         answer = commandProvider.provideLine();

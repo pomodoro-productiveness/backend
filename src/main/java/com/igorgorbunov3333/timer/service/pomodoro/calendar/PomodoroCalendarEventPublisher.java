@@ -5,7 +5,6 @@ import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.service.google.calendar.GoogleCalendarEventPublisher;
-import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +26,6 @@ public class PomodoroCalendarEventPublisher {
     private final GoogleCalendarEventPublisher googleCalendarEventPublisher;
     private final PomodoroProperties pomodoroProperties;
     private final GoogleServicesProperties googleServicesProperties;
-    private final TagService tagService;
 
     public void publish(PomodoroDto pomodoro) {
         try {
@@ -50,24 +49,36 @@ public class PomodoroCalendarEventPublisher {
     }
 
     private void publishPomodoro(PomodoroDto pomodoro) {
-        List<PomodoroTagDto> pomodoroTags = pomodoro.getTags();
-        List<String> pomodoroTagNames = pomodoroTags.stream()
-                .map(PomodoroTagDto::getName)
-                .collect(Collectors.toList());
+        String summary = getSummary(pomodoro);
 
+        String colorId = getColorId(pomodoro.getTags());
+
+        long pomodoroStartTime = pomodoro.getStartTime().toInstant().toEpochMilli();
+        long pomodoroEndTime = pomodoro.getEndTime().toInstant().toEpochMilli();
+        googleCalendarEventPublisher.publishEvent(summary, googleServicesProperties.getCalendar().getId().getPomodoro(), colorId, pomodoroStartTime, pomodoroEndTime);
+    }
+
+    private String getSummary(PomodoroDto pomodoro) {
         String summary = "Pomodoro";
-        String tagTitle = StringUtils.EMPTY;
-        if (!CollectionUtils.isEmpty(pomodoroTags)) {
-            tagTitle = "#" + pomodoroTags.stream().map(PomodoroTagDto::getName).collect(Collectors.joining("#"));
+        String tagTitle;
+        if (!CollectionUtils.isEmpty(pomodoro.getTags())) {
+            tagTitle = "#" + pomodoro.getTags().stream()
+                    .map(PomodoroTagDto::getName)
+                    .sorted()
+                    .collect(Collectors.joining("#"));
             summary += StringUtils.SPACE + "with tag" + StringUtils.SPACE + tagTitle;
         }
+        return summary;
+    }
 
+    private String getColorId(List<PomodoroTagDto> pomodoroTags) {
         String educationColorId = pomodoroProperties.getTag().getEducation().getCalendarIdColor();
         String workColorId = pomodoroProperties.getTag().getWork().getCalendarIdColor();
 
         String workTagName = pomodoroProperties.getTag().getWork().getName();
         String educationTagName = pomodoroProperties.getTag().getEducation().getName();
 
+        List<String> pomodoroTagNames = getTagNames(pomodoroTags);
         String colorId;
         if (pomodoroTagNames.contains(workTagName)) {
             colorId = workColorId;
@@ -76,12 +87,17 @@ public class PomodoroCalendarEventPublisher {
         } else {
             colorId = COLOR_ID_DEFAULT;
         }
+        return colorId;
+    }
 
-        long pomodoroStartTime = pomodoro.getStartTime().toInstant().toEpochMilli();
-        long pomodoroEndTime = pomodoro.getEndTime().toInstant().toEpochMilli();
-
-        googleCalendarEventPublisher.publishEvent(summary, googleServicesProperties.getCalendar().getId().getPomodoro(), colorId, pomodoroStartTime, pomodoroEndTime);
-
+    private List<String> getTagNames(List<PomodoroTagDto> pomodoroTags) {
+        List<String> pomodoroTagNames = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(pomodoroTags)) {
+            pomodoroTagNames = pomodoroTags.stream()
+                    .map(PomodoroTagDto::getName)
+                    .collect(Collectors.toList());
+        }
+        return pomodoroTagNames;
     }
 
 }

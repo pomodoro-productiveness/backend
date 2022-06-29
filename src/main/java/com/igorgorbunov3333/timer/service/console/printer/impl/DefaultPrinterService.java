@@ -32,7 +32,7 @@ public class DefaultPrinterService implements PrinterService {
     }
 
     @Override
-    public void printWithCarriage(String message) {
+    public void printWithoutCarriageOffset(String message) {
         System.out.print(message);
     }
 
@@ -110,7 +110,10 @@ public class DefaultPrinterService implements PrinterService {
 
             String tagLine = StringUtils.EMPTY;
             if (!CollectionUtils.isEmpty(pomodoro.getTags())) {
-                tagLine = "#" + pomodoro.getTags().stream().map(PomodoroTagDto::getName).collect(Collectors.joining(" #"));
+                tagLine = "#" + pomodoro.getTags().stream()
+                        .map(PomodoroTagDto::getName)
+                        .sorted()
+                        .collect(Collectors.joining(" #"));
             }
 
             pomodoroRow = "id - ".concat(pomodoroId)

@@ -8,7 +8,7 @@ import com.igorgorbunov3333.timer.service.pomodoro.provider.local.impl.CurrentDa
 
 import java.util.List;
 
-public abstract class AbstractPomodoroCommandService {
+public abstract class AbstractPomodoroSessionMapper {
 
     public abstract CurrentDayLocalPomodoroProvider getCurrentDayLocalPomodoroProvider();
     public abstract PrinterService getPrinterService();
@@ -21,7 +21,7 @@ public abstract class AbstractPomodoroCommandService {
 
     //TODO: must be another session service to only map tag to pomodoro
     public void startTagSessionAndPrintDailyPomodoros(Long pomodoroId) {
-        getTagPomodoroSessionMapper().mapTagToPomodoro(pomodoroId);
+        getTagPomodoroSessionMapper().addTagToPomodoro(pomodoroId);
 
         getAndPrintDailyPomodoros();
     }

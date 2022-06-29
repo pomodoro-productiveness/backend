@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,13 +26,33 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
     @Getter
     private final CommandProvider commandProvider;
 
-    public void mapTagToPomodoro(Long pomodoroId) {
+    public void addTagToPomodoro(Long pomodoroId) {
         List<PomodoroTagInfo> tagInfos = provideTags();
+
+        Set<String> tags;
+        while (true) {
+            tags = getTagsFromUser(tagInfos);
+
+            printerService.print("Following tags [" + tags + "] will be mapped to pomodoro. Do you confirm?");
+            printerService.print("Yes (y), No");
+
+            String answer = provideLine();
+
+            if (answer.startsWith("y")) {
+                break;
+            }
+        }
+
+        localPomodoroUpdater.updatePomodoroWithTag(pomodoroId, tags);
+    }
+
+    private Set<String> getTagsFromUser(List<PomodoroTagInfo> tagInfos) {
+        List<PomodoroTagInfo> tagInfosCopy = new ArrayList<>(tagInfos);
 
         Set<String> tags = new HashSet<>();
         while (true) {
             printerService.print("Choose tag to map to saved pomodoro or press \"e\" to finish");
-            printTags(tagInfos);
+            printTags(tagInfosCopy);
 
             PomodoroTagInfo tagToMap = provideTagAnswer(tagInfos, null);
             if (tagToMap == null) {
@@ -39,18 +60,10 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
             }
 
             tags.add(tagToMap.getTagName());
-            tagInfos.remove(tagToMap);
+            tagInfosCopy.remove(tagToMap);
         }
 
-        printerService.print("Following tags [" + tags + "] will be mapped to pomodoro. Do you confirm?");
-        printerService.print("Yes (y), No");
-
-        String answer = provideLine();
-
-        if (answer.startsWith("y")) {
-            localPomodoroUpdater.updatePomodoroWithTag(pomodoroId, tags);
-        }
-
+        return tags;
     }
 
 }

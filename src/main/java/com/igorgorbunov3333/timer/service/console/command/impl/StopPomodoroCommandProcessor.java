@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class StopPomodoroCommandProcessor extends AbstractPomodoroCommandService implements CommandProcessor, CompletedStandardPrintable {
+public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper implements CommandProcessor, CompletedStandardPrintable {
 
     private final PomodoroEngineService pomodoroEngineService;
     @Getter

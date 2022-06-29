@@ -12,7 +12,7 @@ public interface PrinterService {
 
     void print(String message);
 
-    void printWithCarriage(String message);
+    void printWithoutCarriageOffset(String message);
 
     void printParagraph();
 
