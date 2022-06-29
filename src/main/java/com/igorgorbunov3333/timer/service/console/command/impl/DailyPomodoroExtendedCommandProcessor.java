@@ -4,6 +4,8 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardPrintable;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
+import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.local.impl.CurrentDayLocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculatorCoordinator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
@@ -18,6 +20,8 @@ import java.util.List;
 @AllArgsConstructor
 public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor, CompletedStandardPrintable {
 
+    private final PomodoroEngineService pomodoroEngineService;
+    private final PomodoroEngine pomodoroEngine;
     private final CurrentDayLocalPomodoroProvider currentDayLocalPomodoroProvider;
     @Getter
     private final PrinterService printerService;
@@ -32,7 +36,16 @@ public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor, 
 
         printerService.printPomodorosWithIdsAndTags(pomodoros);
 
+        if (pomodoroEngine.isPomodoroCurrentlyRunning()) {
+            String pomodoroCurrentDuration = pomodoroEngineService.getPomodoroCurrentDuration();
+
+            printerService.printParagraph();
+
+            printerService.print("Currently running pomodoro duration: " + pomodoroCurrentDuration);
+        }
+
         printCompletedStandard(PomodoroPeriod.DAY);
+
     }
 
     @Override

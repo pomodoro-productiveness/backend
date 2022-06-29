@@ -72,11 +72,11 @@ public class PomodoroEngine {
         do {
             Thread.sleep(1000);
             int currentValue = PomodoroState.POMODORO_DURATION.incrementAndGet();
-            if (currentValue >= pomodoroProperties.getDuration() && !playerStarted) {
+            if (currentValue >= pomodoroProperties.getDuration() * 60 && !playerStarted) {
                 player.play();
                 playerStarted = true;
             }
-            if (currentValue >= pomodoroProperties.getAutomaticShutdownDuration()) {
+            if (currentValue >= pomodoroProperties.getAutomaticShutdownDuration() * 60) {
                 final int pomodoroCurrentDuration = PomodoroState.POMODORO_DURATION.get();
                 stopPomodoro();
                 pomodoroStoppedSpringEventPublisher.publish(pomodoroCurrentDuration);
