@@ -20,6 +20,8 @@ pomodoro:
     education:
       name: education
       calendar-id-color: 5
+  duration: ${POMODORO_DURATION:20}
+  automatic-shutdown-duration: ${POMODORO_AUTOMATIC_SHUTDOWN_DURATION:25}
 google-services:
   document-id: ${DRIVE_DOCUMENT_ID:}
   credentials-path: ${DRIVE_CREDENTIALS_PATH:}

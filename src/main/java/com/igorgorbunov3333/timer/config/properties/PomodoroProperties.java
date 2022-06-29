@@ -30,6 +30,14 @@ public class PomodoroProperties {
     @NotNull
     private Tag tag;
 
+    @NotNull
+    @Positive
+    private Integer duration;
+
+    @NotNull
+    @Positive
+    private Integer automaticShutdownDuration;
+
     @Data
     public static class Standard {
 

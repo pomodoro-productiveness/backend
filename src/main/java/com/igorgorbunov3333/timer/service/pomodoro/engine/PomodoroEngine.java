@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.service.pomodoro.engine;
 
+import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.service.audioplayer.AudioPlayerService;
 import com.igorgorbunov3333.timer.service.event.publisher.PomodoroStoppedSpringEventPublisher;
 import lombok.AllArgsConstructor;
@@ -15,12 +16,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @AllArgsConstructor
 public class PomodoroEngine {
 
-    private static final int SECONDS_IN_20_MINUTES = 20 * 60;
-    private static final int SECONDS_IN_25_MINUTES = 25 * 60;
-
     private final AudioPlayerService player;
     private final PomodoroStoppedSpringEventPublisher pomodoroStoppedSpringEventPublisher;
     private final PomodoroPausesStorage pomodoroPausesStorage;
+    private final PomodoroProperties pomodoroProperties;
 
     @Async
     public void startPomodoro() {
@@ -73,11 +72,11 @@ public class PomodoroEngine {
         do {
             Thread.sleep(1000);
             int currentValue = PomodoroState.POMODORO_DURATION.incrementAndGet();
-            if (currentValue >= SECONDS_IN_20_MINUTES && !playerStarted) {
+            if (currentValue >= pomodoroProperties.getDuration() && !playerStarted) {
                 player.play();
                 playerStarted = true;
             }
-            if (currentValue >= SECONDS_IN_25_MINUTES) {
+            if (currentValue >= pomodoroProperties.getAutomaticShutdownDuration()) {
                 final int pomodoroCurrentDuration = PomodoroState.POMODORO_DURATION.get();
                 stopPomodoro();
                 pomodoroStoppedSpringEventPublisher.publish(pomodoroCurrentDuration);
