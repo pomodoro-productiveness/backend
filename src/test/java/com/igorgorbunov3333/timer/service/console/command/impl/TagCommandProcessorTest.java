@@ -1,6 +1,7 @@
-package com.igorgorbunov3333.timer.service.console.command.line.session;
+package com.igorgorbunov3333.timer.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
+import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroTagInfo;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
@@ -19,10 +20,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TagCommandSessionStarterTest {
+class TagCommandProcessorTest {
 
     @InjectMocks
-    private TagCommandSessionStarter testee;
+    private TagCommandProcessor testee;
 
     @Mock
     private TagService tagService;
