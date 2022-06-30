@@ -1,5 +1,4 @@
 spring:
   datasource:
     url: ${DATASOURCE_URL}
-    username: postgres
     password: ${DATASOURCE_PASSWORD}

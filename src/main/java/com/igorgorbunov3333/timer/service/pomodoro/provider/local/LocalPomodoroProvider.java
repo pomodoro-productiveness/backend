@@ -13,7 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//TODO: refactor
+//TODO: refactor and rename as no local and remote terms for pomodoro
 public interface LocalPomodoroProvider {
 
     PomodoroRepository getPomodoroRepository();
