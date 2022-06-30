@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-// TODO: create provisioner to create new calendar for pomodoro if not exists
 @Slf4j
 @Component
 @AllArgsConstructor

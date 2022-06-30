@@ -13,6 +13,7 @@ import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTime
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor, 
     private final EducationTimeStandardCalculatorCoordinator educationTimeStandardCalculatorCoordinator;
 
     @Override
+    @Transactional(readOnly = true)
     public void process() {
         List<PomodoroDto> pomodoros = currentDayLocalPomodoroProvider.provide(null);
 

@@ -12,6 +12,7 @@ import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -36,6 +37,7 @@ public class CurrentWeekLocalPomodoroProvider implements LocalPomodoroProvider, 
     private final TagService tagService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<PomodoroDto> provide(String pomodoroTag) {
         LocalDate startDayOfWeek = provideStartDayOfWeek();
 

@@ -7,7 +7,12 @@ spring:
     url: jdbc:postgresql://localhost:5432/pomodoro_database
     username: postgres
     password: root
-  jpa.show-sql: false
+  jpa:
+    show-sql: false
+    properties.hibernate:
+      show_sql: false
+      use_sql_comments: false
+      format_sql: false
 pomodoro:
   minimum-lifetime: ${POMODORO_MIN_LIFETIME:}
   standard:

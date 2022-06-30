@@ -1,3 +1,5 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/pomodoro_db
+    url: ${DATASOURCE_URL}
+    username: postgres
+    password: ${DATASOURCE_PASSWORD}

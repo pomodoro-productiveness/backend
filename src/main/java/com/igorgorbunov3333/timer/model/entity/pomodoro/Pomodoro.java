@@ -50,6 +50,7 @@ public class Pomodoro implements TemporalObject {
     private List<PomodoroPause> pomodoroPauses;
 
     @Setter
+    @Fetch(FetchMode.SUBSELECT)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "pomodoro_pomodoro_tag", joinColumns = {@JoinColumn(name = "pomodoro_id")}, inverseJoinColumns = {@JoinColumn(name = "tag_id")})
     private List<PomodoroTag> tags;

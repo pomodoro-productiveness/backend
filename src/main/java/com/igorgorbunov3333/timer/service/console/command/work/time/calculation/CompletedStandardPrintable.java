@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.Edu
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTimeStandardCalculatorCoordinator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 
-//TODO: consider make it separate bean an autowire it as usual as needed
+//TODO: consider make it separate bean an autowire it as usual as needed and rename
 public interface CompletedStandardPrintable {
 
     PrinterService getPrinterService();

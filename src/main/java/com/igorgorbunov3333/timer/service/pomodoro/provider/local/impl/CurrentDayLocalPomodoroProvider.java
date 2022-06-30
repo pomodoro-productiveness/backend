@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -29,7 +28,6 @@ public class CurrentDayLocalPomodoroProvider implements LocalPomodoroProvider {
     private final TagService tagService;
 
     @Override
-    @Transactional(readOnly = true) //TODO: is it needed here?
     public List<PomodoroDto> provide(String tag) {
         Pair<ZonedDateTime, ZonedDateTime> startEndTimePair = currentTimeService.getCurrentDayPeriod();
 

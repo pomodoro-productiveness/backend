@@ -1,6 +1,5 @@
 package com.igorgorbunov3333.timer.service.console.command;
 
-import com.igorgorbunov3333.timer.service.synchronization.toggler.LocalPrioritySynchronizationToggler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,13 +12,11 @@ import java.util.stream.Collectors;
 public class CommandCoordinator {
 
     private final Map<String, CommandProcessor> commandByService;
-    private final LocalPrioritySynchronizationToggler toggler;
 
     @Autowired
-    public CommandCoordinator(List<CommandProcessor> commandProcessors, LocalPrioritySynchronizationToggler toggler) {
+    public CommandCoordinator(List<CommandProcessor> commandProcessors) {
         commandByService = commandProcessors.stream()
                 .collect(Collectors.toMap(CommandProcessor::command, Function.identity()));
-        this.toggler = toggler;
     }
 
     public boolean coordinate(String command) {
@@ -29,7 +26,7 @@ public class CommandCoordinator {
             return false;
         }
         commandProcessor.process();
-        toggler.synchronize();
+
         return true;
     }
 
