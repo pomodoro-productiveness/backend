@@ -6,7 +6,7 @@ import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.local.impl.CurrentDayLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculatorCoordinator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTimeStandardCalculatorCoordinator;
@@ -23,7 +23,7 @@ public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor, 
 
     private final PomodoroEngineService pomodoroEngineService;
     private final PomodoroEngine pomodoroEngine;
-    private final CurrentDayLocalPomodoroProvider currentDayLocalPomodoroProvider;
+    private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
     @Getter
     private final PrinterService printerService;
     @Getter

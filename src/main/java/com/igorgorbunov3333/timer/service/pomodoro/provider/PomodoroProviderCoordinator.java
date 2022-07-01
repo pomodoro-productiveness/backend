@@ -1,7 +1,6 @@
 package com.igorgorbunov3333.timer.service.pomodoro.provider;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.local.LocalPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +13,18 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class LocalPomodoroProviderCoordinator {
+public class PomodoroProviderCoordinator {
 
-    private final Map<PomodoroPeriod, LocalPomodoroProvider> pomodoroPeriodsToProviders;
+    private final Map<PomodoroPeriod, PomodoroProvider> pomodoroPeriodsToProviders;
 
     @Autowired
-    public LocalPomodoroProviderCoordinator(List<LocalPomodoroProvider> localPomodoroProviders) {
-        this.pomodoroPeriodsToProviders = localPomodoroProviders.stream()
-                .collect(Collectors.toMap(LocalPomodoroProvider::pomodoroPeriod, Function.identity()));
+    public PomodoroProviderCoordinator(List<PomodoroProvider> pomodoroProviders) {
+        this.pomodoroPeriodsToProviders = pomodoroProviders.stream()
+                .collect(Collectors.toMap(PomodoroProvider::pomodoroPeriod, Function.identity()));
     }
 
     public List<PomodoroDto> provide(PomodoroPeriod period, String tag) {
-        LocalPomodoroProvider provider = pomodoroPeriodsToProviders.get(period);
+        PomodoroProvider provider = pomodoroPeriodsToProviders.get(period);
 
         if (provider == null) {
             throw new IllegalArgumentException(String.format("Provider not found for period %s", period));

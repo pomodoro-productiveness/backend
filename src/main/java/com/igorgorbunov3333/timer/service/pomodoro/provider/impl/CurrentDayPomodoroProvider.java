@@ -1,9 +1,9 @@
-package com.igorgorbunov3333.timer.service.pomodoro.provider.local.impl;
+package com.igorgorbunov3333.timer.service.pomodoro.provider.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.local.LocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.PomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class CurrentDayLocalPomodoroProvider implements LocalPomodoroProvider {
+public class CurrentDayPomodoroProvider implements PomodoroProvider {
 
     private final CurrentTimeService currentTimeService;
     @Getter

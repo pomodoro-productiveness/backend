@@ -9,7 +9,7 @@ import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodo
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagSessionProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.impl.DefaultPrinterService;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.local.impl.CurrentDayLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +24,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class TagRemappingSessionProcessor extends AbstractPomodoroSessionMapper implements TagSessionProcessor, NumberProvidable {
 
-    private final CurrentDayLocalPomodoroProvider currentDayLocalPomodoroProvider;
+    private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
     private final CommandProvider commandProvider;
     private final PrinterService printerService;
     private final TagPomodoroSessionMapper tagPomodoroSessionMapper;

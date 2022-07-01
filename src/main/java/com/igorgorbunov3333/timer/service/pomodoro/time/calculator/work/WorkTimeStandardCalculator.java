@@ -22,7 +22,7 @@ public interface WorkTimeStandardCalculator extends BaseTimeStandardCalculator {
                 .collect(Collectors.toList());
 
         String workTag = getPomodoroWorkTag();
-        int actualAmount = getLocalPomodoroProviderCoordinator().provide(period, workTag)
+        int actualAmount = getPomodoroProviderCoordinator().provide(period, workTag)
                 .size();
 
         LocalDate today = getCurrentTimeService().getCurrentDateTime().toLocalDate();

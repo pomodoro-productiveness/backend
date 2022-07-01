@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.im
 
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.service.pomodoro.period.WeekStartDayProvidable;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.LocalPomodoroProviderCoordinator;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.PomodoroProviderCoordinator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
@@ -19,7 +19,7 @@ public class WeekEducationTimeStandardCalculator implements WeekStartDayProvidab
 
     private final CurrentTimeService currentTimeService;
     private final PomodoroProperties pomodoroProperties;
-    private final LocalPomodoroProviderCoordinator localPomodoroProviderCoordinator;
+    private final PomodoroProviderCoordinator pomodoroProviderCoordinator;
 
     @Override
     public int calculate() {

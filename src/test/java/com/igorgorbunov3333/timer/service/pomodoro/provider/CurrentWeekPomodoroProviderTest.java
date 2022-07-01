@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.local.impl.CurrentWeekLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentWeekPomodoroProvider;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CurrentWeekLocalPomodoroProviderTest {
+class CurrentWeekPomodoroProviderTest {
 
     private static final ZoneId CURRENT_ZONE_ID = ZoneId.of("Europe/Kiev");
 
@@ -39,7 +39,7 @@ class CurrentWeekLocalPomodoroProviderTest {
     private CurrentTimeService currentTimeService;
 
     @InjectMocks
-    private CurrentWeekLocalPomodoroProvider testee;
+    private CurrentWeekPomodoroProvider testee;
 
     @Test
     void getCurrentWeekPomodoros_WhenNoWeeklyPomodoros_ThenReturnEmptyMap() {

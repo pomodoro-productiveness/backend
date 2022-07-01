@@ -7,7 +7,7 @@ import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.local.impl.CurrentDayLocalPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroAutoSaver;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculatorCoordinator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
@@ -22,7 +22,7 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
 
     private final PomodoroAutoSaver pomodoroAutoSaver;
     @Getter
-    private final CurrentDayLocalPomodoroProvider currentDayLocalPomodoroProvider;
+    private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
     @Getter
     private final PrinterService printerService;
     @Getter

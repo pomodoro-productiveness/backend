@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.service.warmup;
 
+import com.igorgorbunov3333.timer.service.pomodoro.calendar.PomodoroCalendarEventProcessor;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -12,13 +13,13 @@ import org.springframework.stereotype.Component;
 public class WarmUpper {
 //TODO: pass local pomodoros for PomodoroCalendarEventProcessor to process
 
-//    private final PomodoroCalendarEventProcessor pomodoroCalendarEventProcessor;
+    private final PomodoroCalendarEventProcessor pomodoroCalendarEventProcessor;
 
     @EventListener({ContextRefreshedEvent.class})
     void onStartup() {
         log.info("WarmUpper has started");
 
-//        pomodoroCalendarEventProcessor.process(remotePomodoro);
+        pomodoroCalendarEventProcessor.process();
 
         log.info("WarmUpper successfully finished");
     }

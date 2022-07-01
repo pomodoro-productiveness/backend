@@ -1,11 +1,9 @@
-package com.igorgorbunov3333.timer.service.pomodoro.provider.local;
+package com.igorgorbunov3333.timer.service.pomodoro.provider;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
-import com.igorgorbunov3333.timer.service.tag.TagService;
 import org.springframework.util.CollectionUtils;
 
 import java.time.ZonedDateTime;
@@ -13,15 +11,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//TODO: refactor and rename as no local and remote terms for pomodoro
-public interface LocalPomodoroProvider {
+public interface BasePomodoroProvider {
 
     PomodoroRepository getPomodoroRepository();
     PomodoroMapper getPomodoroMapper();
-    PomodoroPeriod pomodoroPeriod();
-    TagService getTagService();
-
-    List<PomodoroDto> provide(String tag);
 
     default List<PomodoroDto> provide(ZonedDateTime startRange, ZonedDateTime endRange, String tagName) { //TODO: move this method to another class to not expose it as it used only by providers
         if (tagName == null) {
