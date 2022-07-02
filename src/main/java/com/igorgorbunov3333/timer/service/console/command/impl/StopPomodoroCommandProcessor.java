@@ -3,7 +3,7 @@ package com.igorgorbunov3333.timer.service.console.command.impl;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodoroSessionMapper;
-import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardPrintable;
+import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardCalculable;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
@@ -14,10 +14,11 @@ import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTime
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
-public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper implements CommandProcessor, CompletedStandardPrintable {
+public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper implements CommandProcessor, CompletedStandardCalculable {
 
     private final PomodoroEngineService pomodoroEngineService;
     @Getter
@@ -32,6 +33,7 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
     private final WorkTimeStandardCalculatorCoordinator workTimeStandardCalculatorCoordinator;
 
     @Override
+    @Transactional
     public void process() {
         PomodoroDto savedPomodoro;
         try {
@@ -45,7 +47,7 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
 
         startTagSessionAndPrintDailyPomodoros(savedPomodoro.getId());
 
-        printCompletedStandard(PomodoroPeriod.DAY);
+        calculateStandard(PomodoroPeriod.DAY);
     }
 
     @Override

@@ -6,13 +6,13 @@ import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTime
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 
 //TODO: consider make it separate bean an autowire it as usual as needed and rename
-public interface CompletedStandardPrintable {
+public interface CompletedStandardCalculable {
 
     PrinterService getPrinterService();
     WorkTimeStandardCalculatorCoordinator getWorkTimeStandardCalculatorCoordinator();
     EducationTimeStandardCalculatorCoordinator getEducationTimeStandardCalculatorCoordinator();
 
-    default void printCompletedStandard(PomodoroPeriod period) {
+    default void calculateStandard(PomodoroPeriod period) {
         getPrinterService().printParagraph();
         int workBalance = getWorkTimeStandardCalculatorCoordinator()
                 .calculate(period);

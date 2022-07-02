@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardPrintable;
+import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardCalculable;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor, CompletedStandardPrintable {
+public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor, CompletedStandardCalculable {
 
     private final PomodoroEngineService pomodoroEngineService;
     private final PomodoroEngine pomodoroEngine;
@@ -46,7 +46,7 @@ public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor, 
             printerService.print("Currently running pomodoro duration: " + pomodoroCurrentDuration);
         }
 
-        printCompletedStandard(PomodoroPeriod.DAY);
+        calculateStandard(PomodoroPeriod.DAY);
 
     }
 

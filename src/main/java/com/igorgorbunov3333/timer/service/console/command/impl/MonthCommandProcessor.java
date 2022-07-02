@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardPrintable;
+import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardCalculable;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentMonthPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculatorCoordinator;
@@ -11,6 +11,7 @@ import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.Pomodor
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class MonthCommandProcessor implements CommandProcessor, CompletedStandardPrintable {
+public class MonthCommandProcessor implements CommandProcessor, CompletedStandardCalculable {
 
     private final CurrentMonthPomodoroProvider currentMonthLocalPomodoroProvider;
     @Getter
@@ -31,6 +32,7 @@ public class MonthCommandProcessor implements CommandProcessor, CompletedStandar
     private final WorkTimeStandardCalculatorCoordinator workTimeStandardCalculatorCoordinator;
 
     @Override
+    @Transactional(readOnly = true)
     public void process() {
         List<PomodoroDto> monthlyPomodoros = currentMonthLocalPomodoroProvider.provide(null);
         Map<LocalDate, List<PomodoroDto>> datesToPomadoros = monthlyPomodoros.stream()
@@ -42,7 +44,7 @@ public class MonthCommandProcessor implements CommandProcessor, CompletedStandar
         }
         printerService.printLocalDatePomodoros(sortedPomodoros);
 
-        printCompletedStandard(PomodoroPeriod.MONTH);
+        calculateStandard(PomodoroPeriod.MONTH);
     }
 
     @Override

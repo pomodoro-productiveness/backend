@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardPrintable;
+import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardCalculable;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculatorCoordinator;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTimeStandardCalculatorCoordinator;
@@ -11,6 +11,7 @@ import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.Pomodor
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
-public class WeekCommandProcessor implements CommandProcessor, CompletedStandardPrintable {
+public class WeekCommandProcessor implements CommandProcessor, CompletedStandardCalculable {
 
     private final CurrentWeekPomodoroProvider currentWeekLocalPomodoroProvider;
     @Getter
@@ -29,6 +30,7 @@ public class WeekCommandProcessor implements CommandProcessor, CompletedStandard
     private final WorkTimeStandardCalculatorCoordinator workTimeStandardCalculatorCoordinator;
 
     @Override
+    @Transactional(readOnly = true)
     public void process() {
         Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoros = currentWeekLocalPomodoroProvider.provideCurrentWeekPomodorosByDays();
         if (weeklyPomodoros.isEmpty()) {
@@ -36,7 +38,7 @@ public class WeekCommandProcessor implements CommandProcessor, CompletedStandard
         }
         printerService.printDayOfWeekToPomodoros(weeklyPomodoros);
 
-        printCompletedStandard(PomodoroPeriod.WEEK);
+        calculateStandard(PomodoroPeriod.WEEK);
     }
 
     @Override
