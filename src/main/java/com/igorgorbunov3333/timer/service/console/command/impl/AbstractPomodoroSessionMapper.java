@@ -20,15 +20,17 @@ public abstract class AbstractPomodoroSessionMapper {
     }
 
     //TODO: must be another session service to only map tag to pomodoro
-    public void startTagSessionAndPrintDailyPomodoros(Long pomodoroId) {
+    public List<PomodoroDto> startTagSessionAndPrintDailyPomodoros(Long pomodoroId) {
         getTagPomodoroSessionMapper().addTagToPomodoro(pomodoroId);
 
-        getAndPrintDailyPomodoros();
+        return getAndPrintDailyPomodoros();
     }
 
-    private void getAndPrintDailyPomodoros() {
-        List<PomodoroDto> pomodoros = getCurrentDayLocalPomodoroProvider().provide(null);
-        getPrinterService().printPomodorosWithIdsAndTags(pomodoros);
+    private List<PomodoroDto> getAndPrintDailyPomodoros() {
+        List<PomodoroDto> pomodoro = getCurrentDayLocalPomodoroProvider().provide(null);
+        getPrinterService().printPomodorosWithIdsAndTags(pomodoro);
+
+        return pomodoro;
     }
 
 }

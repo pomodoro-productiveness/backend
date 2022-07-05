@@ -16,6 +16,8 @@ import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper implements CommandProcessor, CompletedStandardCalculable {
@@ -45,9 +47,9 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
         }
         printSuccessfullySavedMessage(savedPomodoro);
 
-        startTagSessionAndPrintDailyPomodoros(savedPomodoro.getId());
+        List<PomodoroDto> dailyPomodoro = startTagSessionAndPrintDailyPomodoros(savedPomodoro.getId());
 
-        calculateStandard(PomodoroPeriod.DAY);
+        calculateStandard(PomodoroPeriod.DAY, dailyPomodoro);
     }
 
     @Override

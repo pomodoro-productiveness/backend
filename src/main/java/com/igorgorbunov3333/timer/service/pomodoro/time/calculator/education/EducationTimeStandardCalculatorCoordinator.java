@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education;
 
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +23,14 @@ public class EducationTimeStandardCalculatorCoordinator {
                 .collect(Collectors.toMap(EducationTimeStandardCalculator::period, Function.identity()));
     }
 
-    public int calculate(PomodoroPeriod period) {
+    public int calculate(PomodoroPeriod period, List<PomodoroDto> pomodoro) {
         EducationTimeStandardCalculator calculator = calculatorsByPeriods.get(period);
 
         if (calculator == null) {
             throw new IllegalArgumentException(String.format("Wrong period: %s", period)); //TODO: handle this exception
         }
 
-        return calculator.calculate();
+        return calculator.calculate(pomodoro);
     }
 
 }

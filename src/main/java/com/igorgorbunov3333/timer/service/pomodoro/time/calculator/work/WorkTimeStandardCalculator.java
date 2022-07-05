@@ -1,29 +1,32 @@
 package com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work;
 
+import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.model.entity.dayoff.DayOff;
 import com.igorgorbunov3333.timer.repository.DayOffRepository;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.BaseTimeStandardCalculator;
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import org.springframework.util.CollectionUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public interface WorkTimeStandardCalculator extends BaseTimeStandardCalculator {
 
     DayOffRepository getDayOffRepository();
 
-    default int calculate(PomodoroPeriod period, LocalDate startDate) { //TODO: move common code to BaseTimeStandardCalculator
+    default int calculate(LocalDate startDate, List<PomodoroDto> pomodoro) { //TODO: move common code to BaseTimeStandardCalculator
         List<LocalDate> dayOffs = getDayOffRepository().findByDayGreaterThanEqualOrderByDay(startDate).stream()
                 .map(DayOff::getDay)
                 .collect(Collectors.toList());
 
         String workTag = getPomodoroWorkTag();
-        int actualAmount = getPomodoroProviderCoordinator().provide(period, workTag)
-                .size();
+        int actualAmount = (int) pomodoro.stream()
+                .filter(filterByTag(workTag))
+                .count();
 
         LocalDate today = getCurrentTimeService().getCurrentDateTime().toLocalDate();
 
@@ -42,6 +45,13 @@ public interface WorkTimeStandardCalculator extends BaseTimeStandardCalculator {
         int standardAmount = getPomodoroProperties().getStandard().getWork() * daysAmount;
 
         return actualAmount - standardAmount;
+    }
+
+    private Predicate<PomodoroDto> filterByTag(String workTag) {
+        return p -> p.getTags().stream()
+                .map(PomodoroTagDto::getName)
+                .collect(Collectors.toList())
+                .contains(workTag);
     }
 
     private String getPomodoroWorkTag() {

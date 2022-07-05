@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -38,7 +39,11 @@ public class WeekCommandProcessor implements CommandProcessor, CompletedStandard
         }
         printerService.printDayOfWeekToPomodoros(weeklyPomodoros);
 
-        calculateStandard(PomodoroPeriod.WEEK);
+        List<PomodoroDto> pomodoro = weeklyPomodoros.values().stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        calculateStandard(PomodoroPeriod.WEEK, pomodoro);
     }
 
     @Override

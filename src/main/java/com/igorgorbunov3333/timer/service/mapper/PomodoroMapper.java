@@ -25,7 +25,7 @@ public class PomodoroMapper {
                 pomodoro.getStartTime(),
                 pomodoro.getEndTime(),
                 pomodoro.isSavedAutomatically(),
-                mapPomodoroPausesToDtos(pomodoro.getPomodoroPauses()),
+                List.of(),
                 mapPomodoroTagToDto(pomodoro.getTags())
         );
     }
@@ -34,16 +34,6 @@ public class PomodoroMapper {
         return pomodoroDtos.stream()
                 .map(this::mapToEntity)
                 .collect(Collectors.toList());
-    }
-
-    private List<PomodoroPauseDto> mapPomodoroPausesToDtos(List<PomodoroPause> pomodoroPauses) {
-        return pomodoroPauses.stream()
-                .map(this::mapPomodoroPauseToDto)
-                .collect(Collectors.toList());
-    }
-
-    private PomodoroPauseDto mapPomodoroPauseToDto(PomodoroPause pomodoroPause) {
-        return new PomodoroPauseDto(pomodoroPause.getStartTime(), pomodoroPause.getEndTime());
     }
 
     private List<PomodoroTagDto> mapPomodoroTagToDto(List<PomodoroTag> tags) {

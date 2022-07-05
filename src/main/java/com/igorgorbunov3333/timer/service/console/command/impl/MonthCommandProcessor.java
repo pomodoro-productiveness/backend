@@ -34,8 +34,8 @@ public class MonthCommandProcessor implements CommandProcessor, CompletedStandar
     @Override
     @Transactional(readOnly = true)
     public void process() {
-        List<PomodoroDto> monthlyPomodoros = currentMonthLocalPomodoroProvider.provide(null);
-        Map<LocalDate, List<PomodoroDto>> datesToPomadoros = monthlyPomodoros.stream()
+        List<PomodoroDto> monthlyPomodoro = currentMonthLocalPomodoroProvider.provide(null);
+        Map<LocalDate, List<PomodoroDto>> datesToPomadoros = monthlyPomodoro.stream()
                 .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().toLocalDate()));
         Map<LocalDate, List<PomodoroDto>> sortedPomodoros = new TreeMap<>(datesToPomadoros);
         if (sortedPomodoros.isEmpty()) {
@@ -44,7 +44,7 @@ public class MonthCommandProcessor implements CommandProcessor, CompletedStandar
         }
         printerService.printLocalDatePomodoros(sortedPomodoros);
 
-        calculateStandard(PomodoroPeriod.MONTH);
+        calculateStandard(PomodoroPeriod.MONTH, monthlyPomodoro);
     }
 
     @Override

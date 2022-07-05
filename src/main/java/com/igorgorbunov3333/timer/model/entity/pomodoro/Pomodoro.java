@@ -46,12 +46,11 @@ public class Pomodoro implements TemporalObject {
 
     @Fetch(FetchMode.SUBSELECT)
     @JoinColumn(name = "pomodoroId")
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PomodoroPause> pomodoroPauses;
 
     @Setter
-    @Fetch(FetchMode.SUBSELECT)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "pomodoro_pomodoro_tag", joinColumns = {@JoinColumn(name = "pomodoro_id")}, inverseJoinColumns = {@JoinColumn(name = "tag_id")})
     private List<PomodoroTag> tags;
 
