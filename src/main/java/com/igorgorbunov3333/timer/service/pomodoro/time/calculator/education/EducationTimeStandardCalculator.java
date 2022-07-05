@@ -1,17 +1,24 @@
 package com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.BaseTimeStandardCalculator;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public interface EducationTimeStandardCalculator extends BaseTimeStandardCalculator {
 
-    default int calculate(LocalDate startDate, List<PomodoroDto> pomodoroDtos) { //TODO: move common code to BaseTimeStandardCalculator
-        int actualAmount = pomodoroDtos.size();
+    default int calculate(LocalDate startDate, List<PomodoroDto> pomodoro) { //TODO: move common code to BaseTimeStandardCalculator
+        String educationTag = getPomodoroWorkTag();
+
+        int actualAmount = (int) pomodoro.stream()
+                .filter(filterByTag(educationTag))
+                .count();
 
         LocalDate today = getCurrentTimeService().getCurrentDateTime().toLocalDate();
 
@@ -28,6 +35,19 @@ public interface EducationTimeStandardCalculator extends BaseTimeStandardCalcula
         int standardAmount = getPomodoroProperties().getStandard().getEducation() * days.size();
 
         return actualAmount - standardAmount;
+    }
+
+    private String getPomodoroWorkTag() {
+        return getPomodoroProperties().getTag()
+                .getEducation()
+                .getName();
+    }
+
+    private Predicate<PomodoroDto> filterByTag(String workTag) {
+        return p -> p.getTags().stream()
+                .map(PomodoroTagDto::getName)
+                .collect(Collectors.toList())
+                .contains(workTag);
     }
 
 }
