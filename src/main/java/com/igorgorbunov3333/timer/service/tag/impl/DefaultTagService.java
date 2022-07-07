@@ -3,7 +3,7 @@ package com.igorgorbunov3333.timer.service.tag.impl;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
-import com.igorgorbunov3333.timer.repository.TagRepository;
+import com.igorgorbunov3333.timer.repository.PomodoroTagRepository;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.mapper.TagMapper;
 import com.igorgorbunov3333.timer.service.tag.TagService;
@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DefaultTagService implements TagService {
 
-    private final TagRepository tagRepository;
+    private final PomodoroTagRepository pomodoroTagRepository;
     private final PomodoroRepository pomodoroRepository;
     private final TagMapper tagMapper;
     private final PrinterService printerService;
 
     @Override
     public String save(String name) {
-        PomodoroTag tag = tagRepository.findByName(name).orElse(null);
+        PomodoroTag tag = pomodoroTagRepository.findByName(name).orElse(null);
 
         if (tag != null) {
             if (tag.isRemoved()) {
@@ -39,7 +39,7 @@ public class DefaultTagService implements TagService {
         }
 
         PomodoroTag tagToSave = new PomodoroTag(null, name, false);
-        PomodoroTag savedTag = tagRepository.save(tagToSave);
+        PomodoroTag savedTag = pomodoroTagRepository.save(tagToSave);
 
         return savedTag.getName();
     }
@@ -48,7 +48,7 @@ public class DefaultTagService implements TagService {
     @Override
     @Transactional(readOnly = true)
     public List<PomodoroTagDto> getSortedTags(boolean includeRemoved) {
-        return tagRepository.findAll().stream()
+        return pomodoroTagRepository.findAll().stream()
                 .filter(tag -> filterTag(tag, includeRemoved))
                 .map(tagMapper::mapToDto)
                 .sorted(Comparator.comparing(PomodoroTagDto::getName))
@@ -58,7 +58,7 @@ public class DefaultTagService implements TagService {
     @Override
     @Transactional
     public void removeTag(String tagName) {
-        PomodoroTag tag = tagRepository.findByName(tagName).orElse(null);
+        PomodoroTag tag = pomodoroTagRepository.findByName(tagName).orElse(null);
 
         if (tag == null) {
             printerService.print(String.format("Tag with name %s does not exist", tagName));
@@ -67,28 +67,28 @@ public class DefaultTagService implements TagService {
 
         if (pomodoroRepository.existsByTagsName(tagName)) {
             tag.setRemoved(true);
-            tagRepository.save(tag);
+            pomodoroTagRepository.save(tag);
         } else {
-            tagRepository.deleteByName(tagName);
+            pomodoroTagRepository.deleteByName(tagName);
         }
     }
 
     @Override
     public void removeAllTags() {
-        tagRepository.deleteAll();
-        tagRepository.flush();
+        pomodoroTagRepository.deleteAll();
+        pomodoroTagRepository.flush();
     }
 
     @Override
     public List<PomodoroTag> save(List<PomodoroTagDto> tags) {
         List<PomodoroTag> tagsToSave = tagMapper.mapToEntities(tags);
 
-        return tagRepository.saveAll(tagsToSave);
+        return pomodoroTagRepository.saveAll(tagsToSave);
     }
 
     @Override
     public boolean exists(String tagName) {
-        return tagRepository.existsByName(tagName);
+        return pomodoroTagRepository.existsByName(tagName);
     }
 
     private boolean filterTag(PomodoroTag tag, boolean withRemoved) {

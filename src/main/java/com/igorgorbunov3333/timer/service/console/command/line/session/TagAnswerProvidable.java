@@ -6,7 +6,7 @@ public interface TagAnswerProvidable extends TagsPrintable, NumberProvidable {
 
     default PomodoroTagInfo provideTagAnswer(List<PomodoroTagInfo> tags, String parentTagName) {
         do {
-            Integer intAnswerNumber = provideNumber();
+            Integer intAnswerNumber = provideNumber(); //TODO: int answer can not be null, fix it
             if (intAnswerNumber == null) {
                 printTags(tags);
                 continue;
