@@ -20,7 +20,7 @@ public class PomodoroTagBunchCleaner {
     public void clean() {
         List<PomodoroTagBunch> bunchesToDelete = pomodoroTagBunchRepository.findAllByOrderByIdDesc()
                 .stream()
-                .skip(10L)
+                .skip(5L)
                 .collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(bunchesToDelete)) {

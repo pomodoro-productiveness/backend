@@ -33,7 +33,7 @@ public class PomodoroTagBunchService {
             }
         }
 
-        if (!CollectionUtils.isEmpty(pomodoroTags) && tags.size() > 1) {
+        if (!CollectionUtils.isEmpty(pomodoroTags)) {
             PomodoroTagBunch bunch = new PomodoroTagBunch(null, pomodoroTags);
 
             pomodoroTagBunchRepository.save(bunch);
