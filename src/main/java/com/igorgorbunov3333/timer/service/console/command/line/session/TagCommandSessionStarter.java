@@ -16,7 +16,6 @@ public class TagCommandSessionStarter {
     private final TagCommandSessionCoordinator tagCommandSessionCoordinator;
 
     public boolean startSession(List<PomodoroTagInfo> tagsWithNumbers) {
-        boolean successfullyChosen;
         String answer;
         printerService.print("Chose an option:");
         printerService.print("Press 1 to create a new tag");
@@ -30,7 +29,7 @@ public class TagCommandSessionStarter {
             return true;
         }
 
-        successfullyChosen = tagCommandSessionCoordinator.coordinate(answer, tagsWithNumbers);
+        boolean successfullyChosen = tagCommandSessionCoordinator.coordinate(answer, tagsWithNumbers);
 
         if (!successfullyChosen) {
             printerService.print("Incorrect option, please retry or press \"e\" to exit");

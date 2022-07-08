@@ -76,7 +76,7 @@ public class PomodoroEngine {
                 player.play();
                 playerStarted = true;
             }
-            if (currentValue >= pomodoroProperties.getAutomaticShutdownDuration() * 60) {
+            if (currentValue >= pomodoroProperties.getAutomaticShutdownDuration() * 60) { //TODO: validate this value, it must be less then standard duration
                 final int pomodoroCurrentDuration = PomodoroState.POMODORO_DURATION.get();
                 stopPomodoro();
                 pomodoroStoppedSpringEventPublisher.publish(pomodoroCurrentDuration);
