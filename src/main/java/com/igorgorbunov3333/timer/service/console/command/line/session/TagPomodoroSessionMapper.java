@@ -38,21 +38,7 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
     private final PomodoroTagBunchService pomodoroTagBunchService;
 
     public void addTagToPomodoro(Long pomodoroId) {
-        printerService.print("Use latest tag bunches?");
-        printerService.print("Yes (y), No");
-
-        Set<String> tags;
-        String answer = provideLine();
-
-        if (answer.startsWith("y")) { //TODO: extract to common code
-            tags = getTagsFromBunch();
-
-            if (tags == null) {
-                tags = getChosenTags();
-            }
-        } else {
-            tags = getChosenTags();
-        }
+        Set<String> tags = getTagsFromBunch();
 
         localPomodoroUpdater.updatePomodoroWithTag(pomodoroId, tags);
     }
@@ -61,9 +47,7 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
         List<PomodoroTagBunch> pomodoroTagBunches = pomodoroTagBunchService.getLatestTagBunches();
 
         if (CollectionUtils.isEmpty(pomodoroTagBunches)) {
-            printerService.print("There are no tag bunches yet");
-
-            return null;
+            return getChosenTags();
         }
 
         Map<Integer, PomodoroTagBunch> pomodoroTagBunchMap = new HashMap<>();
@@ -79,7 +63,7 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
         }
 
         while (true) {
-            printerService.print("Please choose tags bunch by it's number");
+            printerService.print("Please choose tags bunch by it's number or press \"e\" to map by other tags");
             int numberAnswer = provideNumber();
 
             if (numberAnswer != -1) {
@@ -91,7 +75,7 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
                     break;
                 }
             } else {
-                return null;
+                return getChosenTags();
             }
         }
         return chosenTagBunch.getPomodoroTags().stream()
