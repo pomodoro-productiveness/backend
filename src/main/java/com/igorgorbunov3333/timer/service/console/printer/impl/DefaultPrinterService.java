@@ -59,8 +59,8 @@ public class DefaultPrinterService implements PrinterService {
     }
 
     @Override
-    public void printSavedAndDailyPomodorosAfterStoppingPomodoro(PomodoroDto savedPomodoro,
-                                                                 List<PomodoroDto> dailyPomodoros) {
+    public void printSavedAndDailyPomodoroAfterStoppingPomodoro(PomodoroDto savedPomodoro,
+                                                                List<PomodoroDto> dailyPomodoros) {
         System.out.println("Pomodoro stopped automatically!");
         System.out.println(MESSAGE_POMODORO_SAVED + savedPomodoro);
         printPomodorosWithIdsAndTags(dailyPomodoros);

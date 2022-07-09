@@ -26,37 +26,42 @@ public class StartPomodoroCommandProcessor implements CommandProcessor {
     public void process() {
         try {
             pomodoroEngineService.startPomodoro();
+
+            Integer minutesToPauseDuration = getMinutesToPauseDuration();
+            if (minutesToPauseDuration != null && isValidDuration(minutesToPauseDuration)) {
+                pomodoroPauseTimer.conduct(minutesToPauseDuration * 60);
+            }
         } catch (PomodoroEngineException e) {
             printerService.print(e.getMessage());
             return;
         }
-        printerService.print("Pomodoro has started");
+        printerService.print("Pomodoro started");
         pomodoroEngineService.printThreeSecondsOfPomodoroExecution();
+    }
 
+    private Integer getMinutesToPauseDuration() {
         String currentCommand = CurrentCommandStorage.currentCommand;
 
         String[] commandParts = currentCommand.split(StringUtils.SPACE);
 
         if (commandParts.length < 2) {
-            return;
+            return null;
         }
 
-        Integer durationInMinutes = null;
+        Integer timerToPauseDurationInMinutes = null;
         try {
-            durationInMinutes = Integer.valueOf(commandParts[1]);
+            timerToPauseDurationInMinutes = Integer.valueOf(commandParts[1]);
         } catch (NumberFormatException e) {
             String className = this.getClass().getSimpleName();
             log.error(String.format("Error while parsing command in %s", className), e);
         }
 
-        if (durationInMinutes != null && isValidDuration(durationInMinutes)) {
-            pomodoroPauseTimer.conduct(durationInMinutes * 60);
-        }
+        return timerToPauseDurationInMinutes;
     }
 
     private boolean isValidDuration(Integer minutes) {
         if (minutes >= pomodoroProperties.getDuration()
-            || minutes >= pomodoroProperties.getAutomaticShutdownDuration()) {
+                || minutes >= pomodoroProperties.getAutomaticShutdownDuration()) {
             printerService.print("Duration must be less then pomodoro standard duration an less then automatic shutdown duration");
 
             return false;

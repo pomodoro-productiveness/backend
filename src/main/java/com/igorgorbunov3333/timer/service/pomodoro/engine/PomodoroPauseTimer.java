@@ -20,12 +20,14 @@ public class PomodoroPauseTimer {
         long start = System.currentTimeMillis();
 
         while (true) {
-            long currentDurationInSeconds = (System.currentTimeMillis() - start) / 1000;
+            long currentDurationInMilliseconds = System.currentTimeMillis() - start;
 
-            if (currentDurationInSeconds >= seconds) {
-                player.play();
+            if (currentDurationInMilliseconds >= (seconds * 1000L)) {
+                pomodoroEngine.pausePomodoro();
 
                 printerService.print(String.format("[%d] seconds have passed.", seconds));
+
+                player.play();
 
                 try {
                     Thread.sleep(3000L);
@@ -35,7 +37,6 @@ public class PomodoroPauseTimer {
 
                 player.stop();
 
-                pomodoroEngine.pausePomodoro();
                 printerService.print(String.format("Pomodoro paused at %s", pomodoroEngineService.getPomodoroCurrentDuration()));
 
                 break;

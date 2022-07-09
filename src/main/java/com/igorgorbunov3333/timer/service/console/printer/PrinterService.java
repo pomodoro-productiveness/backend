@@ -18,7 +18,7 @@ public interface PrinterService {
 
     void printFeaturesList();
 
-    void printSavedAndDailyPomodorosAfterStoppingPomodoro(PomodoroDto savedPomodoro, List<PomodoroDto> dailyPomodoros);
+    void printSavedAndDailyPomodoroAfterStoppingPomodoro(PomodoroDto savedPomodoro, List<PomodoroDto> dailyPomodoros);
 
     void printPomodorosWithIdsAndTags(List<PomodoroDto> pomodoros);
 

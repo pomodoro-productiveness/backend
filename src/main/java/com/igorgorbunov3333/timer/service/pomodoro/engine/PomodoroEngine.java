@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @AllArgsConstructor
@@ -23,20 +22,20 @@ public class PomodoroEngine {
 
     @Async
     public void startPomodoro() {
-        startPomodoro(0);
+        startPomodoro(null);
     }
 
     public int stopPomodoro() {
         PomodoroState.POMODORO_RUNNING.set(false);
         PomodoroState.POMODORO_PAUSED.set(false);
-        final int pomodoroDuration = PomodoroState.POMODORO_DURATION.get();
+        final int pomodoroDuration = (int) PomodoroState.currentPomodoroDurationInMilliseconds / 1000;
         player.stop();
-        PomodoroState.POMODORO_DURATION.set(0);
+        PomodoroState.currentPomodoroDurationInMilliseconds = 0;
         return pomodoroDuration;
     }
 
     public int getPomodoroCurrentDuration() {
-        return PomodoroState.POMODORO_DURATION.get();
+        return (int) (PomodoroState.currentPomodoroDurationInMilliseconds / 1000);
     }
 
     public boolean isPomodoroCurrentlyRunning() {
@@ -58,28 +57,30 @@ public class PomodoroEngine {
         PomodoroState.POMODORO_PAUSED.set(false);
         PomodoroPauseState.pomodoroPauseEndTime = System.currentTimeMillis();
         pomodoroPausesStorage.add(Pair.of(PomodoroPauseState.pomodoroPauseStartTime, PomodoroPauseState.pomodoroPauseEndTime));
-        startPomodoro(PomodoroState.POMODORO_DURATION.get());
+        startPomodoro(PomodoroState.currentPomodoroDurationInMilliseconds);
     }
 
     @SneakyThrows
-    private void startPomodoro(int currentDuration) {
+    private void startPomodoro(Long currentDuration) {
+        long startMillis = System.currentTimeMillis();
+
         if (PomodoroState.POMODORO_RUNNING.get()) {
             return;
         }
         PomodoroState.POMODORO_RUNNING.set(true);
-        PomodoroState.POMODORO_DURATION.set(currentDuration);
+
+        long additionalDuration = currentDuration == null ? 0 : currentDuration;
+
         boolean playerStarted = false;
         do {
-            Thread.sleep(1000);
-            int currentValue = PomodoroState.POMODORO_DURATION.incrementAndGet();
-            if (currentValue >= pomodoroProperties.getDuration() * 60 && !playerStarted) {
+            PomodoroState.currentPomodoroDurationInMilliseconds = System.currentTimeMillis() - startMillis + additionalDuration;
+            if (PomodoroState.currentPomodoroDurationInMilliseconds >= (pomodoroProperties.getDuration() * 60 * 1000) && !playerStarted) {
                 player.play();
                 playerStarted = true;
             }
-            if (currentValue >= pomodoroProperties.getAutomaticShutdownDuration() * 60) { //TODO: validate this value, it must be less then standard duration
-                final int pomodoroCurrentDuration = PomodoroState.POMODORO_DURATION.get();
+            if (PomodoroState.currentPomodoroDurationInMilliseconds >= (pomodoroProperties.getAutomaticShutdownDuration() * 60 * 1000)) { //TODO: validate this value, it must be less then standard duration
                 stopPomodoro();
-                pomodoroStoppedSpringEventPublisher.publish(pomodoroCurrentDuration);
+                pomodoroStoppedSpringEventPublisher.publish((int) (PomodoroState.currentPomodoroDurationInMilliseconds / 1000));
             }
         } while (PomodoroState.POMODORO_RUNNING.get());
     }
@@ -87,7 +88,7 @@ public class PomodoroEngine {
     private static class PomodoroState {
 
         //TODO: convert atomics to plane types?
-        private static final AtomicInteger POMODORO_DURATION = new AtomicInteger(0);
+        private static volatile long currentPomodoroDurationInMilliseconds;
         private static final AtomicBoolean POMODORO_RUNNING = new AtomicBoolean(false);
         private static final AtomicBoolean POMODORO_PAUSED = new AtomicBoolean(false);
 
