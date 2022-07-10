@@ -1,26 +1,27 @@
 package com.igorgorbunov3333.timer.service.console.command.impl;
 
+import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodoroSessionMapper;
-import com.igorgorbunov3333.timer.service.console.command.work.time.calculation.CompletedStandardCalculable;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.StandardReportPrinter;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroAutoSaver;
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.education.EducationTimeStandardCalculatorCoordinator;
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.work.WorkTimeStandardCalculatorCoordinator;
+import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper implements CommandProcessor, CompletedStandardCalculable {
+public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper implements CommandProcessor {
 
     private final PomodoroAutoSaver pomodoroAutoSaver;
     @Getter
@@ -29,11 +30,9 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
     private final PrinterService printerService;
     @Getter
     private final TagPomodoroSessionMapper tagPomodoroSessionMapper;
-    @Getter
-    private final EducationTimeStandardCalculatorCoordinator educationTimeStandardCalculatorCoordinator;
-    @Getter
-    private final WorkTimeStandardCalculatorCoordinator workTimeStandardCalculatorCoordinator;
+    private final StandardReportPrinter standardReportPrinter;
     private final PomodoroEngine pomodoroEngine;
+    private final CurrentTimeService currentTimeService;
 
     @Override
     public void process() {
@@ -59,7 +58,10 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
 
         List<PomodoroDto> dailyPomodoro = startTagSessionAndPrintDailyPomodoros(savedPomodoro.getId());
 
-        calculateStandard(PomodoroPeriod.DAY, dailyPomodoro);
+        LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();
+        PeriodDto period = new PeriodDto(currentDay.atStartOfDay(), currentDay.atTime(LocalTime.MAX));
+
+        standardReportPrinter.print(period, dailyPomodoro);
     }
 
     @Override

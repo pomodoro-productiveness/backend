@@ -6,7 +6,6 @@ import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.period.CurrentWeekDaysProvidable;
 import com.igorgorbunov3333.timer.service.pomodoro.period.WeekStartDayProvidable;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.PomodoroProvider;
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
@@ -76,11 +75,6 @@ public class CurrentWeekPomodoroProvider implements PomodoroProvider, CurrentWee
     private List<PomodoroDto> getDailyPomodoros(Map<DayOfWeek, List<PomodoroDto>> dayOfWeekToPomodoros,
                                                 DayOfWeek dayOfWeek) {
         return dayOfWeekToPomodoros.computeIfAbsent(dayOfWeek, k -> new ArrayList<>());
-    }
-
-    @Override
-    public PomodoroPeriod pomodoroPeriod() {
-        return PomodoroPeriod.WEEK;
     }
 
 }

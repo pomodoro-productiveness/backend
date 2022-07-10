@@ -4,7 +4,6 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.PomodoroProvider;
-import com.igorgorbunov3333.timer.service.pomodoro.time.calculator.enums.PomodoroPeriod;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
@@ -32,11 +31,6 @@ public class CurrentDayPomodoroProvider implements PomodoroProvider {
         Pair<ZonedDateTime, ZonedDateTime> startEndTimePair = currentTimeService.getCurrentDayPeriod();
 
         return provide(startEndTimePair.getFirst(), startEndTimePair.getSecond(), tag);
-    }
-
-    @Override
-    public PomodoroPeriod pomodoroPeriod() {
-        return PomodoroPeriod.DAY;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.service.warmup;
 
+import com.igorgorbunov3333.timer.service.dayoff.DayOffSynchronizer;
 import com.igorgorbunov3333.timer.service.pomodoro.calendar.PomodoroCalendarEventProcessor;
 import com.igorgorbunov3333.timer.service.tag.bunch.PomodoroTagBunchCleaner;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ public class WarmUpper {
 
     private final PomodoroCalendarEventProcessor pomodoroCalendarEventProcessor;
     private final PomodoroTagBunchCleaner pomodoroTagBunchCleaner;
+    private final DayOffSynchronizer dayOffSynchronizer;
 
     @EventListener({ContextRefreshedEvent.class})
     void onStartup() {
@@ -23,6 +25,7 @@ public class WarmUpper {
 
         pomodoroCalendarEventProcessor.process();
         pomodoroTagBunchCleaner.clean();
+        dayOffSynchronizer.synchronize();
 
         log.info("WarmUpper successfully finished");
     }
