@@ -18,15 +18,15 @@ public class GeneralAmountStandardReportCalculator implements WorkStandardAmount
     private final PomodoroProperties pomodoroProperties;
 
     public GeneralAmountStandardReportDto calculate(PeriodDto period,
-                                                    int allPomodoroAmount,
+                                                    int pomodoroAmount,
                                                     List<LocalDate> dayOffs) {
         int workStandardAmount = calculateWorkStandardAmount(period, dayOffs);
         int educationStandardAmount = calculateEducationStandardAmount(period);
         int generalStandardAmount = workStandardAmount + educationStandardAmount;
 
-        int balance = allPomodoroAmount - generalStandardAmount;
+        int balance = pomodoroAmount - generalStandardAmount;
 
-        return new GeneralAmountStandardReportDto(generalStandardAmount, balance);
+        return new GeneralAmountStandardReportDto(generalStandardAmount, balance, pomodoroAmount);
     }
 
 }

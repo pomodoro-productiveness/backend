@@ -11,8 +11,4 @@ public class PomodoroStandardReportDto {
     private final EducationTimeStandardReportDto education;
     private final WorkTimeStandardReportDto work;
 
-    public static PomodoroStandardReportDto buildEmpty() {
-        return new PomodoroStandardReportDto(null, null, null);
-    }
-
 }

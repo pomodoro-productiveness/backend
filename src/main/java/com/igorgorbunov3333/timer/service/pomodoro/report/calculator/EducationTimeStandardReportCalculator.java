@@ -18,7 +18,7 @@ public class EducationTimeStandardReportCalculator implements EducationStandardA
         int standardAmount = calculateEducationStandardAmount(period);
         int balanceAmount = pomodoroAmount - standardAmount;
 
-        return new EducationTimeStandardReportDto(standardAmount, balanceAmount);
+        return new EducationTimeStandardReportDto(standardAmount, balanceAmount, pomodoroAmount);
     }
 
 }

@@ -9,5 +9,6 @@ public abstract class AbstractStandardReportDto {
 
     private final int standardAmount;
     private final int balanceAmount;
+    private final int actualAmount;
 
 }
