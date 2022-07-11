@@ -39,10 +39,10 @@ public class StandardReportPrinter {
             String reportName = entry.getKey();
             AbstractStandardReportDto abstractReport = entry.getValue();
 
-            printerService.print(String.format(reportName + StringUtils.SPACE + "standard: %d, actual amount: %d, balance: %d",
+            printerService.print(String.format(reportName + StringUtils.SPACE + "standard: %d, actual amount: %d, difference: %d",
                     abstractReport.getStandardAmount(),
                     abstractReport.getActualAmount(),
-                    abstractReport.getBalanceAmount()));
+                    abstractReport.getDifferenceAmount()));
         }
     }
 

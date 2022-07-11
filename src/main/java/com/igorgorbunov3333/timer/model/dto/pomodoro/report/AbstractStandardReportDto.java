@@ -8,7 +8,7 @@ import lombok.Getter;
 public abstract class AbstractStandardReportDto {
 
     private final int standardAmount;
-    private final int balanceAmount;
+    private final int differenceAmount;
     private final int actualAmount;
 
 }
