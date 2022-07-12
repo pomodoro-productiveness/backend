@@ -1,4 +1,6 @@
-package com.igorgorbunov3333.timer.service.console.command.line.session;
+package com.igorgorbunov3333.timer.service.console.command.line.session.processor;
+
+import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroTagInfo;
 
 import java.util.List;
 

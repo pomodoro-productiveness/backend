@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.service.console.command.line.session;
 
+import com.igorgorbunov3333.timer.service.console.command.line.session.processor.TagSessionProcessor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

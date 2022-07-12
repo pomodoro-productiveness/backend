@@ -1,9 +1,9 @@
-package com.igorgorbunov3333.timer.service.console.command.line.session.impl;
+package com.igorgorbunov3333.timer.service.console.command.line.session.processor.impl;
 
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroTagInfo;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagAnswerProvidable;
-import com.igorgorbunov3333.timer.service.console.command.line.session.TagSessionProcessor;
+import com.igorgorbunov3333.timer.service.console.command.line.session.processor.TagSessionProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;

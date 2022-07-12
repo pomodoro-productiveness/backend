@@ -5,6 +5,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.StandardReportPrinter;
+import com.igorgorbunov3333.timer.service.console.printer.TagDurationReportPrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.period.CurrentWeekDaysProvidable;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentWeekPomodoroProvider;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
@@ -30,6 +31,7 @@ public class WeekCommandProcessor implements CommandProcessor, CurrentWeekDaysPr
     private final StandardReportPrinter standardReportPrinter;
     @Getter
     private final CurrentTimeService currentTimeService;
+    private final TagDurationReportPrinter tagDurationReportPrinter;
 
     @Override
     @Transactional(readOnly = true)
@@ -52,6 +54,7 @@ public class WeekCommandProcessor implements CommandProcessor, CurrentWeekDaysPr
         PeriodDto period = new PeriodDto(startPeriod.atStartOfDay(), currentDay.atTime(LocalTime.MAX));
 
         standardReportPrinter.print(period, pomodoro);
+        tagDurationReportPrinter.print(pomodoro);
     }
 
     @Override

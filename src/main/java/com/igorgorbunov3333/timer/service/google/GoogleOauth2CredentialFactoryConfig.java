@@ -23,7 +23,7 @@ import java.util.Set;
 
 @Configuration
 @AllArgsConstructor
-public class GoogleOauth2CredetialFactoryConfig {
+public class GoogleOauth2CredentialFactoryConfig {
 
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
 

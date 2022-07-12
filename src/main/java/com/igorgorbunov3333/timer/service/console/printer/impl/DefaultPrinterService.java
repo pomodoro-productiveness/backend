@@ -25,6 +25,7 @@ public class DefaultPrinterService implements PrinterService {
     public static final String MESSAGE_POMODORO_SAVED = "Pomodoro successfully saved: ";
     public static final String MESSAGE_NO_POMODOROS = "No pomodoros to display!";
     public static final String DOT = ".";
+    public static final String TABULATION = "         ";
 
     @Override
     public void print(@NonNull String message) {
