@@ -49,11 +49,12 @@ public class DefaultPrinterService implements PrinterService {
         System.out.println("3. current time");
         System.out.println("4. pomadoros today");
         System.out.println("5. pomadoros today extended");
-        System.out.println("6. pomadoros for the last month");
+        System.out.println("6. pomadoros for the current month");
         System.out.println("Type \"help\" to list all available features");
         System.out.println("Type \"remove\" to remove latest pomodoro or specify pomodoro id. For example \"remove 10\"");
         System.out.println("Type \"save\" for saving pomodoro automatically");
         System.out.println("Type \"week\" to list all pomodoros for current week");
+        System.out.println("Type \"year\" to list all pomodoros for current year");
         System.out.println("Type \"tag\" to enter tag menu");
         System.out.println("Type \"sync\" to synchronize local data");
         System.out.println("Type \"e\" to exit");
