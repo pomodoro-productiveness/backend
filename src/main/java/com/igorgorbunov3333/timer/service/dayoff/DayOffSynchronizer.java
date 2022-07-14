@@ -24,8 +24,8 @@ public class DayOffSynchronizer {
         dayOffRepository.deleteAll();
         dayOffRepository.flush();
 
-        List<DayOff> dayOffList = remoteDayOffProvider.provide();
-        dayOffRepository.saveAll(dayOffList);
+        List<DayOff> dayOffs = remoteDayOffProvider.provide();
+        dayOffRepository.saveAll(dayOffs);
 
         log.debug("Day off synchronization finished successfully");
     }

@@ -17,7 +17,13 @@ public interface NumberProvidable {
                     return -1;
                 }
 
-                return Integer.parseInt(tagNumberAnswer);
+                int response = Integer.parseInt(tagNumberAnswer);
+
+                if (response <= 0) {
+                    getPrinterService().print("Number cannot be less then or equal to zero");
+                } else {
+                    return response;
+                }
             } catch (NumberFormatException e) {
                 getPrinterService().print("Incorrect format, please enter a number again or press \"e\" to exit");
             }

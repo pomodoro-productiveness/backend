@@ -1,6 +1,7 @@
-package com.igorgorbunov3333.timer.service.console.command.line.session;
+package com.igorgorbunov3333.timer.service.console.command.line.session.coordinator;
 
-import com.igorgorbunov3333.timer.service.console.command.line.session.processor.TagSessionProcessor;
+import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroTagInfo;
+import com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.TagSessionProcessor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

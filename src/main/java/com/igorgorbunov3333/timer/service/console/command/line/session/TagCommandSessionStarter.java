@@ -1,6 +1,7 @@
 package com.igorgorbunov3333.timer.service.console.command.line.session;
 
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
+import com.igorgorbunov3333.timer.service.console.command.line.session.coordinator.TagCommandSessionCoordinator;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class PomodoroMonthlyDivider {
+public class PomodoroByMonthsDivider {
 
     public Map<PeriodDto, List<PomodoroDto>> divide(List<PomodoroDto> pomodoro) {
         if (CollectionUtils.isEmpty(pomodoro)) {
