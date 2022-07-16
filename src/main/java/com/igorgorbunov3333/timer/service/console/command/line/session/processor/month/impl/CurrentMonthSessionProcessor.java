@@ -3,16 +3,13 @@ package com.igorgorbunov3333.timer.service.console.command.line.session.processo
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.month.MonthSessionProcessor;
+import com.igorgorbunov3333.timer.service.console.printer.MonthlyPomodoroPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.console.printer.StandardReportPrinter;
-import com.igorgorbunov3333.timer.service.console.printer.TagDurationReportPrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByMonthsDivider;
-import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +22,7 @@ public class CurrentMonthSessionProcessor implements MonthSessionProcessor {
 
     private final PomodoroByMonthsDivider pomodoroByMonthsDivider;
     private final PrinterService printerService;
-    private final CurrentTimeService currentTimeService;
-    private final StandardReportPrinter standardReportPrinter;
-    private final TagDurationReportPrinter tagDurationReportPrinter;
+    private final MonthlyPomodoroPrinter monthlyPomodoroPrinter;
 
     @Override
     public void process(List<PomodoroDto> pomodoro) {
@@ -43,20 +38,13 @@ public class CurrentMonthSessionProcessor implements MonthSessionProcessor {
             printerService.print("No monthly pomodoros");
             return;
         }
-        printerService.printLocalDatePomodoros(sortedPomodoros);
-
-        LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();
-        LocalDate startPeriod = currentDay.withDayOfMonth(1);
-
-        PeriodDto period = new PeriodDto(startPeriod.atStartOfDay(), currentDay.atTime(LocalTime.MAX));
 
         List<PomodoroDto> monthlyPomodoro = sortedPomodoros.values()
                 .stream()
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
 
-        standardReportPrinter.print(period, monthlyPomodoro);
-        tagDurationReportPrinter.print(monthlyPomodoro);
+        monthlyPomodoroPrinter.print(monthlyPomodoro);
     }
 
     @Override

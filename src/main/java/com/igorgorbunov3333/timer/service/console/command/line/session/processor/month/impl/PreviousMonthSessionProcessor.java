@@ -5,9 +5,8 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.month.MonthSessionProcessor;
+import com.igorgorbunov3333.timer.service.console.printer.MonthlyPomodoroPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.console.printer.StandardReportPrinter;
-import com.igorgorbunov3333.timer.service.console.printer.TagDurationReportPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.impl.DefaultPrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByMonthsDivider;
 import lombok.AllArgsConstructor;
@@ -31,8 +30,7 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
     private final PomodoroByMonthsDivider pomodoroByMonthsDivider;
     @Getter
     private final PrinterService printerService;
-    private final StandardReportPrinter standardReportPrinter;
-    private final TagDurationReportPrinter tagDurationReportPrinter;
+    private final MonthlyPomodoroPrinter monthlyPomodoroPrinter;
     @Getter
     private final CommandProvider commandProvider;
 
@@ -70,8 +68,7 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
             Map.Entry<PeriodDto, List<PomodoroDto>> chosenPeriodToMonthlyPomodoro = numberedPeriodsByMonthlyPomodoro.get(numberAnswer);
 
             if (chosenPeriodToMonthlyPomodoro != null) {
-                standardReportPrinter.print(chosenPeriodToMonthlyPomodoro.getKey(), chosenPeriodToMonthlyPomodoro.getValue());
-                tagDurationReportPrinter.print(chosenPeriodToMonthlyPomodoro.getValue());
+                monthlyPomodoroPrinter.print(chosenPeriodToMonthlyPomodoro.getValue());
                 break;
             } else {
                 printerService.print(String.format("No month under the number %d", numberAnswer));
