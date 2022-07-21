@@ -3,14 +3,18 @@ package com.igorgorbunov3333.timer.service.pomodoro.engine;
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.service.audioplayer.AudioPlayerService;
 import com.igorgorbunov3333.timer.service.event.publisher.PomodoroStoppedSpringEventPublisher;
+import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class PomodoroEngine {
@@ -19,6 +23,7 @@ public class PomodoroEngine {
     private final PomodoroStoppedSpringEventPublisher pomodoroStoppedSpringEventPublisher;
     private final PomodoroPausesStorage pomodoroPausesStorage;
     private final PomodoroProperties pomodoroProperties;
+    private final CurrentTimeService currentTimeService;
 
     @Async
     public void startPomodoro() {
@@ -58,6 +63,24 @@ public class PomodoroEngine {
         PomodoroPauseState.pomodoroPauseEndTime = System.currentTimeMillis();
         pomodoroPausesStorage.add(Pair.of(PomodoroPauseState.pomodoroPauseStartTime, PomodoroPauseState.pomodoroPauseEndTime));
         startPomodoro(PomodoroState.currentPomodoroDurationInMilliseconds);
+    }
+
+    public LocalDateTime getCurrentPomodoroStartTime() {
+        if (!PomodoroState.POMODORO_RUNNING.get()) {
+            return null;
+        }
+
+        long pausesDurationInSeconds = pomodoroPausesStorage.getPausesDurationInSeconds();
+        long currentPomodoroDurationInSeconds = PomodoroState.currentPomodoroDurationInMilliseconds / 1000;
+
+        log.debug("Pauses duration in seconds [{}], current pomodoro duration in seconds [{}]", pausesDurationInSeconds, currentPomodoroDurationInSeconds);
+
+        LocalDateTime currentPomodoroStartTime =
+                currentTimeService.getCurrentDateTime().minusSeconds(pausesDurationInSeconds + currentPomodoroDurationInSeconds);
+
+        log.debug("Current pomodoro start time [{}]", currentPomodoroStartTime);
+
+        return currentPomodoroStartTime;
     }
 
     @SneakyThrows

@@ -23,10 +23,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DefaultPomodoroFreeSlotFinderServiceTest {
+class DefaultPomodoroFreeSlotProviderServiceTest {
 
     @InjectMocks
-    private DefaultPomodoroFreeSlotFinderService testee;
+    private DefaultPomodoroFreeSlotProviderService testee;
 
     @Mock
     private CurrentTimeService currentTimeService;

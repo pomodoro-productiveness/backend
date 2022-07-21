@@ -36,16 +36,6 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
 
     @Override
     public void process() {
-        if (pomodoroEngine.isPomodoroCurrentlyRunning()) {
-            printerService.print("The pomodoro cannot be saved automatically because other one works now");
-            return;
-        }
-
-        if (pomodoroEngine.isPomodoroPaused()) {
-            printerService.print("The pomodoro cannot be saved automatically because other one was paused already");
-            return;
-        }
-
         PomodoroDto savedPomodoro;
         try {
             savedPomodoro = pomodoroAutoSaver.save();

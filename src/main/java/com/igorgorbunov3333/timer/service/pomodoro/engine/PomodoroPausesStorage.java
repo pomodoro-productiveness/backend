@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,12 @@ public class PomodoroPausesStorage {
         }
 
         return zonedDateTimePauses;
+    }
+
+    public long getPausesDurationInSeconds() {
+        return getPauses().stream()
+                .mapToLong(pause -> ChronoUnit.SECONDS.between(pause.getFirst(), pause.getSecond()))
+                .sum();
     }
 
     public void evict() {

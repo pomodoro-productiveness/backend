@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroFreeSlotFinderService;
+import com.igorgorbunov3333.timer.service.pomodoro.PomodoroFreeSlotProviderService;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +23,7 @@ public class PomodoroAutoSaver implements SinglePomodoroSavable{
 
     @Getter
     private final PomodoroRepository pomodoroRepository;
-    private final PomodoroFreeSlotFinderService pomodoroFreeSlotFinderService;
+    private final PomodoroFreeSlotProviderService pomodoroFreeSlotProviderService;
     @Getter
     private final PomodoroMapper pomodoroMapper;
     private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
@@ -31,7 +31,7 @@ public class PomodoroAutoSaver implements SinglePomodoroSavable{
     @Transactional
     public PomodoroDto save() {
         List<PomodoroDto> dailyPomodoros = currentDayLocalPomodoroProvider.provide(null);
-        PeriodDto latestFreeSlot = pomodoroFreeSlotFinderService.findFreeSlotInCurrentDay(dailyPomodoros);
+        PeriodDto latestFreeSlot = pomodoroFreeSlotProviderService.findFreeSlotInCurrentDay(dailyPomodoros);
         Pomodoro pomodoroToSave = buildPomodoro(latestFreeSlot);
 
         return save(pomodoroToSave);

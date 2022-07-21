@@ -26,7 +26,7 @@ public class RateLimitedGoogleApiExecutor {
 
         T t = request.execute();
 
-        log.debug("Request submitted successfully with result [{}]", t);
+        log.debug("Request submitted successfully");
 
         return t;
     }

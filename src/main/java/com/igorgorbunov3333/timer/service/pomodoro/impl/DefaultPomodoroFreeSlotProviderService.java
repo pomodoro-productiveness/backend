@@ -3,10 +3,12 @@ package com.igorgorbunov3333.timer.service.pomodoro.impl;
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroFreeSlotFinderService;
+import com.igorgorbunov3333.timer.service.pomodoro.PomodoroFreeSlotProviderService;
+import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,55 +18,68 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @AllArgsConstructor
-public class DefaultPomodoroFreeSlotFinderService implements PomodoroFreeSlotFinderService {
+public class DefaultPomodoroFreeSlotProviderService implements PomodoroFreeSlotProviderService {
 
     private static final long BREAK_BETWEEN_SLOTS = 1L;
 
     private final CurrentTimeService currentTimeService;
+    private final PomodoroEngine pomodoroEngine;
 
     @Override
-    public PeriodDto findFreeSlotInCurrentDay(List<PomodoroDto> dailyPomodoros) {
+    public PeriodDto findFreeSlotInCurrentDay(List<PomodoroDto> dailyPomodoro) {  //TODO: validate that all pomodoro from same day
         LocalDateTime currentTime = currentTimeService.getCurrentDateTime();
 
-        PeriodDto potentialFreeSlot = buildPomodoroTimePeriodFromCurrentTime(currentTime);
+        PeriodDto potentialFreeSlot = buildNearestFreeSlot(currentTime);
         validatePeriod(potentialFreeSlot.getStart(), currentTime);
 
-        List<PomodoroDto> reversedDailyPomodoros = reversedDailyPomodoros(dailyPomodoros);
-        if (reversedDailyPomodoros.isEmpty()) {
+        List<PomodoroDto> reversedDailyPomodoro = reversedDailyPomodoro(dailyPomodoro);
+        if (reversedDailyPomodoro.isEmpty()) {
             return potentialFreeSlot;
         }
 
-        return findNearestFreeSlotConsideringExistingPomodoros(currentTime, potentialFreeSlot, reversedDailyPomodoros);
+        return findNearestFreeSlotConsideringExistingPomodoro(currentTime, potentialFreeSlot, reversedDailyPomodoro);
     }
 
-    private PeriodDto buildPomodoroTimePeriodFromCurrentTime(LocalDateTime currentTime) {
+    private PeriodDto buildNearestFreeSlot(LocalDateTime currentTime) {
+        LocalDateTime currentPomodoroStartTime = pomodoroEngine.getCurrentPomodoroStartTime();
+        if (currentPomodoroStartTime != null) {
+            LocalDateTime periodEnd = currentPomodoroStartTime.minusMinutes(1L);
+            LocalDateTime periodStart = periodEnd.minusMinutes(PomodoroChronoUtil.POMODORO_DURATION);
+
+            PeriodDto freeSlot = new PeriodDto(periodStart, periodEnd);
+
+            log.debug("Pomodoro is running currently. Nearest free slot is [{}]", freeSlot);
+
+            return freeSlot;
+        }
+
         LocalDateTime periodStart = currentTime.minusMinutes(BREAK_BETWEEN_SLOTS)
                 .minusMinutes(PomodoroChronoUtil.POMODORO_DURATION);
         LocalDateTime periodEnd = periodStart.plusMinutes(PomodoroChronoUtil.POMODORO_DURATION);
-
         return new PeriodDto(periodStart, periodEnd);
     }
 
-    private List<PomodoroDto> reversedDailyPomodoros(List<PomodoroDto> dailyPomodoros) {
+    private List<PomodoroDto> reversedDailyPomodoro(List<PomodoroDto> dailyPomodoros) {
         dailyPomodoros.sort(Comparator.comparing(PomodoroDto::getStartTime).reversed());
 
         return dailyPomodoros;
     }
 
-    private PeriodDto findNearestFreeSlotConsideringExistingPomodoros(LocalDateTime currentTime,
-                                                                      PeriodDto potentialFreeSlotPeriod,
-                                                                      List<PomodoroDto> reversedDailyPomodoros) {
-        if (isPotentialFreeSlotStartAfterLatestPomodoroEndPlusOneMinute(potentialFreeSlotPeriod.getStart(), reversedDailyPomodoros)) {
-            return potentialFreeSlotPeriod;
+    private PeriodDto findNearestFreeSlotConsideringExistingPomodoro(LocalDateTime currentTime,
+                                                                     PeriodDto nearestFreeSlot,
+                                                                     List<PomodoroDto> reversedDailyPomodoro) {
+        if (isPotentialFreeSlotStartAfterLatestPomodoroEndPlusOneMinute(nearestFreeSlot.getStart(), reversedDailyPomodoro)) {
+            return nearestFreeSlot;
         }
 
-        PeriodDto latestFreeSlotAtNearestValidGap = tryToFindLatestFreeSlotAtNearestValidGapBetweenPomodoros(reversedDailyPomodoros);
+        PeriodDto latestFreeSlotAtNearestValidGap = tryToFindLatestFreeSlotAtNearestValidGapBetweenPomodoros(reversedDailyPomodoro);
 
         return Objects.requireNonNullElseGet(
                 latestFreeSlotAtNearestValidGap,
-                () -> tryToFindFreeSlotBeforeOldestPomodoroOrThrow(currentTime, reversedDailyPomodoros)
+                () -> tryToFindFreeSlotBeforeOldestPomodoroOrThrow(currentTime, reversedDailyPomodoro)
         );
     }
 
@@ -79,9 +94,9 @@ public class DefaultPomodoroFreeSlotFinderService implements PomodoroFreeSlotFin
     }
 
     private PeriodDto tryToFindLatestFreeSlotAtNearestValidGapBetweenPomodoros(List<PomodoroDto> reversedDailyPomodoros) {
-        List<PeriodDto> gapsBetweenPomodoros = findGapsBetweenPomodoros(reversedDailyPomodoros);
+        List<PeriodDto> gapsBetweenPomodoro = findGapsBetweenPomodoros(reversedDailyPomodoros);
 
-        return gapsBetweenPomodoros.stream()
+        return gapsBetweenPomodoro.stream()
                 .filter(this::isValidGap)
                 .map(this::mapValidGapToPeriod)
                 .findFirst()

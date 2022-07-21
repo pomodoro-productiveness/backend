@@ -5,8 +5,8 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 
 import java.util.List;
 
-public interface PomodoroFreeSlotFinderService {
+public interface PomodoroFreeSlotProviderService {
 
-    PeriodDto findFreeSlotInCurrentDay(List<PomodoroDto> dailyPomodoros);
+    PeriodDto findFreeSlotInCurrentDay(List<PomodoroDto> dailyPomodoro);
 
 }
