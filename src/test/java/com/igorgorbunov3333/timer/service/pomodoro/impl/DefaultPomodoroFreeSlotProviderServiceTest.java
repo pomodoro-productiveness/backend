@@ -3,6 +3,7 @@ package com.igorgorbunov3333.timer.service.pomodoro.impl;
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.exception.PomodoroException;
+import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,8 @@ class DefaultPomodoroFreeSlotProviderServiceTest {
 
     @Mock
     private CurrentTimeService currentTimeService;
+    @Mock
+    private PomodoroEngine pomodoroEngine;
 
     @Test
     void find_WhenNoPomodorosInDay_ThenReturnNearestTimeWithEndingOneMinuteAgo() {
