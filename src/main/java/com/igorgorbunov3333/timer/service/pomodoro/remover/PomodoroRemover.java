@@ -16,7 +16,7 @@ import java.util.List;
 //TODO: do not use flush()? Instead use @Transactional?
 @Component
 @AllArgsConstructor
-public class LocalPomodoroRemover {
+public class PomodoroRemover {
 
     private final PomodoroRepository pomodoroRepository;
     private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;

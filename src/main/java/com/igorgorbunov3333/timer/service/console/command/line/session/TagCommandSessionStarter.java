@@ -17,14 +17,14 @@ public class TagCommandSessionStarter {
     private final TagCommandSessionCoordinator tagCommandSessionCoordinator;
 
     public boolean startSession(List<PomodoroTagInfo> tagsWithNumbers) {
-        String answer;
+        printerService.printParagraph();
         printerService.print("Chose an option:");
         printerService.print("Press 1 to create a new tag");
         printerService.print("Press 2 to remove a tag");
         printerService.print("Press 3 to remap tags for pomodoro");
         printerService.print("You may exit by pressing \"e\" to save current changes");
 
-        answer = commandProvider.provideLine();
+        String answer = commandProvider.provideLine();
         if (answer.startsWith("e")) {
             printerService.print("Tag menu abandoned"); //TODO: message duplication
             return true;
