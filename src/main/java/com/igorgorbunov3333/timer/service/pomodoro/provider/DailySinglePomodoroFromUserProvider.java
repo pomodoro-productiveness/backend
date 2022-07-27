@@ -8,7 +8,6 @@ import com.igorgorbunov3333.timer.service.console.printer.impl.DefaultPrinterSer
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -39,11 +38,9 @@ public class DailySinglePomodoroFromUserProvider implements NumberProvidable {
 
         int count = 0;
         for (PomodoroDto pomodoro : dailyPomodoro) {
-            printerService.printWithoutCarriageOffset(++count + DefaultPrinterService.DOT + StringUtils.SPACE);
+            numberToPomodoro.put(++count, pomodoro);
 
-            numberToPomodoro.put(count, pomodoro);
-
-            printerService.printPomodoro(pomodoro, true, true);
+            printerService.printPomodoro(pomodoro, true, count);
         }
 
         printerService.printParagraph();

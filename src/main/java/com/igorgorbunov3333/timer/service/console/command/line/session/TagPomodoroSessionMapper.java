@@ -91,7 +91,7 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
             tags = getTagsFromUser(tagInfos);
 
             printerService.print("Following tags [" + tags + "] will be mapped to pomodoro. Do you confirm?");
-            printerService.print("Yes (y), No"); //TODO: extract text to separate util class
+            printerService.printYesNoQuestion();
 
             String answer = provideLine();
 

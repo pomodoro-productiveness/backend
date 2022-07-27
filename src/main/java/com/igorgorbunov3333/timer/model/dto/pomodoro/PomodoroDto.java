@@ -37,8 +37,7 @@ public class PomodoroDto implements TemporalObject {
     @Override
     public String toString() {
         return "Pomodoro {" +
-                "id=" + id +
-                ", startTime=" + startTime.toLocalDateTime() +
+                "startTime=" + startTime.toLocalDateTime() +
                 ", endTime=" + endTime.toLocalDateTime() +
                 '}';
     }

@@ -34,6 +34,16 @@ public class RemoveCommandProcessor implements CommandProcessor, NumberProvidabl
             return;
         }
 
+        printerService.print("Are you sure you want to delete pomodoro " + chosenPomodoro);
+        printerService.printYesNoQuestion();
+
+        String answer = commandProvider.provideLine();
+
+        if (!answer.toLowerCase().startsWith("y")) {
+            printerService.print("Pomodoro will not be deleted");
+            return;
+        }
+
         pomodoroRemover.remove(chosenPomodoro.getId());
 
         printerService.print("Pomodoro [" + chosenPomodoro + "] removed successfully");

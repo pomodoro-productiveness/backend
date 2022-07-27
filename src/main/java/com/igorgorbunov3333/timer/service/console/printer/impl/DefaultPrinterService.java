@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,8 @@ public class DefaultPrinterService implements PrinterService {
     public static final String MESSAGE_NO_POMODOROS = "No pomodoros to display!";
     public static final String DOT = ".";
     public static final String TABULATION = "         ";
+
+    private static final String YES_NO_QUESTION = "Yes (y), No";
 
     @Override
     public void print(@NonNull String message) {
@@ -70,20 +71,7 @@ public class DefaultPrinterService implements PrinterService {
 
     @Override
     public void printPomodorosWithIdsAndTags(List<PomodoroDto> pomodoros) {
-        printPomodoroWithIdsAndTags(pomodoros, true);
-    }
-
-    @Override
-    public void printLocalDatePomodoros(Map<LocalDate, List<PomodoroDto>> datesToPomadoros) {
-        if (datesToPomadoros.isEmpty()) {
-            return;
-        }
-        for (Map.Entry<LocalDate, List<PomodoroDto>> entry : datesToPomadoros.entrySet()) {
-            System.out.println();
-            System.out.println(entry.getKey());
-            System.out.println("pomodoros in day - " + entry.getValue().size());
-            printPomodoroWithIdsAndTags(entry.getValue(), true);
-        }
+        printPomodoroWithIdsAndTags(pomodoros);
     }
 
     @Override
@@ -92,12 +80,12 @@ public class DefaultPrinterService implements PrinterService {
             System.out.println();
             System.out.println(entry.getKey().toString());
             List<PomodoroDto> dailyPomodoros = entry.getValue();
-            printPomodoroWithIdsAndTags(dailyPomodoros, true);
+            printPomodoroWithIdsAndTags(dailyPomodoros);
         }
     }
 
     @Override
-    public void printPomodoro(PomodoroDto pomodoro, boolean withIdAndTag, boolean withCarriageOffset) {
+    public void printPomodoro(PomodoroDto pomodoro, boolean withIdAndTag, int number) {
         String pomodoroPeriod = printPomodoroStartEndTime(pomodoro);
         long pomodoroStartEndTimeDifference = PomodoroChronoUtil.getStartEndTimeDifferenceInSeconds(pomodoro);
         String pomodoroDuration = SecondsFormatter.formatInMinutes(pomodoroStartEndTimeDifference);
@@ -107,9 +95,8 @@ public class DefaultPrinterService implements PrinterService {
                 .concat("duration - ")
                 .concat(pomodoroDuration);
         String pomodoroRow;
-        if (withIdAndTag) {
-            String pomodoroId = pomodoro.getId().toString();
 
+        if (withIdAndTag) {
             String tagLine = StringUtils.EMPTY;
             if (!CollectionUtils.isEmpty(pomodoro.getTags())) {
                 tagLine = "#" + pomodoro.getTags().stream()
@@ -118,8 +105,7 @@ public class DefaultPrinterService implements PrinterService {
                         .collect(Collectors.joining(" #"));
             }
 
-            pomodoroRow = "id - ".concat(pomodoroId)
-                    .concat(" | ")
+            pomodoroRow = number + DOT + StringUtils.SPACE
                     .concat(formattedPomodoroPeriodAndDuration)
                     .concat(" | ")
                     .concat("tag: ")
@@ -127,21 +113,24 @@ public class DefaultPrinterService implements PrinterService {
         } else {
             pomodoroRow = formattedPomodoroPeriodAndDuration;
         }
-        if (withCarriageOffset) {
-            System.out.println(pomodoroRow);
-        } else {
-            System.out.print(pomodoroRow);
-        }
+        System.out.println(pomodoroRow);
     }
 
-    private void printPomodoroWithIdsAndTags(List<PomodoroDto> pomodoros, boolean withIdAndTag) {
+    @Override
+    public void printYesNoQuestion() {
+        print(YES_NO_QUESTION);
+    }
+
+    private void printPomodoroWithIdsAndTags(List<PomodoroDto> pomodoros) {
         if (pomodoros.isEmpty()) {
             System.out.println(MESSAGE_NO_POMODOROS);
             return;
         }
         long pomodoroDurationInSeconds = 0;
+
+        int count = 0;
         for (PomodoroDto pomodoro : pomodoros) {
-            printPomodoro(pomodoro, withIdAndTag, true);
+            printPomodoro(pomodoro, true, ++count);
             long pomodoroStartEndTimeDifference = PomodoroChronoUtil.getStartEndTimeDifferenceInSeconds(pomodoro);
             pomodoroDurationInSeconds += pomodoroStartEndTimeDifference;
         }

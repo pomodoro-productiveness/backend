@@ -3,7 +3,6 @@ package com.igorgorbunov3333.timer.service.console.printer;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +21,9 @@ public interface PrinterService {
 
     void printPomodorosWithIdsAndTags(List<PomodoroDto> pomodoros);
 
-    void printLocalDatePomodoros(Map<LocalDate, List<PomodoroDto>> datesToPomadoros);
-
     void printDayOfWeekToPomodoros(Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoros);
 
-    void printPomodoro(PomodoroDto pomodoro, boolean withIdAndTag, boolean withCarriageOffset);
+    void printPomodoro(PomodoroDto pomodoro, boolean withIdAndTag, int number);
+
+    void printYesNoQuestion();
 }
