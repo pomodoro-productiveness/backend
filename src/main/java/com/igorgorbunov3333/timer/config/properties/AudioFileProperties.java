@@ -10,8 +10,8 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Getter
 @Component
-@ConfigurationProperties(prefix = "audio-player")
-public class AudioPlayerProperties {
+@ConfigurationProperties(prefix = "audio-file")
+public class AudioFileProperties {
 
     @NotBlank
     private String path;

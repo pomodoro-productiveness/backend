@@ -38,5 +38,5 @@ google-services:
     summary:
       day-off: ${GOOGLE_CALENDAR_DAY_OFF_SUMMARY:DayOff}
       pomodoro: ${GOOGLE_CALENDAR_POMODORO_SUMMARY:Pomodoro}
-audio-player:
-  path: ${AUDIO_PLAYER_PATH:}
+audio-file:
+  path: ${AUDIO_FILE_PATH:}

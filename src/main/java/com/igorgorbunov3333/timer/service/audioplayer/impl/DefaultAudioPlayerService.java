@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.audioplayer.impl;
 
-import com.igorgorbunov3333.timer.config.properties.AudioPlayerProperties;
+import com.igorgorbunov3333.timer.config.properties.AudioFileProperties;
 import com.igorgorbunov3333.timer.service.audioplayer.AudioPlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.io.File;
 public class DefaultAudioPlayerService implements AudioPlayerService {
 
     @Autowired
-    private AudioPlayerProperties properties;
+    private AudioFileProperties properties;
 
     private final Clip clip = AudioSystem.getClip();
 
