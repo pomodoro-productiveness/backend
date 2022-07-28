@@ -37,7 +37,7 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
 
     private final PomodoroTagBunchService pomodoroTagBunchService;
 
-    public void addTagToPomodoro(Long pomodoroId) {
+    public void addTagToPomodoro(List<Long> pomodoroId) {
         Set<String> tags = getTagsFromBunch();
 
         localPomodoroUpdater.updatePomodoroWithTag(pomodoroId, tags);

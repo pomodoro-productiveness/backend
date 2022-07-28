@@ -33,7 +33,7 @@ public class TagRemappingSessionProcessor extends AbstractPomodoroSessionMapper 
         PomodoroDto chosenPomodoro = dailySinglePomodoroFromUserProvider.provide();
 
         if (chosenPomodoro != null) {
-            startTagSessionAndPrintDailyPomodoros(chosenPomodoro.getId());
+            startTagSessionAndPrintDailyPomodoro(List.of(chosenPomodoro.getId()));
         }
     }
 

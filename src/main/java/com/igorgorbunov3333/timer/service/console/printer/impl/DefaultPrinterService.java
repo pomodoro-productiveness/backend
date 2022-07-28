@@ -53,7 +53,7 @@ public class DefaultPrinterService implements PrinterService {
         System.out.println("6. pomadoros for the current month");
         System.out.println("Type \"help\" to list all available features");
         System.out.println("Type \"remove\" to remove latest pomodoro or specify pomodoro id. For example \"remove 10\"");
-        System.out.println("Type \"save\" for saving pomodoro automatically");
+        System.out.println("Type \"save\" for saving pomodoro automatically. Specify number after whitespace to save multiple pomodoro");
         System.out.println("Type \"week\" to list all pomodoros for current week");
         System.out.println("Type \"year\" to list all pomodoros for current year");
         System.out.println("Type \"tag\" to enter tag menu");

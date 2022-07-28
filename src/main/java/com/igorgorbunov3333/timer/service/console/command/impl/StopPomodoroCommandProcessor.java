@@ -46,7 +46,7 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
         }
         printSuccessfullySavedMessage(savedPomodoro);
 
-        List<PomodoroDto> dailyPomodoro = startTagSessionAndPrintDailyPomodoros(savedPomodoro.getId());
+        List<PomodoroDto> dailyPomodoro = startTagSessionAndPrintDailyPomodoro(List.of(savedPomodoro.getId()));
         LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();
         PeriodDto period = new PeriodDto(currentDay.atStartOfDay(), currentDay.atTime(LocalTime.MAX));
 
