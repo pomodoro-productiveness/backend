@@ -20,7 +20,7 @@ public class PomodoroTagBunchService {
     private final PomodoroTagRepository pomodoroTagRepository;
 
     public List<PomodoroTagBunch> getLatestTagBunches() {
-        return pomodoroTagBunchRepository.findAllByOrderByIdDesc();
+        return pomodoroTagBunchRepository.findTop10ByOrderByIdDesc();
     }
 
     public void saveBunch(Set<String> tags) {

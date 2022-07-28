@@ -18,9 +18,9 @@ public class PomodoroTagBunchCleaner {
 
     @Transactional
     public void clean() {
-        List<PomodoroTagBunch> bunchesToDelete = pomodoroTagBunchRepository.findAllByOrderByIdDesc()
+        List<PomodoroTagBunch> bunchesToDelete = pomodoroTagBunchRepository.findTop10ByOrderByIdDesc()
                 .stream()
-                .skip(5L)
+                .skip(10L)
                 .collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(bunchesToDelete)) {
