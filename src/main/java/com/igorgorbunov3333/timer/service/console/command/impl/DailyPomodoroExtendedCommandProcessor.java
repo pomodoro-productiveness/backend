@@ -35,7 +35,7 @@ public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor {
     public void process() {
         List<PomodoroDto> pomodoro = currentDayLocalPomodoroProvider.provide(null);
 
-        printerService.printPomodorosWithIdsAndTags(pomodoro);
+        printerService.printPomodoroWithIdsAndTags(pomodoro);
 
         if (pomodoroEngine.isPomodoroCurrentlyRunning()) {
             String pomodoroCurrentDuration = pomodoroEngineService.getPomodoroCurrentDuration();

@@ -30,7 +30,7 @@ public abstract class AbstractPomodoroSessionMapper {
 
     private List<PomodoroDto> getAndPrintDailyPomodoros() {
         List<PomodoroDto> pomodoro = getCurrentDayLocalPomodoroProvider().provide(null);
-        getPrinterService().printPomodorosWithIdsAndTags(pomodoro);
+        getPrinterService().printPomodoroWithIdsAndTags(pomodoro);
 
         return pomodoro;
     }

@@ -17,13 +17,13 @@ public interface PrinterService {
 
     void printFeaturesList();
 
-    void printSavedAndDailyPomodoroAfterStoppingPomodoro(PomodoroDto savedPomodoro, List<PomodoroDto> dailyPomodoros);
+    void printSavedAndDailyPomodoroAfterStoppingPomodoro(PomodoroDto savedPomodoro, List<PomodoroDto> dailyPomodoro);
 
-    void printPomodorosWithIdsAndTags(List<PomodoroDto> pomodoros);
+    void printPomodoroWithIdsAndTags(List<PomodoroDto> pomodoro);
 
-    void printDayOfWeekToPomodoros(Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoros);
+    void printDayOfWeekToPomodoro(Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoro);
 
-    void printPomodoro(PomodoroDto pomodoro, boolean withIdAndTag, int number);
+    void printPomodoro(PomodoroDto pomodoro, boolean withIdAndTag, int number, Integer longestNumberLength);
 
     void printYesNoQuestion();
 }

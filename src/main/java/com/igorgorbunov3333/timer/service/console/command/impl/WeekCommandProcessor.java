@@ -38,9 +38,9 @@ public class WeekCommandProcessor implements CommandProcessor, CurrentWeekDaysPr
     public void process() {
         Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoro = currentWeekLocalPomodoroProvider.provideCurrentWeekPomodorosByDays();
         if (weeklyPomodoro.isEmpty()) {
-            printerService.print("No weekly pomodoros");
+            printerService.print("No weekly pomodoro");
         }
-        printerService.printDayOfWeekToPomodoros(weeklyPomodoro);
+        printerService.printDayOfWeekToPomodoro(weeklyPomodoro);
 
         List<PomodoroDto> pomodoro = weeklyPomodoro.values().stream()
                 .flatMap(List::stream)
