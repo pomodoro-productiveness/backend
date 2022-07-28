@@ -4,9 +4,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class PomodoroException extends RuntimeException {
+public final class FreeSlotException extends RuntimeException {
 
-    public PomodoroException(String message) {
+    public FreeSlotException(String message) {
         super(message);
     }
 

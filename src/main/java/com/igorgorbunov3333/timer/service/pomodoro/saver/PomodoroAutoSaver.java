@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.PomodoroFreeSlotProviderService;
+import com.igorgorbunov3333.timer.service.pomodoro.FreeSlotProviderService;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,18 +25,35 @@ public class PomodoroAutoSaver implements SinglePomodoroSavable{
 
     @Getter
     private final PomodoroRepository pomodoroRepository;
-    private final PomodoroFreeSlotProviderService pomodoroFreeSlotProviderService;
+    private final FreeSlotProviderService freeSlotProviderService;
     @Getter
     private final PomodoroMapper pomodoroMapper;
     private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
 
     @Transactional
-    public PomodoroDto save() {
-        List<PomodoroDto> dailyPomodoros = currentDayLocalPomodoroProvider.provide(null);
-        PeriodDto latestFreeSlot = pomodoroFreeSlotProviderService.findFreeSlotInCurrentDay(dailyPomodoros);
-        Pomodoro pomodoroToSave = buildPomodoro(latestFreeSlot);
+    public List<PomodoroDto> save(int numberToSave) {
+        List<PomodoroDto> dailyPomodoro = currentDayLocalPomodoroProvider.provide(null);
+        List<PeriodDto> reservedSlots = dailyPomodoro.stream()
+                .map(p -> new PeriodDto(p.getStartTime().toLocalDateTime(), p.getEndTime().toLocalDateTime()))
+                .collect(Collectors.toList());
 
-        return save(pomodoroToSave);
+        List<PomodoroDto> savedPomodoro = new ArrayList<>();
+        for (int i = 0; i < numberToSave; i++) {
+            PeriodDto latestFreeSlot = freeSlotProviderService.findFreeSlotInCurrentDay(reservedSlots);
+
+            if (latestFreeSlot == null) {
+                return List.of();
+            }
+
+            Pomodoro pomodoroToSave = buildPomodoro(latestFreeSlot);
+            reservedSlots.add(latestFreeSlot);
+
+            PomodoroDto savedSinglePomodoro = save(pomodoroToSave);
+
+            savedPomodoro.add(savedSinglePomodoro);
+        }
+
+        return savedPomodoro;
     }
 
     private Pomodoro buildPomodoro(PeriodDto latestFreeSlot) {

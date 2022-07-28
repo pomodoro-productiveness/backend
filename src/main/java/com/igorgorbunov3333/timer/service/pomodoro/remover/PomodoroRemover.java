@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.exception.NoDataException;
-import com.igorgorbunov3333.timer.service.exception.PomodoroException;
+import com.igorgorbunov3333.timer.service.exception.FreeSlotException;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -43,7 +43,7 @@ public class PomodoroRemover {
                 .orElseThrow(() -> new NoDataException("No such pomodoro with id [" + pomodoroId + "]"));
         LocalDate pomodoroLocalDate = pomodoro.getStartTime().toLocalDate();
         if (pomodoroLocalDate.isBefore(LocalDate.now())) {
-            throw new PomodoroException("Pomodoro with id [" + pomodoroId + "] cannot be deleted because pomodoro not from todays day");
+            throw new FreeSlotException("Pomodoro with id [" + pomodoroId + "] cannot be deleted because pomodoro not from todays day");
         }
         pomodoroRepository.deleteById(pomodoroId);
         pomodoroRepository.flush();

@@ -7,7 +7,7 @@ import com.igorgorbunov3333.timer.service.console.command.CurrentCommandStorage;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodoroSessionMapper;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.StandardReportPrinter;
-import com.igorgorbunov3333.timer.service.exception.PomodoroException;
+import com.igorgorbunov3333.timer.service.exception.FreeSlotException;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroAutoSaver;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
@@ -15,11 +15,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +37,6 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
     private final CurrentTimeService currentTimeService;
 
     @Override
-    @Transactional
     public void process() {
         Integer numberOfPomodoroToSave = getNumberFromCommand();
 
@@ -46,15 +44,10 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
             return;
         }
 
-        List<PomodoroDto> savedPomodoroList = new ArrayList<>();
-        for (int i = 0; i < numberOfPomodoroToSave; i++) {
-            PomodoroDto singlePomodoro = save();
+        List<PomodoroDto> savedPomodoroList = save(numberOfPomodoroToSave);
 
-            if (singlePomodoro == null) {
-                return;
-            }
-
-            savedPomodoroList.add(singlePomodoro);
+        if (CollectionUtils.isEmpty(savedPomodoroList)) {
+            return;
         }
 
         List<Long> pomodoroIdList = savedPomodoroList.stream()
@@ -94,14 +87,15 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
         }
     }
 
-    private PomodoroDto save() {
-        PomodoroDto savedPomodoro;
+    private List<PomodoroDto> save(int numberToSave) {
+        List<PomodoroDto> savedPomodoro;
         try {
-            savedPomodoro = pomodoroAutoSaver.save();
-            printSuccessfullySavedMessage(savedPomodoro);
+            savedPomodoro = pomodoroAutoSaver.save(numberToSave);
+
+            savedPomodoro.forEach(this::printSuccessfullySavedMessage);
 
             return savedPomodoro;
-        } catch (PomodoroException e) {
+        } catch (FreeSlotException e) {
             String errorMessage = e.getMessage();
             printerService.print(errorMessage);
             return null;
