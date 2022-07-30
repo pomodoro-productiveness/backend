@@ -3,7 +3,7 @@ package com.igorgorbunov3333.timer.service.console.command.line.session.processo
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.month.MonthSessionProcessor;
-import com.igorgorbunov3333.timer.service.console.printer.MonthlyPomodoroPrinter;
+import com.igorgorbunov3333.timer.service.console.printer.MonthlyPomodoroReportPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByMonthsDivider;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class CurrentMonthSessionProcessor implements MonthSessionProcessor {
 
     private final PomodoroByMonthsDivider pomodoroByMonthsDivider;
-    private final MonthlyPomodoroPrinter monthlyPomodoroPrinter;
+    private final MonthlyPomodoroReportPrinter monthlyPomodoroReportPrinter;
 
     @Override
     public void process(List<PomodoroDto> pomodoro) {
@@ -43,7 +43,7 @@ public class CurrentMonthSessionProcessor implements MonthSessionProcessor {
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
 
-        monthlyPomodoroPrinter.print(monthlyPomodoro);
+        monthlyPomodoroReportPrinter.print(monthlyPomodoro);
     }
 
     @Override

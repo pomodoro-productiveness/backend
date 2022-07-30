@@ -18,7 +18,7 @@ public final class SimplePrinter {
     }
 
     public static void printParagraph() {
-        print(StringUtils.LF);
+        System.out.print(StringUtils.LF);
     }
 
     public static void printYesNoQuestion() {

@@ -8,18 +8,19 @@ import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByWeekDivider;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
 @Component
 @AllArgsConstructor
-public class MonthlyPomodoroPrinter {
+public class MonthlyPomodoroReportPrinter {
 
     private final StandardReportPrinter standardReportPrinter;
     private final TagDurationReportPrinter tagDurationReportPrinter;
     private final PomodoroByWeekDivider weekDivider;
-    private final PrinterService printerService;
 
     public void print(List<PomodoroDto> pomodoro) {
         Map<PeriodDto, List<PomodoroDto>> weeks = weekDivider.divide(pomodoro);
@@ -33,6 +34,21 @@ public class MonthlyPomodoroPrinter {
 
             standardReportPrinter.print(entry.getKey(), entry.getValue());
             tagDurationReportPrinter.print(entry.getValue());
+        }
+
+        SimplePrinter.printParagraph();
+        SimplePrinter.print("MONTH REPORT");
+
+        if (!CollectionUtils.isEmpty(pomodoro)) {
+            PomodoroDto firstPomodoro = pomodoro.get(0);
+            PomodoroDto lastPomodoro = pomodoro.get(pomodoro.size() - 1);
+
+            PeriodDto period = new PeriodDto(
+                    firstPomodoro.getStartTime().toLocalDate().atStartOfDay(),
+                    lastPomodoro.getEndTime().toLocalDate().atTime(LocalTime.MAX));
+
+            standardReportPrinter.print(period, pomodoro);
+            tagDurationReportPrinter.print(pomodoro);
         }
     }
 

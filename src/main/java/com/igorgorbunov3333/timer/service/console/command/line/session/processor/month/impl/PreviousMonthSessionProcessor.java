@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.month.MonthSessionProcessor;
-import com.igorgorbunov3333.timer.service.console.printer.MonthlyPomodoroPrinter;
+import com.igorgorbunov3333.timer.service.console.printer.MonthlyPomodoroReportPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByMonthsDivider;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class PreviousMonthSessionProcessor implements MonthSessionProcessor, NumberProvidable {
 
     private final PomodoroByMonthsDivider pomodoroByMonthsDivider;
-    private final MonthlyPomodoroPrinter monthlyPomodoroPrinter;
+    private final MonthlyPomodoroReportPrinter monthlyPomodoroReportPrinter;
     @Getter
     private final CommandProvider commandProvider;
 
@@ -66,7 +66,7 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
             Map.Entry<PeriodDto, List<PomodoroDto>> chosenPeriodToMonthlyPomodoro = numberedPeriodsByMonthlyPomodoro.get(numberAnswer);
 
             if (chosenPeriodToMonthlyPomodoro != null) {
-                monthlyPomodoroPrinter.print(chosenPeriodToMonthlyPomodoro.getValue());
+                monthlyPomodoroReportPrinter.print(chosenPeriodToMonthlyPomodoro.getValue());
                 break;
             } else {
                 SimplePrinter.print(String.format("No month under the number %d", numberAnswer));
