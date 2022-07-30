@@ -66,7 +66,7 @@ public class PomodoroEngine {
     }
 
     public LocalDateTime getCurrentPomodoroStartTime() {
-        if (!PomodoroState.POMODORO_RUNNING.get()) {
+        if (!PomodoroState.POMODORO_RUNNING.get() && !PomodoroState.POMODORO_PAUSED.get()) {
             return null;
         }
 
