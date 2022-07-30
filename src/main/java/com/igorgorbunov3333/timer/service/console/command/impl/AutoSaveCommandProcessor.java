@@ -7,6 +7,7 @@ import com.igorgorbunov3333.timer.service.console.command.CurrentCommandStorage;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodoroSessionMapper;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.StandardReportPrinter;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.exception.FreeSlotException;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroAutoSaver;
@@ -82,7 +83,7 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
             pomodoroNumber = Integer.valueOf(commandNumberPart);
             return pomodoroNumber;
         } catch (NumberFormatException e) {
-            printerService.print(String.format("Incorrect number [%s]", pomodoroNumber));
+            SimplePrinter.print(String.format("Incorrect number [%s]", pomodoroNumber));
             return null;
         }
     }
@@ -97,7 +98,7 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
             return savedPomodoro;
         } catch (FreeSlotException e) {
             String errorMessage = e.getMessage();
-            printerService.print(errorMessage);
+            SimplePrinter.print(errorMessage);
             return null;
         }
     }

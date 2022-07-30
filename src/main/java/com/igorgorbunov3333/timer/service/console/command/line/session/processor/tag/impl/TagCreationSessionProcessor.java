@@ -3,7 +3,7 @@ package com.igorgorbunov3333.timer.service.console.command.line.session.processo
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroTagInfo;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.TagSessionProcessor;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.exception.TagOperationException;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
@@ -21,13 +21,12 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
     private final static int TAG_MAX_LENGTH = 30;
 
     private final TagService tagService;
-    private final PrinterService printerService;
     private final CommandProvider commandProvider;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void process(List<PomodoroTagInfo> tagsWithNumbers) {
-        printerService.print("Please provide tag name");
+        SimplePrinter.print("Please provide tag name");
 
         String tagNameAnswer = provideAndValidateTagName();
         if (tagNameAnswer == null) {
@@ -38,11 +37,11 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
         try {
             savedTagName = tagService.save(tagNameAnswer);
         } catch (TagOperationException e) {
-            printerService.print(e.getMessage());
+            SimplePrinter.print(e.getMessage());
         }
 
         if (savedTagName != null) {
-            printerService.print(String.format("Tag with name %s successfully saved", savedTagName));
+            SimplePrinter.print(String.format("Tag with name %s successfully saved", savedTagName));
         }
 
     }
@@ -53,16 +52,16 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
             String tagNameAnswer = commandProvider.provideLine();
 
             if (tagNameAnswer.equalsIgnoreCase("e")) {
-                printerService.print("Tag menu abandoned"); //TODO: message duplication
+                SimplePrinter.print("Tag menu abandoned"); //TODO: message duplication
                 return null;
             }
 
             if (tagNameAnswer.length() > TAG_MAX_LENGTH) {
-                printerService.print(String.format("Tag name size must not be more then %d characters", TAG_MAX_LENGTH));
+                SimplePrinter.print(String.format("Tag name size must not be more then %d characters", TAG_MAX_LENGTH));
             } else if (StringUtils.isEmpty(tagNameAnswer)) {
-                printerService.print("Tag must not be empty, please try again or press \"e\" to exit");
+                SimplePrinter.print("Tag must not be empty, please try again or press \"e\" to exit");
             } else if (tagService.exists(tagNameAnswer)) {
-                printerService.print(String.format("Tag with name %s already exists", tagNameAnswer));
+                SimplePrinter.print(String.format("Tag with name %s already exists", tagNameAnswer));
             } else {
                 return tagNameAnswer;
             }

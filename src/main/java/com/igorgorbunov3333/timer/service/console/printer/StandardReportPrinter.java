@@ -4,7 +4,8 @@ import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.report.AbstractStandardReportDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.report.PomodoroStandardReportDto;
-import com.igorgorbunov3333.timer.service.console.printer.impl.DefaultPrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.report.PomodoroStandardReporter;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +22,6 @@ import java.util.stream.IntStream;
 public class StandardReportPrinter {
 
     private final PomodoroStandardReporter pomodoroStandardReporter;
-    private final PrinterService printerService;
 
     public void print(PeriodDto period, List<PomodoroDto> pomodoro) {
         if (CollectionUtils.isEmpty(pomodoro)) {
@@ -35,8 +35,8 @@ public class StandardReportPrinter {
         reports.put("Education", report.getEducation());
         reports.put("General", report.getAmount());
 
-        printerService.printParagraph();
-        printerService.print("Pomodoro amount report:");
+        SimplePrinter.printParagraph();
+        SimplePrinter.print("Pomodoro amount report:");
 
         int longestReportName = reports.keySet().stream()
                 .mapToInt(String::length)
@@ -66,28 +66,28 @@ public class StandardReportPrinter {
             int currentReportNameLength = reportName.length();
             int spacesToPrint = longestReportName - currentReportNameLength;
 
-            printerService.printWithoutCarriageOffset(reportName + StringUtils.SPACE + "standard:");
+            SimplePrinter.printWithoutCarriageOffset(reportName + StringUtils.SPACE + "standard:");
             IntStream.range(0, spacesToPrint)
-                            .forEach(i -> printerService.printWithoutCarriageOffset(StringUtils.SPACE));
-            printerService.printWithoutCarriageOffset(String.valueOf(abstractReport.getStandardAmount()));
+                            .forEach(i -> SimplePrinter.printWithoutCarriageOffset(StringUtils.SPACE));
+            SimplePrinter.printWithoutCarriageOffset(String.valueOf(abstractReport.getStandardAmount()));
 
             int spacesToPrintAfterStandardAmount = pomodoroStandardAmountMaxLength
                     - String.valueOf(abstractReport.getStandardAmount()).length();
             IntStream.range(0, spacesToPrintAfterStandardAmount)
-                            .forEach(i -> printerService.printWithoutCarriageOffset(StringUtils.SPACE));
+                            .forEach(i -> SimplePrinter.printWithoutCarriageOffset(StringUtils.SPACE));
 
-            printerService.printWithoutCarriageOffset(DefaultPrinterService.TABULATION);
+            SimplePrinter.printWithoutCarriageOffset(PrintUtil.TABULATION);
 
-            printerService.printWithoutCarriageOffset(String.format("actual amount: %d", abstractReport.getActualAmount()));
+            SimplePrinter.printWithoutCarriageOffset(String.format("actual amount: %d", abstractReport.getActualAmount()));
 
             int spacesToPrintAfterActualAmount = pomodoroActualAmountMaxLength
                     - String.valueOf(abstractReport.getActualAmount()).length();
             IntStream.range(0, spacesToPrintAfterActualAmount)
-                    .forEach(i -> printerService.printWithoutCarriageOffset(StringUtils.SPACE));
+                    .forEach(i -> SimplePrinter.printWithoutCarriageOffset(StringUtils.SPACE));
 
-            printerService.printWithoutCarriageOffset(DefaultPrinterService.TABULATION);
+            SimplePrinter.printWithoutCarriageOffset(PrintUtil.TABULATION);
 
-            printerService.print(String.format("difference: %d", abstractReport.getDifferenceAmount()));
+            SimplePrinter.print(String.format("difference: %d", abstractReport.getDifferenceAmount()));
         }
     }
 

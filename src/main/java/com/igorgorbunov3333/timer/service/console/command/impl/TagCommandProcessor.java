@@ -5,7 +5,6 @@ import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroT
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagCommandSessionStarter;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagsPrintable;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagsWithNestingAndNumberingProvidable;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,8 +19,6 @@ public class TagCommandProcessor implements CommandProcessor, TagsWithNestingAnd
     private final TagCommandSessionStarter tagCommandSessionStarter;
     @Getter
     private final TagService tagService;
-    @Getter
-    private final PrinterService printerService;
 
     @Override
     public void process() {

@@ -3,10 +3,11 @@ package com.igorgorbunov3333.timer.service.console.printer.impl;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.printer.PomodoroPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -18,29 +19,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class DefaultPrinterService implements PrinterService {
 
-    public static final String MESSAGE_POMODORO_SAVED = "Pomodoro successfully saved: ";
-    public static final String MESSAGE_NO_POMODORO = "No pomodoro to display!";
-    public static final String DOT = ".";
-    public static final String TABULATION = "         ";
-
-    private static final String YES_NO_QUESTION = "Yes (y), No";
-
     private final PomodoroPrinter pomodoroPrinter;
-
-    @Override
-    public void print(@NonNull String message) {
-        System.out.println(message);
-    }
-
-    @Override
-    public void printWithoutCarriageOffset(String message) {
-        System.out.print(message);
-    }
-
-    @Override
-    public void printParagraph() {
-        System.out.println();
-    }
 
     @Override
     public void printFeaturesList() {
@@ -64,7 +43,7 @@ public class DefaultPrinterService implements PrinterService {
     public void printSavedAndDailyPomodoroAfterStoppingPomodoro(PomodoroDto savedPomodoro,
                                                                 List<PomodoroDto> dailyPomodoro) {
         System.out.println("Pomodoro stopped automatically!");
-        System.out.println(MESSAGE_POMODORO_SAVED + savedPomodoro);
+        System.out.println(PrintUtil.MESSAGE_POMODORO_SAVED + savedPomodoro);
         printPomodoroListWithIdsAndTags(dailyPomodoro);
     }
 
@@ -83,19 +62,19 @@ public class DefaultPrinterService implements PrinterService {
         }
     }
 
-    @Override
-    public void printYesNoQuestion() {
-        print(YES_NO_QUESTION);
-    }
+//    @Override
+//    public void printYesNoQuestion() {
+//        SimplePrinter.print(YES_NO_QUESTION);
+//    }
 
     private void printPomodoroListWithIdsAndTags(List<PomodoroDto> pomodoroList) {
         if (pomodoroList.isEmpty()) {
-            System.out.println(MESSAGE_NO_POMODORO);
+            System.out.println(PrintUtil.MESSAGE_NO_POMODORO);
             return;
         }
         long pomodoroDurationInSeconds = 0;
 
-        printParagraph();
+        SimplePrinter.printParagraph();
 
         int count = 0;
         Map<Integer, PomodoroDto> numberToPomodoro = new LinkedHashMap<>();

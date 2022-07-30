@@ -5,6 +5,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.StandardReportPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
@@ -25,7 +26,6 @@ public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor {
     private final PomodoroEngineService pomodoroEngineService;
     private final PomodoroEngine pomodoroEngine;
     private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
-    @Getter
     private final PrinterService printerService;
     private final StandardReportPrinter standardReportPrinter;
     private final CurrentTimeService currentTimeService;
@@ -40,9 +40,9 @@ public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor {
         if (pomodoroEngine.isPomodoroCurrentlyRunning()) {
             String pomodoroCurrentDuration = pomodoroEngineService.getPomodoroCurrentDuration();
 
-            printerService.printParagraph();
+            SimplePrinter.printParagraph();
 
-            printerService.print("Currently running pomodoro duration: " + pomodoroCurrentDuration);
+            SimplePrinter.print("Currently running pomodoro duration: " + pomodoroCurrentDuration);
         }
 
         LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();

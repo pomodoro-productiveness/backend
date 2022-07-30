@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.repository.PomodoroTagRepository;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.mapper.TagMapper;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,6 @@ public class DefaultTagService implements TagService {
     private final PomodoroTagRepository pomodoroTagRepository;
     private final PomodoroRepository pomodoroRepository;
     private final TagMapper tagMapper;
-    private final PrinterService printerService;
 
     @Override
     public String save(String name) {
@@ -30,9 +29,9 @@ public class DefaultTagService implements TagService {
 
         if (tag != null) {
             if (tag.isRemoved()) {
-                printerService.print(String.format("Tag with name %s already marked as deleted", name));
+                SimplePrinter.print(String.format("Tag with name %s already marked as deleted", name));
             } else {
-                printerService.print("Tag with name %s already exists");
+                SimplePrinter.print("Tag with name %s already exists");
             }
 
             return null;
@@ -61,7 +60,7 @@ public class DefaultTagService implements TagService {
         PomodoroTag tag = pomodoroTagRepository.findByName(tagName).orElse(null);
 
         if (tag == null) {
-            printerService.print(String.format("Tag with name %s does not exist", tagName));
+            SimplePrinter.print(String.format("Tag with name %s does not exist", tagName));
             return;
         }
 

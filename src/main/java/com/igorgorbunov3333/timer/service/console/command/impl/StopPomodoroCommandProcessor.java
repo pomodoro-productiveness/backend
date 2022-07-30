@@ -6,6 +6,7 @@ import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodoroSessionMapper;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.StandardReportPrinter;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
@@ -41,7 +42,7 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
             savedPomodoro = pomodoroEngineService.stopPomodoro();
         } catch (PomodoroEngineException e) {
             String errorMessage = e.getMessage();
-            printerService.print(errorMessage);
+            SimplePrinter.print(errorMessage);
             return;
         }
         printSuccessfullySavedMessage(savedPomodoro);

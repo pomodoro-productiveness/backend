@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.month.MonthSessionProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.MonthlyPomodoroPrinter;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByMonthsDivider;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class CurrentMonthSessionProcessor implements MonthSessionProcessor {
 
     private final PomodoroByMonthsDivider pomodoroByMonthsDivider;
-    private final PrinterService printerService;
     private final MonthlyPomodoroPrinter monthlyPomodoroPrinter;
 
     @Override
@@ -35,7 +34,7 @@ public class CurrentMonthSessionProcessor implements MonthSessionProcessor {
                 .collect(Collectors.groupingBy(p -> p.getStartTime().toLocalDate()));
         Map<LocalDate, List<PomodoroDto>> sortedPomodoros = new TreeMap<>(datesToPomadoros);
         if (sortedPomodoros.isEmpty()) {
-            printerService.print("No monthly pomodoros");
+            SimplePrinter.print("No monthly pomodoros");
             return;
         }
 

@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
 import com.igorgorbunov3333.timer.service.console.command.line.session.coordinator.MonthSessionCommandCoordinator;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentYearPomodoroProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,8 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 public class MonthCommandProcessor implements CommandProcessor, NumberProvidable {
 
-    @Getter
-    private final PrinterService printerService;
     private final CurrentYearPomodoroProvider currentYearPomodoroProvider;
     @Getter
     private final CommandProvider commandProvider;
@@ -31,10 +29,10 @@ public class MonthCommandProcessor implements CommandProcessor, NumberProvidable
         List<PomodoroDto> yearlyPomodoro = currentYearPomodoroProvider.provide(null);
 
         while (true) {
-            printerService.printParagraph();
-            printerService.print("Choose an option how to display monthly pomodoro or \"e\" to exit");
-            printerService.print("1. Current month");
-            printerService.print("2. Previous month");
+            SimplePrinter.printParagraph();
+            SimplePrinter.print("Choose an option how to display monthly pomodoro or \"e\" to exit");
+            SimplePrinter.print("1. Current month");
+            SimplePrinter.print("2. Previous month");
 
             int numberAnswer = provideNumber();
 
@@ -43,13 +41,13 @@ public class MonthCommandProcessor implements CommandProcessor, NumberProvidable
             }
 
             if (numberAnswer > 2) {
-                printerService.print("Wrong number. Try again");
+                SimplePrinter.print("Wrong number. Try again");
             } else {
                 monthSessionCommandCoordinator.coordinate(String.valueOf(numberAnswer), yearlyPomodoro);
             }
         }
 
-        printerService.print("Monthly pomodoro menu abandoned");
+        SimplePrinter.print("Monthly pomodoro menu abandoned");
     }
 
     @Override

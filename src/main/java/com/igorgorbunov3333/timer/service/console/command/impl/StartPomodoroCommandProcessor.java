@@ -3,7 +3,7 @@ package com.igorgorbunov3333.timer.service.console.command.impl;
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.CurrentCommandStorage;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroPauseTimer;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 public class StartPomodoroCommandProcessor implements CommandProcessor {
 
     private final PomodoroEngineService pomodoroEngineService;
-    private final PrinterService printerService;
     private final PomodoroPauseTimer pomodoroPauseTimer;
     private final PomodoroProperties pomodoroProperties;
 
@@ -32,10 +31,10 @@ public class StartPomodoroCommandProcessor implements CommandProcessor {
                 pomodoroPauseTimer.conduct(minutesToPauseDuration * 60);
             }
         } catch (PomodoroEngineException e) {
-            printerService.print(e.getMessage());
+            SimplePrinter.print(e.getMessage());
             return;
         }
-        printerService.print("Pomodoro started");
+        SimplePrinter.print("Pomodoro started");
         pomodoroEngineService.printThreeSecondsOfPomodoroExecution();
     }
 
@@ -62,7 +61,7 @@ public class StartPomodoroCommandProcessor implements CommandProcessor {
     private boolean isValidDuration(Integer minutes) {
         if (minutes >= pomodoroProperties.getDuration()
                 || minutes >= pomodoroProperties.getAutomaticShutdownDuration()) {
-            printerService.print("Duration must be less then pomodoro standard duration an less then automatic shutdown duration");
+            SimplePrinter.print("Duration must be less then pomodoro standard duration an less then automatic shutdown duration");
 
             return false;
         }

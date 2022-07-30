@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTagBunch;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.AbstractLineProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.printer.ListOfItemsPrinter;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.updater.LocalPomodoroUpdater;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.tag.bunch.PomodoroTagBunchService;
@@ -29,8 +29,6 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
 
     @Getter
     private final TagService tagService;
-    @Getter
-    private final PrinterService printerService;
     @Getter
     private final CommandProvider commandProvider;
     private final LocalPomodoroUpdater localPomodoroUpdater;
@@ -66,14 +64,14 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
         listOfItemsPrinter.print(pomodoroTagBunchMap, extractorFunction);
 
         while (true) {
-            printerService.print("Please choose tags bunch by it's number or press \"e\" to map by other tags");
+            SimplePrinter.print("Please choose tags bunch by it's number or press \"e\" to map by other tags");
             int numberAnswer = provideNumber();
 
             if (numberAnswer != -1) {
                 chosenTagBunch = pomodoroTagBunchMap.get(numberAnswer);
 
                 if (chosenTagBunch == null) {
-                    printerService.print(String.format("No such bunch with number [%d]", numberAnswer));
+                    SimplePrinter.print(String.format("No such bunch with number [%d]", numberAnswer));
                 } else {
                     break;
                 }
@@ -93,8 +91,8 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
         while (true) {
             tags = getTagsFromUser(tagInfos);
 
-            printerService.print("Following tags [" + tags + "] will be mapped to pomodoro. Do you confirm?");
-            printerService.printYesNoQuestion();
+            SimplePrinter.print("Following tags [" + tags + "] will be mapped to pomodoro. Do you confirm?");
+            SimplePrinter.printYesNoQuestion();
 
             String answer = provideLine();
 
@@ -113,7 +111,7 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
 
         Set<String> tags = new HashSet<>();
         while (true) {
-            printerService.print("Choose tag to map to saved pomodoro or press \"e\" to finish");
+            SimplePrinter.print("Choose tag to map to saved pomodoro or press \"e\" to finish");
             printTags(tagInfosCopy);
 
             PomodoroTagInfo tagToMap = provideTagAnswer(tagInfos, null);

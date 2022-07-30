@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.service.pomodoro.engine;
 
 import com.igorgorbunov3333.timer.service.audioplayer.AudioPlayerService;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 public class PomodoroPauseTimer {
 
     private final PomodoroEngine pomodoroEngine;
-    private final PrinterService printerService;
     private final AudioPlayerService player;
     private final PomodoroEngineService pomodoroEngineService;
 
@@ -26,7 +25,7 @@ public class PomodoroPauseTimer {
             if (currentDurationInMilliseconds >= (seconds * 1000L)) {
                 pomodoroEngine.pausePomodoro();
 
-                printerService.print(String.format("[%s] minutes have passed", SecondsFormatter.formatInMinutes(seconds)));
+                SimplePrinter.print(String.format("[%s] minutes have passed", SecondsFormatter.formatInMinutes(seconds)));
 
                 player.play();
 
@@ -38,7 +37,7 @@ public class PomodoroPauseTimer {
 
                 player.stop();
 
-                printerService.print(String.format("Pomodoro paused at %s", pomodoroEngineService.getPomodoroCurrentDuration()));
+                SimplePrinter.print(String.format("Pomodoro paused at %s", pomodoroEngineService.getPomodoroCurrentDuration()));
 
                 break;
             }

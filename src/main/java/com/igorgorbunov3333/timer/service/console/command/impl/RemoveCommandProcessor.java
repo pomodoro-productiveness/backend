@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.DailySinglePomodoroFromUserProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.remover.PomodoroRemover;
 import lombok.AllArgsConstructor;
@@ -19,14 +19,12 @@ public class RemoveCommandProcessor implements CommandProcessor, NumberProvidabl
     private final DailySinglePomodoroFromUserProvider dailySinglePomodoroFromUserProvider;
 
     @Getter
-    private final PrinterService printerService;
-    @Getter
     private final CommandProvider commandProvider;
 
     @Override
     public void process() {
-        printerService.printParagraph();
-        printerService.print("Choose pomodoro to remove:");
+        SimplePrinter.printParagraph();
+        SimplePrinter.print("Choose pomodoro to remove:");
 
         PomodoroDto chosenPomodoro = dailySinglePomodoroFromUserProvider.provide();
 
@@ -34,19 +32,19 @@ public class RemoveCommandProcessor implements CommandProcessor, NumberProvidabl
             return;
         }
 
-        printerService.print("Are you sure you want to delete pomodoro " + chosenPomodoro);
-        printerService.printYesNoQuestion();
+        SimplePrinter.print("Are you sure you want to delete pomodoro " + chosenPomodoro);
+        SimplePrinter.printYesNoQuestion();
 
         String answer = commandProvider.provideLine();
 
         if (!answer.toLowerCase().startsWith("y")) {
-            printerService.print("Pomodoro will not be deleted");
+            SimplePrinter.print("Pomodoro will not be deleted");
             return;
         }
 
         pomodoroRemover.remove(chosenPomodoro.getId());
 
-        printerService.print("Pomodoro [" + chosenPomodoro + "] removed successfully");
+        SimplePrinter.print("Pomodoro [" + chosenPomodoro + "] removed successfully");
     }
 
     @Override

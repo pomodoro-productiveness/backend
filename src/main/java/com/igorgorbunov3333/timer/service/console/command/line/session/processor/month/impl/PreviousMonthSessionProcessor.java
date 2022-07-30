@@ -6,8 +6,8 @@ import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandP
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.month.MonthSessionProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.MonthlyPomodoroPrinter;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.console.printer.impl.DefaultPrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByMonthsDivider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 public class PreviousMonthSessionProcessor implements MonthSessionProcessor, NumberProvidable {
 
     private final PomodoroByMonthsDivider pomodoroByMonthsDivider;
-    @Getter
-    private final PrinterService printerService;
     private final MonthlyPomodoroPrinter monthlyPomodoroPrinter;
     @Getter
     private final CommandProvider commandProvider;
@@ -45,12 +43,12 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
                         .get(periodByPomodoro.size() - 1)
         );
 
-        printerService.print("Choose month to display");
+        SimplePrinter.print("Choose month to display");
 
         int count = 0;
         Map<Integer, Map.Entry<PeriodDto, List<PomodoroDto>>> numberedPeriodsByMonthlyPomodoro = new LinkedHashMap<>();
         for (Map.Entry<PeriodDto, List<PomodoroDto>> entry : periodByPomodoro.entrySet()) {
-            printerService.print(++count + DefaultPrinterService.DOT + StringUtils.SPACE
+            SimplePrinter.print(++count + PrintUtil.DOT + StringUtils.SPACE
                     + Month.from(entry.getKey().getStart())
                     .getDisplayName(TextStyle.FULL, Locale.getDefault())
                     .toUpperCase());
@@ -71,7 +69,7 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
                 monthlyPomodoroPrinter.print(chosenPeriodToMonthlyPomodoro.getValue());
                 break;
             } else {
-                printerService.print(String.format("No month under the number %d", numberAnswer));
+                SimplePrinter.print(String.format("No month under the number %d", numberAnswer));
             }
         }
     }

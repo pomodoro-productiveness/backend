@@ -4,6 +4,7 @@ import com.igorgorbunov3333.timer.service.console.command.CurrentCommandStorage;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.CommandCoordinator;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ public class CommandLineController {
 
     public void start() {
         Scanner sc = new Scanner(System.in);
-        printerService.printParagraph();
+        SimplePrinter.printParagraph();
         printerService.printFeaturesList();
         while (true) {
             String command = commandProvider.provideLine();
@@ -38,7 +39,7 @@ public class CommandLineController {
         boolean correctCommand = commandCoordinator.coordinate(command);
 
         if (!correctCommand) {
-            printerService.print(INVALID_INPUT);
+            SimplePrinter.print(INVALID_INPUT);
         }
     }
 

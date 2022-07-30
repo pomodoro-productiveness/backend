@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
 import com.igorgorbunov3333.timer.service.console.printer.PomodoroPrinter;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,8 +22,6 @@ public class DailySinglePomodoroFromUserProvider implements NumberProvidable {
     private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
 
     @Getter
-    private final PrinterService printerService;
-    @Getter
     private final CommandProvider commandProvider;
     private final PomodoroPrinter pomodoroPrinter;
 
@@ -31,7 +29,7 @@ public class DailySinglePomodoroFromUserProvider implements NumberProvidable {
         List<PomodoroDto> dailyPomodoro = currentDayLocalPomodoroProvider.provide(null);
 
         if (CollectionUtils.isEmpty(dailyPomodoro)) {
-            printerService.print("There are no daily pomodoro");
+            SimplePrinter.print("There are no daily pomodoro");
             return null;
         }
 
@@ -44,7 +42,7 @@ public class DailySinglePomodoroFromUserProvider implements NumberProvidable {
 
         pomodoroPrinter.print(numberToPomodoro);
 
-        printerService.printParagraph();
+        SimplePrinter.printParagraph();
 
         PomodoroDto chosenPomodoro;
         while (true) {
@@ -55,7 +53,7 @@ public class DailySinglePomodoroFromUserProvider implements NumberProvidable {
 
             chosenPomodoro = numberToPomodoro.get(chosenNumber);
             if (chosenPomodoro == null) {
-                printerService.print(String.format("No such pomodoro with number [%s]", chosenNumber));
+                SimplePrinter.print(String.format("No such pomodoro with number [%s]", chosenNumber));
             } else {
                 return chosenPomodoro;
             }

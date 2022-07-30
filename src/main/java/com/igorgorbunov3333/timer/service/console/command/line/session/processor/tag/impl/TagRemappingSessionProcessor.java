@@ -6,6 +6,7 @@ import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroT
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodoroSessionMapper;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.TagSessionProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.DailySinglePomodoroFromUserProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ public class TagRemappingSessionProcessor extends AbstractPomodoroSessionMapper 
 
     @Override
     public void process(List<PomodoroTagInfo> tagPositionToTags) {
-        printerService.print("Chose pomodoro to remap tags");
+        SimplePrinter.print("Chose pomodoro to remap tags");
         PomodoroDto chosenPomodoro = dailySinglePomodoroFromUserProvider.provide();
 
         if (chosenPomodoro != null) {

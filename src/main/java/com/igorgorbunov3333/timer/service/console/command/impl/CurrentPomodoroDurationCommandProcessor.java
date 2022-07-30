@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,12 +11,11 @@ import org.springframework.stereotype.Service;
 public class CurrentPomodoroDurationCommandProcessor implements CommandProcessor {
 
     private final PomodoroEngineService pomodoroEngineService;
-    private final PrinterService printerService;
 
     @Override
     public void process() {
         String pomodoroCurrentDuration = pomodoroEngineService.getPomodoroCurrentDuration();
-        printerService.print(pomodoroCurrentDuration);
+        SimplePrinter.print(pomodoroCurrentDuration);
     }
 
     @Override

@@ -2,7 +2,8 @@ package com.igorgorbunov3333.timer.service.console.printer;
 
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.service.console.printer.impl.DefaultPrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByWeekDivider;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -25,8 +26,8 @@ public class MonthlyPomodoroPrinter {
 
         int counter = 0;
         for (Map.Entry<PeriodDto, List<PomodoroDto>> entry : weeks.entrySet()) {
-            printerService.printParagraph();
-            printerService.print(++counter + DefaultPrinterService.DOT + " WEEK ("
+            SimplePrinter.printParagraph();
+            SimplePrinter.print(++counter + PrintUtil.DOT + " WEEK ("
                     + entry.getKey().getStart().toLocalDate() + StringUtils.SPACE + "-" + StringUtils.SPACE
                     + entry.getKey().getEnd().toLocalDate() + ")");
 

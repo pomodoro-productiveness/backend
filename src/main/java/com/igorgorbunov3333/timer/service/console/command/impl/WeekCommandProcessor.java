@@ -6,6 +6,7 @@ import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.StandardReportPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.TagDurationReportPrinter;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.period.CurrentWeekDaysProvidable;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentWeekPomodoroProvider;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
@@ -26,7 +27,6 @@ import java.util.stream.Collectors;
 public class WeekCommandProcessor implements CommandProcessor, CurrentWeekDaysProvidable {
 
     private final CurrentWeekPomodoroProvider currentWeekLocalPomodoroProvider;
-    @Getter
     private final PrinterService printerService;
     private final StandardReportPrinter standardReportPrinter;
     @Getter
@@ -38,7 +38,7 @@ public class WeekCommandProcessor implements CommandProcessor, CurrentWeekDaysPr
     public void process() {
         Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoro = currentWeekLocalPomodoroProvider.provideCurrentWeekPomodorosByDays();
         if (weeklyPomodoro.isEmpty()) {
-            printerService.print("No weekly pomodoro");
+            SimplePrinter.print("No weekly pomodoro");
         }
         printerService.printDayOfWeekToPomodoro(weeklyPomodoro);
 

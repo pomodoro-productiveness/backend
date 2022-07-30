@@ -3,7 +3,7 @@ package com.igorgorbunov3333.timer.service.pomodoro.engine.impl;
 import com.igorgorbunov3333.timer.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroPauseDto;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
@@ -29,7 +29,6 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
     private final PomodoroSaver pomodoroSaver;
     private final PomodoroEngine pomodoroEngine;
     private final PomodoroProperties pomodoroProperties;
-    private final PrinterService printerService;
     private final PomodoroPausesStorage pomodoroPausesStorage;
 
     @Override
@@ -53,7 +52,7 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
         int duration = pomodoroEngine.stopPomodoro();
         long pomodoroMinimumLifetime = pomodoroProperties.getMinimumLifetime();
         if (pomodoroMinimumLifetime == 0) {
-            printerService.print("Pomodoro lifetime didn't set. Please configure");
+            SimplePrinter.print("Pomodoro lifetime didn't set. Please configure");
         }
         if (duration <= pomodoroMinimumLifetime) {
             String message = "Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds";
@@ -98,7 +97,7 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
         for (int i = 0; i < 3; i++) {
             Thread.sleep(1100);
             String formattedTime = getPomodoroCurrentDurationInString();
-            printerService.print(formattedTime);
+            SimplePrinter.print(formattedTime);
         }
     }
 

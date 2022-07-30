@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandP
 import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroTagInfo;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagAnswerProvidable;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.TagSessionProcessor;
-import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,13 +18,11 @@ public class TagRemovingSessionProcessor implements TagSessionProcessor, TagAnsw
 
     private final TagService tagService;
     @Getter
-    private final PrinterService printerService;
-    @Getter
     private final CommandProvider commandProvider;
 
     @Override
     public void process(List<PomodoroTagInfo> tags) {
-        printerService.print("Enter the tag number to remove tag or press \"e\" to exit");
+        SimplePrinter.print("Enter the tag number to remove tag or press \"e\" to exit");
 
         PomodoroTagInfo parentTag = provideTagAnswer(tags, null);
         if (parentTag == null) {
@@ -33,7 +31,7 @@ public class TagRemovingSessionProcessor implements TagSessionProcessor, TagAnsw
 
         tagService.removeTag(parentTag.getTagName());
 
-        printerService.print("Pomodoro tag successfully removed");
+        SimplePrinter.print("Pomodoro tag successfully removed");
     }
 
     @Override

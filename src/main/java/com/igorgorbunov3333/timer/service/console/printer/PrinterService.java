@@ -9,12 +9,6 @@ import java.util.Map;
 //TODO: use separate class with static method to print lines
 public interface PrinterService {
 
-    void print(String message);
-
-    void printWithoutCarriageOffset(String message);
-
-    void printParagraph();
-
     void printFeaturesList();
 
     void printSavedAndDailyPomodoroAfterStoppingPomodoro(PomodoroDto savedPomodoro, List<PomodoroDto> dailyPomodoro);
@@ -22,7 +16,5 @@ public interface PrinterService {
     void printPomodoroWithIdsAndTags(List<PomodoroDto> pomodoro);
 
     void printDayOfWeekToPomodoro(Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoro);
-
-    void printYesNoQuestion();
 
 }
