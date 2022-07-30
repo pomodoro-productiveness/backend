@@ -4,14 +4,13 @@ import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTagBunch;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.AbstractLineProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
+import com.igorgorbunov3333.timer.service.console.printer.ListOfItemsPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.service.console.printer.impl.DefaultPrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.updater.LocalPomodoroUpdater;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.tag.bunch.PomodoroTagBunchService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -21,21 +20,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
 public class TagPomodoroSessionMapper extends AbstractLineProvider implements TagsWithNestingAndNumberingProvidable, TagsPrintable, TagAnswerProvidable {
 
-    private final LocalPomodoroUpdater localPomodoroUpdater;
     @Getter
     private final TagService tagService;
     @Getter
     private final PrinterService printerService;
     @Getter
     private final CommandProvider commandProvider;
-
+    private final LocalPomodoroUpdater localPomodoroUpdater;
     private final PomodoroTagBunchService pomodoroTagBunchService;
+    private final ListOfItemsPrinter listOfItemsPrinter;
 
     public void addTagToPomodoro(List<Long> pomodoroId) {
         Set<String> tags = getTagsFromBunch();
@@ -52,15 +52,18 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
 
         Map<Integer, PomodoroTagBunch> pomodoroTagBunchMap = new HashMap<>();
         PomodoroTagBunch chosenTagBunch;
-        for (int i = 1; i <= pomodoroTagBunches.size(); i++) {
-            PomodoroTagBunch currentBunch = pomodoroTagBunches.get(i - 1);
-            pomodoroTagBunchMap.put(i, currentBunch);
-            printerService.print(i + DefaultPrinterService.DOT + StringUtils.SPACE
-                    + currentBunch.getPomodoroTags().stream()
-                    .map(PomodoroTag::getName)
-                    .sorted()
-                    .collect(Collectors.toList()));
+
+        Function<PomodoroTagBunch, List<String>> extractorFunction = bunch -> bunch.getPomodoroTags().stream()
+                .map(PomodoroTag::getName)
+                .sorted()
+                .collect(Collectors.toList());
+
+        int count = 0;
+        for (PomodoroTagBunch bunch : pomodoroTagBunches) {
+            pomodoroTagBunchMap.put(++count, bunch);
         }
+
+        listOfItemsPrinter.print(pomodoroTagBunchMap, extractorFunction);
 
         while (true) {
             printerService.print("Please choose tags bunch by it's number or press \"e\" to map by other tags");

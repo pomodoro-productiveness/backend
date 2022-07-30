@@ -23,8 +23,8 @@ public class PomodoroStoppedEventListener implements ApplicationListener<Pomodor
     public void onApplicationEvent(PomodoroStoppedSpringEvent event) {
         int pomodoroDuration = event.getPomodoroDuration();
         PomodoroDto savedPomodoro = pomodoroSaver.save(pomodoroDuration);
-        List<PomodoroDto> dailyPomodoros = currentDayLocalPomodoroProvider.provide(null);
-        printerService.printSavedAndDailyPomodoroAfterStoppingPomodoro(savedPomodoro, dailyPomodoros);
+        List<PomodoroDto> dailyPomodoro = currentDayLocalPomodoroProvider.provide(null);
+        printerService.printSavedAndDailyPomodoroAfterStoppingPomodoro(savedPomodoro, dailyPomodoro);
     }
 
 }

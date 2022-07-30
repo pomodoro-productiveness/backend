@@ -3,6 +3,7 @@ package com.igorgorbunov3333.timer.service.pomodoro.provider;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
+import com.igorgorbunov3333.timer.service.console.printer.PomodoroPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class DailySinglePomodoroFromUserProvider implements NumberProvidable {
     private final PrinterService printerService;
     @Getter
     private final CommandProvider commandProvider;
+    private final PomodoroPrinter pomodoroPrinter;
 
     public PomodoroDto provide() {
         List<PomodoroDto> dailyPomodoro = currentDayLocalPomodoroProvider.provide(null);
@@ -35,14 +37,12 @@ public class DailySinglePomodoroFromUserProvider implements NumberProvidable {
 
         Map<Integer, PomodoroDto> numberToPomodoro = new HashMap<>();
 
-        int longestPomodoroNumberLength = String.valueOf(dailyPomodoro.size()).length();
-
         int count = 0;
         for (PomodoroDto pomodoro : dailyPomodoro) {
             numberToPomodoro.put(++count, pomodoro);
-
-            printerService.printPomodoro(pomodoro, true, count, longestPomodoroNumberLength);
         }
+
+        pomodoroPrinter.print(numberToPomodoro);
 
         printerService.printParagraph();
 

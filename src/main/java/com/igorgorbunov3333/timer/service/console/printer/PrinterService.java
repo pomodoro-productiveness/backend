@@ -23,7 +23,6 @@ public interface PrinterService {
 
     void printDayOfWeekToPomodoro(Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoro);
 
-    void printPomodoro(PomodoroDto pomodoro, boolean withIdAndTag, int number, Integer longestNumberLength);
-
     void printYesNoQuestion();
+
 }
