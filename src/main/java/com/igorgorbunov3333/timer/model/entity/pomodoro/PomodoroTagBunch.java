@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,10 +31,13 @@ public class PomodoroTagBunch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
     @Fetch(FetchMode.JOIN)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "pomodoro_tag_bunch_tag", joinColumns = {@JoinColumn(name = "pomodoro_tag_bunch_id")}, inverseJoinColumns = {@JoinColumn(name = "pomodoro_tag_id")})
     private List<PomodoroTag> pomodoroTags;
+
+    @Setter
+    @Column(nullable = false)
+    private Long orderNumber;
 
 }

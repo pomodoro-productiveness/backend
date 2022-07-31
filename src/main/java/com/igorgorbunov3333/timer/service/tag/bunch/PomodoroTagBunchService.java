@@ -20,7 +20,7 @@ public class PomodoroTagBunchService {
     private final PomodoroTagRepository pomodoroTagRepository;
 
     public List<PomodoroTagBunch> getLatestTagBunches() {
-        return pomodoroTagBunchRepository.findTop10ByOrderByIdDesc();
+        return pomodoroTagBunchRepository.findTop10ByOrderByOrderNumberDesc();
     }
 
     public void saveBunch(Set<String> tags) {
@@ -29,15 +29,43 @@ public class PomodoroTagBunchService {
 
         for (PomodoroTagBunch bunch : allBunches) {
             if (new HashSet<>(bunch.getPomodoroTags()).equals(new HashSet<>(pomodoroTags))) {
+                updateOrderNumber(bunch, allBunches);
                 return;
             }
         }
 
         if (!CollectionUtils.isEmpty(pomodoroTags)) {
-            PomodoroTagBunch bunch = new PomodoroTagBunch(null, pomodoroTags);
+            long nextOrderNumber = calculateNextOrderNumber(allBunches);
+
+            PomodoroTagBunch bunch = new PomodoroTagBunch(null, pomodoroTags, nextOrderNumber);
 
             pomodoroTagBunchRepository.save(bunch);
         }
+    }
+
+    public void updateOrderNumber(PomodoroTagBunch bunch, List<PomodoroTagBunch> allBunches) {
+        if (allBunches == null) {
+            allBunches = pomodoroTagBunchRepository.findAll();
+        }
+
+        long nextOrderNumber = calculateNextOrderNumber(allBunches);
+
+        bunch.setOrderNumber(nextOrderNumber);
+
+        pomodoroTagBunchRepository.save(bunch);
+        pomodoroTagBunchRepository.flush();
+    }
+
+    private long calculateNextOrderNumber(List<PomodoroTagBunch> allBunches) {
+        if (!CollectionUtils.isEmpty(allBunches)) {
+            long maxOrderNumber = allBunches.stream()
+                    .mapToLong(PomodoroTagBunch::getOrderNumber)
+                    .max()
+                    .orElse(1L);
+
+            return maxOrderNumber + 1L;
+        }
+        return 1;
     }
 
 }

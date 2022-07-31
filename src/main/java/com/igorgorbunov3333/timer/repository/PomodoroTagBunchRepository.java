@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface PomodoroTagBunchRepository extends JpaRepository<PomodoroTagBunch, Long> {
 
-    List<PomodoroTagBunch> findTop10ByOrderByIdDesc();
+    List<PomodoroTagBunch> findTop10ByOrderByOrderNumberDesc();
 
 }

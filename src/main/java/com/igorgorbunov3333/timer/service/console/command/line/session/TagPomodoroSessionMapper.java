@@ -36,12 +36,12 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
     private final ListOfItemsPrinter listOfItemsPrinter;
 
     public void addTagToPomodoro(List<Long> pomodoroId) {
-        Set<String> tags = getTagsFromBunch();
+        Set<String> tags = getChosenTagBunch();
 
         localPomodoroUpdater.updatePomodoroWithTag(pomodoroId, tags);
     }
 
-    private Set<String> getTagsFromBunch() {
+    private Set<String> getChosenTagBunch() {
         List<PomodoroTagBunch> pomodoroTagBunches = pomodoroTagBunchService.getLatestTagBunches();
 
         if (CollectionUtils.isEmpty(pomodoroTagBunches)) {
@@ -73,6 +73,9 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
                 return getChosenTags();
             }
         }
+
+        pomodoroTagBunchService.updateOrderNumber(chosenTagBunch, null);
+
         return chosenTagBunch.getPomodoroTags().stream()
                 .map(PomodoroTag::getName)
                 .collect(Collectors.toSet());
