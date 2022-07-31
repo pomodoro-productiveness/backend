@@ -9,13 +9,13 @@ import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.updater.LocalPomodoroUpdater;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.tag.bunch.PomodoroTagBunchService;
+import com.igorgorbunov3333.timer.service.util.NumberToItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -48,21 +48,15 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
             return getChosenTags();
         }
 
-        Map<Integer, PomodoroTagBunch> pomodoroTagBunchMap = new HashMap<>();
-        PomodoroTagBunch chosenTagBunch;
+        Map<Integer, PomodoroTagBunch> pomodoroTagBunchMap = NumberToItemBuilder.build(pomodoroTagBunches);
 
         Function<PomodoroTagBunch, List<String>> extractorFunction = bunch -> bunch.getPomodoroTags().stream()
                 .map(PomodoroTag::getName)
                 .sorted()
                 .collect(Collectors.toList());
-
-        int count = 0;
-        for (PomodoroTagBunch bunch : pomodoroTagBunches) {
-            pomodoroTagBunchMap.put(++count, bunch);
-        }
-
         listOfItemsPrinter.print(pomodoroTagBunchMap, extractorFunction);
 
+        PomodoroTagBunch chosenTagBunch;
         while (true) {
             SimplePrinter.print("Please choose tags bunch by it's number or press \"e\" to map by other tags");
             int numberAnswer = provideNumber();

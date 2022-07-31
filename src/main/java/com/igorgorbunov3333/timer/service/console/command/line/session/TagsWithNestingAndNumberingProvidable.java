@@ -12,16 +12,16 @@ public interface TagsWithNestingAndNumberingProvidable {
     TagService getTagService();
 
     default List<PomodoroTagInfo> provideTags() {
-        List<PomodoroTagDto> pomodoroTagDtos = getTagService().getSortedTags(false);
+        List<PomodoroTagDto> pomodoroTagDto = getTagService().getSortedTags(false);
 
-        if (CollectionUtils.isEmpty(pomodoroTagDtos)) {
+        if (CollectionUtils.isEmpty(pomodoroTagDto)) {
             return List.of();
         }
 
         List<PomodoroTagInfo> numberedTags = new ArrayList<>();
 
         int count = 0;
-        for (PomodoroTagDto tag : pomodoroTagDtos) {
+        for (PomodoroTagDto tag : pomodoroTagDto) {
             numberedTags.add(new PomodoroTagInfo(++count, tag.getName()));
         }
 

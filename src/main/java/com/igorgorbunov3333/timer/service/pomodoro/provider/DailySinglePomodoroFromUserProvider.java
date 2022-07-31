@@ -6,12 +6,12 @@ import com.igorgorbunov3333.timer.service.console.command.line.session.NumberPro
 import com.igorgorbunov3333.timer.service.console.printer.PomodoroPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
+import com.igorgorbunov3333.timer.service.util.NumberToItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,12 +33,7 @@ public class DailySinglePomodoroFromUserProvider implements NumberProvidable {
             return null;
         }
 
-        Map<Integer, PomodoroDto> numberToPomodoro = new HashMap<>();
-
-        int count = 0;
-        for (PomodoroDto pomodoro : dailyPomodoro) {
-            numberToPomodoro.put(++count, pomodoro);
-        }
+        Map<Integer, PomodoroDto> numberToPomodoro = NumberToItemBuilder.build(dailyPomodoro);
 
         pomodoroPrinter.print(numberToPomodoro);
 
