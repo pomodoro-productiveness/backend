@@ -7,7 +7,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface TagsWithNestingAndNumberingProvidable {
+public interface TagsWithNestingAndNumberingProvidable { //TODO: redo as separate service and use NumberToItemBuilder and ListOfItemsPrinter
 
     TagService getTagService();
 
