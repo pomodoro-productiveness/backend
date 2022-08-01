@@ -1,12 +1,13 @@
 package com.igorgorbunov3333.timer.service.console.command.line.session;
 
+import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.coordinator.TagCommandSessionCoordinator;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Map;
 
 @Component
 @AllArgsConstructor
@@ -15,7 +16,7 @@ public class TagCommandSessionStarter {
     private final CommandProvider commandProvider;
     private final TagCommandSessionCoordinator tagCommandSessionCoordinator;
 
-    public boolean startSession(List<PomodoroTagInfo> tagsWithNumbers) {
+    public boolean startSession(Map<Integer, PomodoroTagDto> numberedTags) {
         SimplePrinter.printParagraph();
         SimplePrinter.print("Chose an option:");
         SimplePrinter.print("Press 1 to create a new tag");
@@ -29,7 +30,7 @@ public class TagCommandSessionStarter {
             return true;
         }
 
-        boolean successfullyChosen = tagCommandSessionCoordinator.coordinate(answer, tagsWithNumbers);
+        boolean successfullyChosen = tagCommandSessionCoordinator.coordinate(answer, numberedTags);
 
         if (!successfullyChosen) {
             SimplePrinter.print("Incorrect option, please retry or press \"e\" to exit");

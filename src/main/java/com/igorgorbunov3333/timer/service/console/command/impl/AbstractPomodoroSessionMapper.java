@@ -26,10 +26,10 @@ public abstract class AbstractPomodoroSessionMapper {
 
         getTagPomodoroSessionMapper().addTagToPomodoro(pomodoroId);
 
-        return getAndPrintDailyPomodoros();
+        return getAndPrintDailyPomodoro();
     }
 
-    private List<PomodoroDto> getAndPrintDailyPomodoros() {
+    private List<PomodoroDto> getAndPrintDailyPomodoro() {
         List<PomodoroDto> pomodoro = getCurrentDayLocalPomodoroProvider().provide(null);
         getPrinterService().printPomodoroWithIdsAndTags(pomodoro);
 

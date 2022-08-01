@@ -1,13 +1,14 @@
 package com.igorgorbunov3333.timer.service.console.command.line.session;
 
+import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTagBunch;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.AbstractLineProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
-import com.igorgorbunov3333.timer.service.console.printer.ListOfItemsPrinter;
+import com.igorgorbunov3333.timer.service.console.printer.util.ListOfItemsPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.updater.LocalPomodoroUpdater;
-import com.igorgorbunov3333.timer.service.tag.TagService;
+import com.igorgorbunov3333.timer.service.tag.TagProvider;
 import com.igorgorbunov3333.timer.service.tag.bunch.PomodoroTagBunchService;
 import com.igorgorbunov3333.timer.service.util.NumberToItemBuilder;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,6 @@ import lombok.Getter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,15 +25,13 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class TagPomodoroSessionMapper extends AbstractLineProvider implements TagsWithNestingAndNumberingProvidable, TagsPrintable, TagAnswerProvidable {
+public class TagPomodoroSessionMapper extends AbstractLineProvider implements NumberProvidable {
 
-    @Getter
-    private final TagService tagService;
+    private final TagProvider tagProvider;
     @Getter
     private final CommandProvider commandProvider;
     private final LocalPomodoroUpdater localPomodoroUpdater;
     private final PomodoroTagBunchService pomodoroTagBunchService;
-    private final ListOfItemsPrinter listOfItemsPrinter;
 
     public void addTagToPomodoro(List<Long> pomodoroId) {
         Set<String> tags = getChosenTagBunch();
@@ -54,7 +52,7 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
                 .map(PomodoroTag::getName)
                 .sorted()
                 .collect(Collectors.toList());
-        listOfItemsPrinter.print(pomodoroTagBunchMap, extractorFunction);
+        ListOfItemsPrinter.print(pomodoroTagBunchMap, extractorFunction);
 
         PomodoroTagBunch chosenTagBunch;
         while (true) {
@@ -82,11 +80,11 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
     }
 
     private Set<String> getChosenTags() {
-        List<PomodoroTagInfo> tagInfos = provideTags();
+        Map<Integer, PomodoroTagDto> numberedTags = tagProvider.provide();
 
         Set<String> tags;
         while (true) {
-            tags = getTagsFromUser(tagInfos);
+            tags = getTagsFromUser(numberedTags);
 
             SimplePrinter.print("Following tags [" + tags + "] will be mapped to pomodoro. Do you confirm?");
             SimplePrinter.printYesNoQuestion();
@@ -103,24 +101,30 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Ta
         return tags;
     }
 
-    private Set<String> getTagsFromUser(List<PomodoroTagInfo> tagInfos) {
-        List<PomodoroTagInfo> tagInfosCopy = new ArrayList<>(tagInfos);
+    private Set<String> getTagsFromUser(Map<Integer, PomodoroTagDto> tags) {
+        Set<String> chosenTags = new HashSet<>();
 
-        Set<String> tags = new HashSet<>();
         while (true) {
             SimplePrinter.print("Choose tag to map to saved pomodoro or press \"e\" to finish");
-            printTags(tagInfosCopy);
 
-            PomodoroTagInfo tagToMap = provideTagAnswer(tagInfos, null);
-            if (tagToMap == null) {
+            ListOfItemsPrinter.print(tags, PomodoroTagDto::getName);
+
+            int chosenNumber = provideNumber();
+
+            if (chosenNumber < 1) {
                 break;
             }
 
-            tags.add(tagToMap.getTagName());
-            tagInfosCopy.remove(tagToMap);
+            PomodoroTagDto tagToMap = tags.get(chosenNumber);
+            if (tagToMap != null) {
+                chosenTags.add(tagToMap.getName());
+                tags.remove(chosenNumber);
+            } else {
+                SimplePrinter.print(String.format("Incorrect number [%d]", chosenNumber));
+            }
         }
 
-        return tags;
+        return chosenTags;
     }
 
 }

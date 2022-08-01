@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.service.console.command.line.session.coordinator;
 
-import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroTagInfo;
+import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.TagSessionProcessor;
 import org.springframework.stereotype.Component;
 
@@ -19,11 +19,11 @@ public class TagCommandSessionCoordinator {
                 .collect(Collectors.toMap(TagSessionProcessor::action, Function.identity()));
     }
 
-    public boolean coordinate(String action, List<PomodoroTagInfo> tagsWithNumbers) {
+    public boolean coordinate(String action, Map<Integer, PomodoroTagDto> numberedTags) {
         TagSessionProcessor processor = tagOperationByService.get(action);
 
         if (processor != null) {
-            processor.process(tagsWithNumbers);
+            processor.process(numberedTags);
             return true;
         } else {
             return false;

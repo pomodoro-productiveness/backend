@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.impl;
 
+import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
-import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroTagInfo;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.TagSessionProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.exception.TagOperationException;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -25,7 +25,7 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void process(List<PomodoroTagInfo> tagsWithNumbers) {
+    public void process(Map<Integer, PomodoroTagDto> tagsWithNumbers) {
         SimplePrinter.print("Please provide tag name");
 
         String tagNameAnswer = provideAndValidateTagName();

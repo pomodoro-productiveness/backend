@@ -2,6 +2,7 @@ package com.igorgorbunov3333.timer.service.console.printer;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
+import com.igorgorbunov3333.timer.service.console.printer.util.ListOfItemsPrinter;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
@@ -19,12 +20,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PomodoroPrinter {
 
-    private final ListOfItemsPrinter listOfItemsPrinter;
-
     public void print(Map<Integer, PomodoroDto> numberToPomodoro) {
         Function<PomodoroDto, String> pomodoroExtractorFunction = this::mapToString;
 
-        listOfItemsPrinter.print(numberToPomodoro, pomodoroExtractorFunction);
+        ListOfItemsPrinter.print(numberToPomodoro, pomodoroExtractorFunction);
     }
 
     private String mapToString(PomodoroDto pomodoro) {

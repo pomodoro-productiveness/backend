@@ -1,19 +1,16 @@
-package com.igorgorbunov3333.timer.service.console.printer;
+package com.igorgorbunov3333.timer.service.console.printer.util;
 
-import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
-import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.function.Function;
 
-@Component
-@AllArgsConstructor
-public class ListOfItemsPrinter {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ListOfItemsPrinter {
 
-    public <T, R> void print(Map<Integer, T> numberByItems, Function<T, R> function) {
+    public static <T, R> void print(Map<Integer, T> numberByItems, Function<T, R> function) {
         int longestNumber = String.valueOf(numberByItems.size()).length();
         for (Map.Entry<Integer, T> entry : numberByItems.entrySet()) {
             StringBuilder spacesAfterNumber = new StringBuilder(StringUtils.SPACE);
