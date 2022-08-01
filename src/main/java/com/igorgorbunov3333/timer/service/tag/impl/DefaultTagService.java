@@ -73,12 +73,6 @@ public class DefaultTagService implements TagService {
     }
 
     @Override
-    public void removeAllTags() {
-        pomodoroTagRepository.deleteAll();
-        pomodoroTagRepository.flush();
-    }
-
-    @Override
     public List<PomodoroTag> save(List<PomodoroTagDto> tags) {
         List<PomodoroTag> tagsToSave = tagMapper.mapToEntities(tags);
 

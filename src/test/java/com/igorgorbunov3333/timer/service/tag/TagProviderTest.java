@@ -1,8 +1,6 @@
-package com.igorgorbunov3333.timer.service.console.command.impl;
+package com.igorgorbunov3333.timer.service.tag;
 
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.service.console.command.line.session.PomodoroTagInfo;
-import com.igorgorbunov3333.timer.service.tag.TagService;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
@@ -20,10 +19,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TagCommandProcessorTest {
+class TagProviderTest {
 
     @InjectMocks
-    private TagCommandProcessor testee;
+    private TagProvider testee;
 
     @Mock
     private TagService tagService;
@@ -58,9 +57,9 @@ class TagCommandProcessorTest {
         tags.sort(Comparator.comparing(PomodoroTagDto::getName));
         when(tagService.getSortedTags(false)).thenReturn(tags);
 
-        List<PomodoroTagInfo> actual = testee.provideTags();
+        Map<Integer, PomodoroTagDto> actual = testee.provide();
 
-        assertThat(actual).extracting(t -> Tuple.tuple(t.getTagNumber(), t.getTagName()))
+        assertThat(actual).extractingFromEntries(entry -> Tuple.tuple(entry.getKey(), entry.getValue().getName()))
                 .containsExactlyElementsOf(List.of(
                         tuple(1, "firstLevelTag1"),
                         tuple(2, "firstLevelTag2"),
