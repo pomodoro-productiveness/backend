@@ -68,13 +68,13 @@ public class CurrentWeekPomodoroProvider implements PomodoroProvider, CurrentWee
         return daysOfWeek.stream()
                 .map(dayOfWeek -> new AbstractMap.SimpleEntry<>(
                         dayOfWeek,
-                        getDailyPomodoros(dayOfWeekToPomodoros, dayOfWeek)))
+                        getDailyPomodoro(dayOfWeekToPomodoros, dayOfWeek)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private List<PomodoroDto> getDailyPomodoros(Map<DayOfWeek, List<PomodoroDto>> dayOfWeekToPomodoros,
-                                                DayOfWeek dayOfWeek) {
-        return dayOfWeekToPomodoros.computeIfAbsent(dayOfWeek, k -> new ArrayList<>());
+    private List<PomodoroDto> getDailyPomodoro(Map<DayOfWeek, List<PomodoroDto>> dayOfWeekToPomodoro,
+                                               DayOfWeek dayOfWeek) {
+        return dayOfWeekToPomodoro.computeIfAbsent(dayOfWeek, k -> new ArrayList<>());
     }
 
 }

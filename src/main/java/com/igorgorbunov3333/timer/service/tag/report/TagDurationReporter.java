@@ -2,54 +2,125 @@ package com.igorgorbunov3333.timer.service.tag.report;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.model.dto.tag.SingleTagDurationDto;
-import com.igorgorbunov3333.timer.model.dto.tag.TagDurationReportDto;
+import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportDto;
+import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportRowDto;
+import com.igorgorbunov3333.timer.service.tag.TagMappingsBuilder;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
-import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
 public class TagDurationReporter {
 
-    public TagDurationReportDto report(List<PomodoroDto> pomodoro) {
+    private final TagMappingsBuilder tagMappingsBuilder;
+
+    public List<TagDurationReportDto> report(List<PomodoroDto> pomodoro) {
         if (CollectionUtils.isEmpty(pomodoro)) {
-            return new TagDurationReportDto(List.of());
+            return List.of();
         }
 
-        Set<String> tags = new HashSet<>();
-        for (PomodoroDto pomodoroDto : pomodoro) {
-            tags.addAll(pomodoroDto.getTags().stream().map(PomodoroTagDto::getName).collect(Collectors.toSet()));
-        }
+        return buildReports(pomodoro);
+    }
 
-        List<SingleTagDurationDto> tagInfo = new ArrayList<>();
-        for (String tag : tags) {
-            List<PomodoroDto> tagPomodoro = pomodoro.stream()
-                    .filter(p -> p.getTags().stream()
-                            .map(PomodoroTagDto::getName)
-                            .collect(Collectors.toSet())
-                            .contains(tag))
-                    .collect(Collectors.toList());
+    private List<TagDurationReportDto> buildReports(List<PomodoroDto> pomodoro) {
+        Map<String, Set<String>> tagToMappedTags = tagMappingsBuilder.buildTagMappings(pomodoro);
 
-            long durationInSeconds = 0L;
-            for (PomodoroDto currentPomodoro : tagPomodoro) {
-                durationInSeconds += PomodoroChronoUtil.getStartEndTimeDifferenceInSeconds(currentPomodoro);
-            }
+        return tagToMappedTags.keySet().stream()
+                .map(tag -> buildSingleReport(tagToMappedTags, tag, pomodoro))
+                .collect(Collectors.toList());
+    }
 
-            String durationInHours = SecondsFormatter.formatInHours(durationInSeconds);
+    private TagDurationReportDto buildSingleReport(Map<String, Set<String>> tagToMappedTags,
+                                                   String mainTag,
+                                                   List<PomodoroDto> pomodoro) {
+        List<PomodoroDto> tagPomodoro = filterPomodoro(pomodoro, p -> mapToTagNamesSet(p).contains(mainTag));
 
-            tagInfo.add(new SingleTagDurationDto(tag, durationInHours));
-        }
+        return buildSingleReport(tagToMappedTags, mainTag, pomodoro, tagPomodoro);
+    }
 
-        return new TagDurationReportDto(tagInfo);
+    private TagDurationReportDto buildSingleReport(Map<String, Set<String>> tagToMappedTags,
+                                                   String tag,
+                                                   List<PomodoroDto> allPomodoro,
+                                                   List<PomodoroDto> tagPomodoro) {
+        TagDurationReportRowDto mainTagReportRow = buildReportRow(tag, tagPomodoro);
+        List<TagDurationReportRowDto> mappedTagsReportRows = buildMappedTagsReportRows(tagToMappedTags, tag, allPomodoro, tagPomodoro);
+
+        return new TagDurationReportDto(mainTagReportRow, mappedTagsReportRows);
+    }
+
+    private List<TagDurationReportRowDto> buildMappedTagsReportRows(Map<String, Set<String>> tagToMappedTags,
+                                                                    String tag,
+                                                                    List<PomodoroDto> pomodoro,
+                                                                    List<PomodoroDto> tagPomodoro) {
+        Set<Set<String>> mappedTagGroups = buildMappedTagGroups(tagToMappedTags, tag, tagPomodoro);
+
+        return buildMappedTagsReportRows(pomodoro, tag, mappedTagGroups);
+    }
+
+    private List<TagDurationReportRowDto> buildMappedTagsReportRows(List<PomodoroDto> pomodoro,
+                                                                    String mainTag,
+                                                                    Set<Set<String>> mappedTagsGroups) {
+        return mappedTagsGroups.stream()
+                .map(mappedTagGroup -> buildMappedTagReportRow(mappedTagGroup, mainTag, pomodoro))
+                .collect(Collectors.toList());
+    }
+
+    private TagDurationReportRowDto buildMappedTagReportRow(Set<String> mappedTags,
+                                                            String mainTag,
+                                                            List<PomodoroDto> pomodoro) {
+        String mappedTagsNames = buildMappedTagNames(mainTag, mappedTags);
+        List<PomodoroDto> filteredPomodoro = filterPomodoro(pomodoro, singlePomodoro -> mapToTagNamesSet(singlePomodoro).equals(mappedTags));
+
+        return buildReportRow(mappedTagsNames, filteredPomodoro);
+    }
+
+    private List<PomodoroDto> filterPomodoro(List<PomodoroDto> pomodoro, Predicate<PomodoroDto> predicate) {
+        return pomodoro.stream()
+                .filter(predicate)
+                .collect(Collectors.toList());
+    }
+
+    private TagDurationReportRowDto buildReportRow(String tag, List<PomodoroDto> pomodoro) {
+        long duration = calculateDurationInSeconds(pomodoro);
+        return new TagDurationReportRowDto(tag, duration);
+    }
+
+    private Set<Set<String>> buildMappedTagGroups(Map<String, Set<String>> tagToMappedTags,
+                                                  String tag,
+                                                  List<PomodoroDto> pomodoro) {
+        return pomodoro.stream()
+                .map(this::mapToTagNamesSet)
+                .filter(pomodoroTagGroup -> !Collections.disjoint(tagToMappedTags.get(tag), pomodoroTagGroup))
+                .collect(Collectors.toSet());
+    }
+
+    private Set<String> mapToTagNamesSet(PomodoroDto p) {
+        return p.getTags().stream()
+                .map(PomodoroTagDto::getName)
+                .collect(Collectors.toSet());
+    }
+
+    private long calculateDurationInSeconds(List<PomodoroDto> pomodoro) {
+        return pomodoro.stream()
+                .mapToLong(PomodoroChronoUtil::getStartEndTimeDifferenceInSeconds)
+                .sum();
+    }
+
+    private String buildMappedTagNames(String mainTag, Set<String> mappedTags) {
+        Set<String> tagsNotEqualToMainTag = mappedTags.stream()
+                .filter(s -> !s.equals(mainTag))
+                .collect(Collectors.toSet());
+
+        return String.join(" #", tagsNotEqualToMainTag);
     }
 
 }
