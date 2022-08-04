@@ -37,15 +37,13 @@ public class TagDurationReportPrinter {
 
             List<TagDurationReportRowDto> neighbouringTagDurations = tagDurationReportItem.getMappedTagsReportRows();
 
-            if (CollectionUtils.isEmpty(neighbouringTagDurations)) {
-                break;
-            }
+            if (!CollectionUtils.isEmpty(neighbouringTagDurations)) {
+                for (TagDurationReportRowDto neighboringTag : neighbouringTagDurations) {
+                    String tag = neighboringTag.getTag();
+                    String neighboringTagDuration = SecondsFormatter.formatInHours(neighboringTag.getDuration());
 
-            for (TagDurationReportRowDto neighboringTag : neighbouringTagDurations) {
-                String tag = neighboringTag.getTag();
-                String neighboringTagDuration = SecondsFormatter.formatInHours(neighboringTag.getDuration());
-
-                reportRows.add(new ReportRow("-".repeat(4) + tag, neighboringTagDuration, false));
+                    reportRows.add(new ReportRow("-".repeat(4) + tag, neighboringTagDuration, false));
+                }
             }
         }
 

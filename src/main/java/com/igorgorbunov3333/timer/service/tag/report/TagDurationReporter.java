@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportDto;
 import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportRowDto;
-import com.igorgorbunov3333.timer.service.tag.TagMappingsBuilder;
+import com.igorgorbunov3333.timer.service.tag.TagToTagsFromPomodoroMappingsBuilder;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TagDurationReporter {
 
-    private final TagMappingsBuilder tagMappingsBuilder;
+    private final TagToTagsFromPomodoroMappingsBuilder tagToTagsFromPomodoroMappingsBuilder;
 
     public List<TagDurationReportDto> report(List<PomodoroDto> pomodoro) {
         if (CollectionUtils.isEmpty(pomodoro)) {
@@ -32,7 +32,7 @@ public class TagDurationReporter {
     }
 
     private List<TagDurationReportDto> buildReports(List<PomodoroDto> pomodoro) {
-        Map<String, Set<String>> tagToMappedTags = tagMappingsBuilder.buildTagMappings(pomodoro);
+        Map<String, Set<String>> tagToMappedTags = tagToTagsFromPomodoroMappingsBuilder.buildTagMappings(pomodoro);
 
         return tagToMappedTags.keySet().stream()
                 .map(tag -> buildSingleReport(tagToMappedTags, tag, pomodoro))
@@ -120,7 +120,7 @@ public class TagDurationReporter {
                 .filter(s -> !s.equals(mainTag))
                 .collect(Collectors.toSet());
 
-        return String.join(" #", tagsNotEqualToMainTag);
+        return "#" + String.join(" #", tagsNotEqualToMainTag);
     }
 
 }

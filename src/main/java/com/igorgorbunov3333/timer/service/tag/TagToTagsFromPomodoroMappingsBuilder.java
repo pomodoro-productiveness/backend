@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class TagMappingsBuilder {
+public class TagToTagsFromPomodoroMappingsBuilder {
 
     public Map<String, Set<String>> buildTagMappings(List<PomodoroDto> pomodoro) {
         Map<String, Set<String>> tagMappings = new HashMap<>();
