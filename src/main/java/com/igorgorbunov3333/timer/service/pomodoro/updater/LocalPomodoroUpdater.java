@@ -19,6 +19,14 @@ public class LocalPomodoroUpdater {
     private final PomodoroTagRepository pomodoroTagRepository;
 
     @Transactional
+    public void updatePomodoroWithTagsByNewTags(Set<String> oldTags, Set<String> newTags) {
+        List<Pomodoro> pomodoroWithOldTags = pomodoroRepository.findByTagsNameIn(oldTags);
+
+        pomodoroWithOldTags
+                .forEach(p -> updatePomodoroWithTag(List.of(p.getId()), newTags));
+    }
+
+    @Transactional
     public void updatePomodoroWithTag(List<Long> pomodoroId, Set<String> tagNames) {
         pomodoroId.forEach(id -> update(id, tagNames));
     }

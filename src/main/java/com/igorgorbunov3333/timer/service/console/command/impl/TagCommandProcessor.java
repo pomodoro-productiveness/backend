@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.line.session.TagCommandSessionStarter;
 import com.igorgorbunov3333.timer.service.console.printer.util.ListOfItemsPrinter;
-import com.igorgorbunov3333.timer.service.tag.TagProvider;
+import com.igorgorbunov3333.timer.service.tag.provider.TagProvider;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +26,7 @@ public class TagCommandProcessor implements CommandProcessor {
         boolean sessionFinished = false;
 
         Map<Integer, PomodoroTagDto> tagsWithNumbers = tagProvider.provide();
+
         ListOfItemsPrinter.print(tagsWithNumbers, PomodoroTagDto::getName);
 
         while (!sessionFinished) {

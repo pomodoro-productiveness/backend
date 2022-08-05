@@ -1,6 +1,7 @@
 package com.igorgorbunov3333.timer.service.tag;
 
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
+import com.igorgorbunov3333.timer.service.tag.provider.TagProvider;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

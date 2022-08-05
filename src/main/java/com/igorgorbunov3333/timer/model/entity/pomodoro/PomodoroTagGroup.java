@@ -31,6 +31,7 @@ public class PomodoroTagGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Fetch(FetchMode.JOIN)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "pomodoro_tag_group_tag", joinColumns = {@JoinColumn(name = "pomodoro_tag_group_id")}, inverseJoinColumns = {@JoinColumn(name = "pomodoro_tag_id")})

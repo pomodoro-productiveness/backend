@@ -24,7 +24,7 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
     private final CommandProvider commandProvider;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW) //TODO: remove?
     public void process(Map<Integer, PomodoroTagDto> tagsWithNumbers) {
         SimplePrinter.print("Please provide tag name");
 
@@ -41,7 +41,7 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
         }
 
         if (savedTagName != null) {
-            SimplePrinter.print(String.format("Tag with name %s successfully saved", savedTagName));
+            SimplePrinter.print(String.format("Tag with name [%s] successfully saved", savedTagName));
         }
 
     }

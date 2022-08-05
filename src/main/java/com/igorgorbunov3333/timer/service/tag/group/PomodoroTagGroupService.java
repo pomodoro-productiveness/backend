@@ -11,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -66,6 +67,26 @@ public class PomodoroTagGroupService {
             return maxOrderNumber + 1L;
         }
         return 1;
+    }
+
+    public void updateTagGroup(PomodoroTagGroup tagGroupToUpdate, Set<String> newTags) {
+        List<PomodoroTagGroup> pomodoroTagGroups = pomodoroTagGroupRepository.findAll();
+
+        for (PomodoroTagGroup group : pomodoroTagGroups) {
+            Set<String> groupTags = group.getPomodoroTags().stream()
+                    .map(PomodoroTag::getName)
+                    .collect(Collectors.toSet());
+
+            if (groupTags.equals(newTags)) {
+                throw new RuntimeException("Tag group with following tags [" + groupTags + "] already exists");
+            }
+        }
+
+        List<PomodoroTag> newTagsToMap = pomodoroTagRepository.findByNameIn(newTags);
+
+        tagGroupToUpdate.setPomodoroTags(newTagsToMap);
+
+        pomodoroTagGroupRepository.save(tagGroupToUpdate);
     }
 
 }

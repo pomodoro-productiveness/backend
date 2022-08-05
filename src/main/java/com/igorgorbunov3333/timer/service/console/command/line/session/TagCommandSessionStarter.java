@@ -22,6 +22,7 @@ public class TagCommandSessionStarter {
         SimplePrinter.print("Press 1 to create a new tag");
         SimplePrinter.print("Press 2 to remove a tag");
         SimplePrinter.print("Press 3 to remap tags for pomodoro");
+        SimplePrinter.print("Press 4 to update tag group");
         SimplePrinter.print("You may exit by pressing \"e\" to save current changes");
 
         String answer = commandProvider.provideLine();
