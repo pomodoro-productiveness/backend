@@ -53,7 +53,8 @@ public class TagDurationReportPrinter {
                 .orElse(0)
                 + 1;
 
-        String spaces = StringUtils.SPACE;
+        String space = StringUtils.SPACE;
+        String dash = "-";
         for (ReportRow row : reportRows) {
             if (row.mainTag) {
                 SimplePrinter.printParagraph();
@@ -63,7 +64,8 @@ public class TagDurationReportPrinter {
 
             int additionalSpaces = maxTagLength - row.getTagRow().length();
 
-            SimplePrinter.printWithoutCarriageOffset(spaces.repeat(Math.max(0, additionalSpaces)));
+            String indentToRepeat = row.mainTag ? dash : space;
+            SimplePrinter.printWithoutCarriageOffset(indentToRepeat.repeat(Math.max(0, additionalSpaces)));
 
             SimplePrinter.print(row.durationRow);
         }
