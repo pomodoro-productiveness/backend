@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.console.command.line.session;
 
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
-import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTagBunch;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTagGroup;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.AbstractLineProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.impl.TagCreationSessionProcessor;
@@ -10,7 +10,7 @@ import com.igorgorbunov3333.timer.service.console.printer.util.ListOfItemsPrinte
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.updater.LocalPomodoroUpdater;
 import com.igorgorbunov3333.timer.service.tag.TagProvider;
-import com.igorgorbunov3333.timer.service.tag.bunch.PomodoroTagBunchService;
+import com.igorgorbunov3333.timer.service.tag.group.PomodoroTagGroupService;
 import com.igorgorbunov3333.timer.service.util.NumberToItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +33,7 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Nu
     @Getter
     private final CommandProvider commandProvider;
     private final LocalPomodoroUpdater localPomodoroUpdater;
-    private final PomodoroTagBunchService pomodoroTagBunchService;
+    private final PomodoroTagGroupService pomodoroTagGroupService;
     private final TagCreationSessionProcessor tagCreationSessionProcessor;
 
     public void addTagToPomodoro(List<Long> pomodoroId) {
@@ -43,30 +43,30 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Nu
     }
 
     private Set<String> provideTags() {
-        List<PomodoroTagBunch> pomodoroTagBunches = pomodoroTagBunchService.getLatestTagBunches();
+        List<PomodoroTagGroup> pomodoroTagGroups = pomodoroTagGroupService.getLatestTagGroups();
 
-        if (CollectionUtils.isEmpty(pomodoroTagBunches)) {
+        if (CollectionUtils.isEmpty(pomodoroTagGroups)) {
             return chosenTagsByUser();
         }
 
-        Map<Integer, PomodoroTagBunch> pomodoroTagBunchMap = NumberToItemBuilder.build(pomodoroTagBunches);
+        Map<Integer, PomodoroTagGroup> pomodoroTagGroupMap = NumberToItemBuilder.build(pomodoroTagGroups);
 
-        Function<PomodoroTagBunch, List<String>> extractorFunction = bunch -> bunch.getPomodoroTags().stream()
+        Function<PomodoroTagGroup, List<String>> extractorFunction = group -> group.getPomodoroTags().stream()
                 .map(PomodoroTag::getName)
                 .sorted()
                 .collect(Collectors.toList());
-        ListOfItemsPrinter.print(pomodoroTagBunchMap, extractorFunction);
+        ListOfItemsPrinter.print(pomodoroTagGroupMap, extractorFunction);
 
-        PomodoroTagBunch chosenTagBunch;
+        PomodoroTagGroup chosenTagGroup;
         while (true) {
-            SimplePrinter.print("Please choose tags bunch by it's number or press \"e\" to map by other tags");
+            SimplePrinter.print("Please choose tags group by it's number or press \"e\" to map by other tags");
             int numberAnswer = provideNumber();
 
             if (numberAnswer != -1) {
-                chosenTagBunch = pomodoroTagBunchMap.get(numberAnswer);
+                chosenTagGroup = pomodoroTagGroupMap.get(numberAnswer);
 
-                if (chosenTagBunch == null) {
-                    SimplePrinter.print(String.format("No such bunch with number [%d]", numberAnswer));
+                if (chosenTagGroup == null) {
+                    SimplePrinter.print(String.format("No such group with number [%d]", numberAnswer));
                 } else {
                     break;
                 }
@@ -75,9 +75,9 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Nu
             }
         }
 
-        pomodoroTagBunchService.updateOrderNumber(chosenTagBunch, null);
+        pomodoroTagGroupService.updateOrderNumber(chosenTagGroup, null);
 
-        return chosenTagBunch.getPomodoroTags().stream()
+        return chosenTagGroup.getPomodoroTags().stream()
                 .map(PomodoroTag::getName)
                 .collect(Collectors.toSet());
     }
@@ -97,7 +97,7 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Nu
             }
         }
 
-        pomodoroTagBunchService.saveBunch(tags);
+        pomodoroTagGroupService.saveTagGroup(tags);
 
         return tags;
     }

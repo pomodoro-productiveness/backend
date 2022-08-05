@@ -25,7 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class PomodoroTagBunch {
+public class PomodoroTagGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ public class PomodoroTagBunch {
 
     @Fetch(FetchMode.JOIN)
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "pomodoro_tag_bunch_tag", joinColumns = {@JoinColumn(name = "pomodoro_tag_bunch_id")}, inverseJoinColumns = {@JoinColumn(name = "pomodoro_tag_id")})
+    @JoinTable(name = "pomodoro_tag_group_tag", joinColumns = {@JoinColumn(name = "pomodoro_tag_group_id")}, inverseJoinColumns = {@JoinColumn(name = "pomodoro_tag_id")})
     private List<PomodoroTag> pomodoroTags;
 
     @Setter

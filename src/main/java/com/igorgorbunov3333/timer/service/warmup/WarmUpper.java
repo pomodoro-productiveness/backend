@@ -2,7 +2,6 @@ package com.igorgorbunov3333.timer.service.warmup;
 
 import com.igorgorbunov3333.timer.service.dayoff.DayOffSynchronizer;
 import com.igorgorbunov3333.timer.service.pomodoro.calendar.PomodoroCalendarEventProcessor;
-import com.igorgorbunov3333.timer.service.tag.bunch.PomodoroTagBunchCleaner;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -16,7 +15,6 @@ public class WarmUpper {
 //TODO: pass local pomodoros for PomodoroCalendarEventProcessor to process
 
     private final PomodoroCalendarEventProcessor pomodoroCalendarEventProcessor;
-    private final PomodoroTagBunchCleaner pomodoroTagBunchCleaner;
     private final DayOffSynchronizer dayOffSynchronizer;
 
     @EventListener({ContextRefreshedEvent.class})
@@ -24,7 +22,6 @@ public class WarmUpper {
         log.info("WarmUpper has started");
 
         pomodoroCalendarEventProcessor.process();
-        pomodoroTagBunchCleaner.clean();
         dayOffSynchronizer.synchronize();
 
         log.info("WarmUpper successfully finished");
