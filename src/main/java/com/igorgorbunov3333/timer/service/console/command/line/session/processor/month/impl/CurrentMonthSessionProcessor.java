@@ -44,6 +44,8 @@ public class CurrentMonthSessionProcessor implements MonthSessionProcessor {
                 .collect(Collectors.toList());
 
         monthlyPomodoroReportPrinter.print(monthlyPomodoro);
+
+        SimplePrinter.printParagraph();
     }
 
     @Override

@@ -68,6 +68,7 @@ public class TagDurationReportPrinter {
             SimplePrinter.print(row.durationRow);
         }
 
+        SimplePrinter.printParagraph();
     }
 
     @Getter

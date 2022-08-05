@@ -29,10 +29,11 @@ public class MonthCommandProcessor implements CommandProcessor, NumberProvidable
         List<PomodoroDto> yearlyPomodoro = currentYearPomodoroProvider.provide(null);
 
         while (true) {
-            SimplePrinter.printParagraph();
             SimplePrinter.print("Choose an option how to display monthly pomodoro or \"e\" to exit");
             SimplePrinter.print("1. Current month");
             SimplePrinter.print("2. Previous month");
+
+            SimplePrinter.printParagraph();
 
             int numberAnswer = provideNumber();
 
@@ -46,6 +47,8 @@ public class MonthCommandProcessor implements CommandProcessor, NumberProvidable
                 monthSessionCommandCoordinator.coordinate(String.valueOf(numberAnswer), yearlyPomodoro);
             }
         }
+
+        SimplePrinter.printParagraph();
 
         SimplePrinter.print("Monthly pomodoro menu abandoned");
     }

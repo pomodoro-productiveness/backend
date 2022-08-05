@@ -4,7 +4,6 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.printer.PomodoroPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
-import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
@@ -61,19 +60,12 @@ public class DefaultPrinterService implements PrinterService {
         }
     }
 
-//    @Override
-//    public void printYesNoQuestion() {
-//        SimplePrinter.print(YES_NO_QUESTION);
-//    }
-
     private void printPomodoroListWithIdsAndTags(List<PomodoroDto> pomodoroList) {
         if (pomodoroList.isEmpty()) {
             System.out.println(PrintUtil.MESSAGE_NO_POMODORO);
             return;
         }
         long pomodoroDurationInSeconds = 0;
-
-        SimplePrinter.printParagraph();
 
         int count = 0;
         Map<Integer, PomodoroDto> numberToPomodoro = new LinkedHashMap<>();

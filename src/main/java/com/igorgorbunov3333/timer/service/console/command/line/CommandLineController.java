@@ -25,7 +25,9 @@ public class CommandLineController {
         SimplePrinter.printParagraph();
         printerService.printFeaturesList();
         while (true) {
+            SimplePrinter.printParagraph();
             String command = commandProvider.provideLine();
+            SimplePrinter.printParagraph();
             gotoChoice(command);
             if (command.equals("exit")) {
                 break;

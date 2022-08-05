@@ -43,7 +43,9 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
                         .get(periodByPomodoro.size() - 1)
         );
 
+        SimplePrinter.printParagraph();
         SimplePrinter.print("Choose month to display");
+        SimplePrinter.printParagraph();
 
         int count = 0;
         Map<Integer, Map.Entry<PeriodDto, List<PomodoroDto>>> numberedPeriodsByMonthlyPomodoro = new LinkedHashMap<>();
@@ -55,6 +57,8 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
 
             numberedPeriodsByMonthlyPomodoro.put(count, entry);
         }
+
+        SimplePrinter.printParagraph();
 
         while (true) {
             int numberAnswer = provideNumber();
