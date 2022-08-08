@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -20,10 +21,18 @@ public class LocalPomodoroUpdater {
 
     @Transactional
     public void updatePomodoroWithTagsByNewTags(Set<String> oldTags, Set<String> newTags) {
-        List<Pomodoro> pomodoroWithOldTags = pomodoroRepository.findByTagsNameIn(oldTags);
+        List<Pomodoro> pomodoroWithOldTags = pomodoroRepository.findAll().stream()
+                .filter(p -> p.getTags().stream()
+                        .map(PomodoroTag::getName)
+                        .collect(Collectors.toSet())
+                        .equals(oldTags))
+                .collect(Collectors.toList());
 
-        pomodoroWithOldTags
-                .forEach(p -> updatePomodoroWithTag(List.of(p.getId()), newTags));
+        List<PomodoroTag> newTagEntities = pomodoroTagRepository.findByNameIn(newTags);
+
+        pomodoroWithOldTags.forEach(p -> p.setTags(newTagEntities));
+
+        pomodoroRepository.saveAll(pomodoroWithOldTags);
     }
 
     @Transactional

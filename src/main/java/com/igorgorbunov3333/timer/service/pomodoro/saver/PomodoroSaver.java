@@ -30,32 +30,6 @@ public class PomodoroSaver implements SinglePomodoroSavable {
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroMapper pomodoroMapper;
 
-    public void save(List<PomodoroDto> pomodoros, List<PomodoroTag> savedTags) {
-        List<Pomodoro> pomodorosToSave = pomodoroMapper.mapToEntity(pomodoros);
-
-        Map<String, PomodoroTag> tagNamesToTags = savedTags.stream()
-                .collect(Collectors.toMap(PomodoroTag::getName, Function.identity()));
-
-        for (Pomodoro pomodoro : pomodorosToSave) {
-            List<PomodoroTag> pomodoroTags = pomodoro.getTags();
-
-            List<PomodoroTag> pomodoroSavedTags = new ArrayList<>();
-            if (!CollectionUtils.isEmpty(pomodoroTags)) {
-                for (PomodoroTag tag : pomodoroTags) {
-                    PomodoroTag tagToMap = tagNamesToTags.get(tag.getName());
-
-                    if (tagToMap != null) {
-                        pomodoroSavedTags.add(tagToMap);
-                    }
-                }
-            }
-
-            pomodoro.setTags(pomodoroSavedTags);
-        }
-
-        pomodoroRepository.saveAll(pomodorosToSave);
-    }
-
     public PomodoroDto save(int pomodoroDuration, List<PomodoroPauseDto> pomodoroPauses) {
         Pomodoro pomodoro = buildPomodoro(pomodoroDuration, pomodoroPauses);
         return save(pomodoro);
@@ -78,7 +52,7 @@ public class PomodoroSaver implements SinglePomodoroSavable {
                 .map(pauseDto -> new PomodoroPause(null, pauseDto.getStartTime(), pauseDto.getEndTime(), null))
                 .collect(Collectors.toList());
 
-        return new Pomodoro(null, startTime, endTime, false, pomodoroPauses, null);
+        return new Pomodoro(null, startTime, endTime, false, pomodoroPauses, null, null);
     }
 
 }

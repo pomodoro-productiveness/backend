@@ -16,11 +16,7 @@ import javax.validation.constraints.NotNull;
 public class GoogleServicesProperties {
 
     @NotBlank
-    private String documentId;
-    @NotBlank
     private String credentialsPath;
-    @NotBlank
-    private String fileName;
     @NotNull
     private Calendar calendar;
 

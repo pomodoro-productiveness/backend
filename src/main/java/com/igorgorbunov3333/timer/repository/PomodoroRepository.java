@@ -15,6 +15,4 @@ public interface PomodoroRepository extends JpaRepository<Pomodoro, Long> {
 
     boolean existsByTagsName(String tagName);
 
-    List<Pomodoro> findByTagsNameIn(Set<String> tags);
-
 }
