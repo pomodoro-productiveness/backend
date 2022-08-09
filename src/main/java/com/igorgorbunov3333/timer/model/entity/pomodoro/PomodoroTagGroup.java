@@ -18,7 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -35,7 +35,7 @@ public class PomodoroTagGroup {
     @Fetch(FetchMode.JOIN)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "pomodoro_tag_group_tag", joinColumns = {@JoinColumn(name = "pomodoro_tag_group_id")}, inverseJoinColumns = {@JoinColumn(name = "pomodoro_tag_id")})
-    private List<PomodoroTag> pomodoroTags;
+    private Set<PomodoroTag> pomodoroTags;
 
     @Setter
     @Column(nullable = false)

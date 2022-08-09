@@ -6,13 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Set;
 
 public interface PomodoroRepository extends JpaRepository<Pomodoro, Long> {
 
-    @EntityGraph(attributePaths = {"tags"})
+    @EntityGraph(attributePaths = {"pomodoroTagGroup.pomodoroTags"})
     List<Pomodoro> findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(ZonedDateTime startRange, ZonedDateTime endRange);
 
-    boolean existsByTagsName(String tagName);
+    boolean existsByPomodoroTagGroupPomodoroTagsName(String tagName);
+
+    @EntityGraph(attributePaths = {"pomodoroTagGroup.pomodoroTags"})
+    List<Pomodoro> findByIdIn(List<Long> ids);
 
 }

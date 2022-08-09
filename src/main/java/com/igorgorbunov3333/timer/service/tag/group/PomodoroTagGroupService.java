@@ -10,6 +10,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class PomodoroTagGroupService {
         if (!CollectionUtils.isEmpty(pomodoroTags)) {
             long nextOrderNumber = calculateNextOrderNumber(allGroups);
 
-            PomodoroTagGroup group = new PomodoroTagGroup(null, pomodoroTags, nextOrderNumber);
+            PomodoroTagGroup group = new PomodoroTagGroup(null, new HashSet<>(pomodoroTags), nextOrderNumber);
 
             pomodoroTagGroupRepository.save(group);
         }
@@ -69,24 +70,10 @@ public class PomodoroTagGroupService {
         return 1;
     }
 
-    public void updateTagGroup(PomodoroTagGroup tagGroupToUpdate, Set<String> newTags) {
-        List<PomodoroTagGroup> pomodoroTagGroups = pomodoroTagGroupRepository.findAll();
-
-        for (PomodoroTagGroup group : pomodoroTagGroups) {
-            Set<String> groupTags = group.getPomodoroTags().stream()
-                    .map(PomodoroTag::getName)
-                    .collect(Collectors.toSet());
-
-            if (groupTags.equals(newTags)) {
-                throw new RuntimeException("Tag group with following tags [" + groupTags + "] already exists");
-            }
-        }
-
-        List<PomodoroTag> newTagsToMap = pomodoroTagRepository.findByNameIn(newTags);
-
-        tagGroupToUpdate.setPomodoroTags(newTagsToMap);
-
-        pomodoroTagGroupRepository.save(tagGroupToUpdate);
+    public Optional<PomodoroTagGroup> findTagGroupsByTagNames(Set<String> tagNames) {
+        return pomodoroTagGroupRepository.findAll().stream()
+                .filter(group -> group.getPomodoroTags().stream().map(PomodoroTag::getName).collect(Collectors.toSet()).equals(tagNames))
+                .findFirst();
     }
 
 }

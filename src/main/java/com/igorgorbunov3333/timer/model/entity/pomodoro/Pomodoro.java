@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,11 +19,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -51,13 +51,16 @@ public class Pomodoro implements TemporalObject {
     private List<PomodoroPause> pomodoroPauses;
 
     @Setter
-    @ManyToMany
-    @JoinTable(name = "pomodoro_pomodoro_tag", joinColumns = {@JoinColumn(name = "pomodoro_id")}, inverseJoinColumns = {@JoinColumn(name = "tag_id")})
-    private List<PomodoroTag> tags;
-
-    @Setter
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_group_id")
     private PomodoroTagGroup pomodoroTagGroup;
+
+    public List<PomodoroTag> getTags() {
+        if (pomodoroTagGroup != null && !CollectionUtils.isEmpty(pomodoroTagGroup.getPomodoroTags())) {
+            return new ArrayList<>(pomodoroTagGroup.getPomodoroTags());
+        }
+
+        return List.of();
+    }
 
 }

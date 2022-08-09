@@ -64,7 +64,7 @@ public class DefaultTagService implements TagService {
             return;
         }
 
-        if (pomodoroRepository.existsByTagsName(tagName)) {
+        if (pomodoroRepository.existsByPomodoroTagGroupPomodoroTagsName(tagName)) {
             tag.setRemoved(true);
             pomodoroTagRepository.save(tag);
         } else {

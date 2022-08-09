@@ -4,22 +4,17 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroPauseDto;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroPause;
-import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
@@ -52,7 +47,7 @@ public class PomodoroSaver implements SinglePomodoroSavable {
                 .map(pauseDto -> new PomodoroPause(null, pauseDto.getStartTime(), pauseDto.getEndTime(), null))
                 .collect(Collectors.toList());
 
-        return new Pomodoro(null, startTime, endTime, false, pomodoroPauses, null, null);
+        return new Pomodoro(null, startTime, endTime, false, pomodoroPauses, null);
     }
 
 }

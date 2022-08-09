@@ -1,51 +1,37 @@
 package com.igorgorbunov3333.timer.service.pomodoro.updater;
 
 import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
-import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
+import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTagGroup;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
-import com.igorgorbunov3333.timer.repository.PomodoroTagRepository;
+import com.igorgorbunov3333.timer.service.tag.group.PomodoroTagGroupService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
 public class LocalPomodoroUpdater {
 
     private final PomodoroRepository pomodoroRepository;
-    private final PomodoroTagRepository pomodoroTagRepository;
-
-    @Transactional
-    public void updatePomodoroWithTagsByNewTags(Set<String> oldTags, Set<String> newTags) {
-        List<Pomodoro> pomodoroWithOldTags = pomodoroRepository.findAll().stream()
-                .filter(p -> p.getTags().stream()
-                        .map(PomodoroTag::getName)
-                        .collect(Collectors.toSet())
-                        .equals(oldTags))
-                .collect(Collectors.toList());
-
-        List<PomodoroTag> newTagEntities = pomodoroTagRepository.findByNameIn(newTags);
-
-        pomodoroWithOldTags.forEach(p -> p.setTags(newTagEntities));
-
-        pomodoroRepository.saveAll(pomodoroWithOldTags);
-    }
+    private final PomodoroTagGroupService pomodoroTagGroupService;
 
     @Transactional
     public void updatePomodoroWithTag(List<Long> pomodoroId, Set<String> tagNames) {
-        pomodoroId.forEach(id -> update(id, tagNames));
+        Optional<PomodoroTagGroup> tagGroup = pomodoroTagGroupService.findTagGroupsByTagNames(tagNames);
+
+        tagGroup.ifPresent(group -> update(group, pomodoroId));
     }
 
-    private void update(Long pomodoroId, Set<String> tagNames) {
-        Pomodoro pomodoroWithTag = pomodoroRepository.getById(pomodoroId);
-        List<PomodoroTag> tags = pomodoroTagRepository.findByNameIn(tagNames);
+    private void update(PomodoroTagGroup tagGroup, List<Long> pomodoroId) {
+        List<Pomodoro> pomodoro = pomodoroRepository.findByIdIn(pomodoroId);
 
-        pomodoroWithTag.setTags(tags);
-        pomodoroRepository.save(pomodoroWithTag);
+        pomodoro.forEach(p -> p.setPomodoroTagGroup(tagGroup));
+
+        pomodoroRepository.saveAll(pomodoro);
     }
 
 }
