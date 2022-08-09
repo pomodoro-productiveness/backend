@@ -55,6 +55,7 @@ public class Pomodoro implements TemporalObject {
     @JoinTable(name = "pomodoro_pomodoro_tag", joinColumns = {@JoinColumn(name = "pomodoro_id")}, inverseJoinColumns = {@JoinColumn(name = "tag_id")})
     private List<PomodoroTag> tags;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "tag_group_id")
     private PomodoroTagGroup pomodoroTagGroup;

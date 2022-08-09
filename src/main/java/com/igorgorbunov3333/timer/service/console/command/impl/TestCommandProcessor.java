@@ -9,13 +9,10 @@ import com.igorgorbunov3333.timer.repository.PomodoroTagRepository;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,35 +34,21 @@ public class TestCommandProcessor implements CommandProcessor {
                         ZonedDateTime.of(LocalDateTime.of(2022, 1, 1, 0, 0), ZoneId.systemDefault()),
                         ZonedDateTime.now());
 
-        Set<Set<String>> uniqueTagCombinations = new HashSet<>();
+        Map<Set<String>, PomodoroTagGroup> tagGroupsMap = pomodoroTagGroupRepository.findAll().stream()
+                .collect(Collectors.toMap(group -> group.getPomodoroTags().stream().map(PomodoroTag::getName).collect(Collectors.toSet()),
+                        Function.identity()));
+
         for (Pomodoro p : pomodoroList) {
-            Set<String> currentTags = p.getTags().stream()
+            Set<String> pomodoroTags = p.getTags().stream()
                     .map(PomodoroTag::getName)
                     .collect(Collectors.toSet());
-            if (!CollectionUtils.isEmpty(currentTags)) uniqueTagCombinations.add(currentTags);
+
+            PomodoroTagGroup correspondingTagGroup = tagGroupsMap.get(pomodoroTags);
+
+            p.setPomodoroTagGroup(correspondingTagGroup);
         }
 
-        Set<Set<String>> existingTagCombinations = pomodoroTagGroupRepository.findAll().stream()
-                .map(group -> group.getPomodoroTags().stream().map(PomodoroTag::getName).collect(Collectors.toSet()))
-                .collect(Collectors.toSet());
-
-        Map<String, PomodoroTag> tagsMap = pomodoroTagRepository.findAll().stream()
-                .collect(Collectors.toMap(PomodoroTag::getName, Function.identity()));
-
-        List<PomodoroTagGroup> tagGroupsToSave = new ArrayList<>();
-        for (Set<String> tagCombination : uniqueTagCombinations) {
-
-            if (!existingTagCombinations.contains(tagCombination)) {
-                List<PomodoroTag> tags = tagCombination.stream()
-                        .map(tagsMap::get)
-                        .collect(Collectors.toList());
-
-                PomodoroTagGroup newPomodoroTagGroup = new PomodoroTagGroup(null, tags, 1L);
-                tagGroupsToSave.add(newPomodoroTagGroup);
-            }
-        }
-
-        pomodoroTagGroupRepository.saveAll(tagGroupsToSave);
+        pomodoroRepository.saveAll(pomodoroList);
     }
 
     @Override
