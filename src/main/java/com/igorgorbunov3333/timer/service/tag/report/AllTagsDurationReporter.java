@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class TagDurationReporter {
+public class AllTagsDurationReporter {
 
     private final TagToTagsFromPomodoroMappingsBuilder tagToTagsFromPomodoroMappingsBuilder;
 
-    public List<TagDurationReportDto> report(List<PomodoroDto> pomodoro) {
+    public List<TagDurationReportDto> reportForEachTag(List<PomodoroDto> pomodoro) {
         if (CollectionUtils.isEmpty(pomodoro)) {
             return List.of();
         }
@@ -91,7 +91,7 @@ public class TagDurationReporter {
 
     private TagDurationReportRowDto buildReportRow(String tag, List<PomodoroDto> pomodoro) {
         long duration = calculateDurationInSeconds(pomodoro);
-        return new TagDurationReportRowDto(tag, duration);
+        return new TagDurationReportRowDto(tag, duration, null, null);
     }
 
     private Set<Set<String>> buildMappedTagGroups(Map<String, Set<String>> tagToMappedTags,

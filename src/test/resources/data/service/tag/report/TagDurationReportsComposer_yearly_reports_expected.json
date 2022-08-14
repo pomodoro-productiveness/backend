@@ -1,0 +1,139 @@
+[
+  {
+    "mainTagReportRow": {
+      "tag": "education",
+      "duration": 359047,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "English",
+        "duration": 4800,
+        "subRows": [
+          {
+            "tag": "YouTube",
+            "duration": 1200,
+            "subRows": []
+          },
+          {
+            "tag": "italki",
+            "duration": 3600,
+            "subRows": []
+          }
+        ]
+      },
+      {
+        "tag": "html/css #EducationCompany",
+        "duration": 69160,
+        "subRows": []
+      },
+      {
+        "tag": "educative.io",
+        "duration": 190315,
+        "subRows": [
+          {
+            "tag": "computerNetworking",
+            "duration": 41005,
+            "subRows": []
+          },
+          {
+            "tag": "JavaScript",
+            "duration": 70987,
+            "subRows": [
+              {
+                "tag": "JavaScriptReact",
+                "duration": 48082,
+                "subRows": []
+              }
+            ]
+          },
+          {
+            "tag": "concurrency",
+            "duration": 63855,
+            "subRows": []
+          },
+          {
+            "tag": "python",
+            "duration": 9647,
+            "subRows": []
+          },
+          {
+            "tag": "algorithms",
+            "duration": 2413,
+            "subRows": []
+          },
+          {
+            "tag": "aws",
+            "duration": 2408,
+            "subRows": []
+          }
+        ]
+      },
+      {
+        "tag": "JavaScript",
+        "duration": 2403,
+        "subRows": []
+      },
+      {
+        "tag": "aws",
+        "duration": 3626,
+        "subRows": []
+      },
+      {
+        "tag": "algorithms",
+        "duration": 46816,
+        "subRows": [
+          {
+            "tag": "leetcode",
+            "duration": 36001,
+            "subRows": []
+          }
+        ]
+      },
+      {
+        "tag": "SpringSecurity #book #SprinSecurityInAction",
+        "duration": 28933,
+        "subRows": []
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "work",
+      "duration": 87051,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "TestCompany",
+        "duration": 14141,
+        "subRows": [
+          {
+            "tag": "trainings",
+            "duration": 8135,
+            "subRows": []
+          }
+        ]
+      },
+      {
+        "tag": "meeting",
+        "duration": 13200,
+        "subRows": []
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "pomodoro",
+      "duration": 337634,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "python",
+        "duration": 9581,
+        "subRows": []
+      }
+    ]
+  }
+]

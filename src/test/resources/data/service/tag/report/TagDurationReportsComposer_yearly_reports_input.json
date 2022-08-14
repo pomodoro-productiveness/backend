@@ -1,0 +1,474 @@
+[
+  {
+    "mainTagReportRow": {
+      "tag": "TestCompany",
+      "duration": 14141,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#work #trainings",
+        "duration": 8135,
+        "subRows": null
+      },
+      {
+        "tag": "#work",
+        "duration": 6006,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "algorithms",
+      "duration": 49229,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education #leetcode",
+        "duration": 36001,
+        "subRows": null
+      },
+      {
+        "tag": "#education #educative.io",
+        "duration": 2413,
+        "subRows": null
+      },
+      {
+        "tag": "#education",
+        "duration": 10815,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "python",
+      "duration": 19228,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#pomodoro",
+        "duration": 9581,
+        "subRows": null
+      },
+      {
+        "tag": "#education #educative.io",
+        "duration": 9647,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "education",
+      "duration": 359047,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#English #YouTube",
+        "duration": 1200,
+        "subRows": null
+      },
+      {
+        "tag": "#English #italki",
+        "duration": 3600,
+        "subRows": null
+      },
+      {
+        "tag": "#html/css #EducationCompany",
+        "duration": 69160,
+        "subRows": null
+      },
+      {
+        "tag": "#JavaScript #JavaScriptReact #educative.io",
+        "duration": 48082,
+        "subRows": null
+      },
+      {
+        "tag": "#aws",
+        "duration": 3626,
+        "subRows": null
+      },
+      {
+        "tag": "#JavaScript #educative.io",
+        "duration": 22905,
+        "subRows": null
+      },
+      {
+        "tag": "#educative.io #concurrency",
+        "duration": 63855,
+        "subRows": null
+      },
+      {
+        "tag": "#algorithms #educative.io",
+        "duration": 2413,
+        "subRows": null
+      },
+      {
+        "tag": "#SpringSecurity #book #SprinSecurityInAction",
+        "duration": 28933,
+        "subRows": null
+      },
+      {
+        "tag": "#algorithms #leetcode",
+        "duration": 36001,
+        "subRows": null
+      },
+      {
+        "tag": "#JavaScript",
+        "duration": 2403,
+        "subRows": null
+      },
+      {
+        "tag": "#computerNetworking #educative.io",
+        "duration": 41005,
+        "subRows": null
+      },
+      {
+        "tag": "#python #educative.io",
+        "duration": 9647,
+        "subRows": null
+      },
+      {
+        "tag": "#algorithms",
+        "duration": 10815,
+        "subRows": null
+      },
+      {
+        "tag": "#aws #educative.io",
+        "duration": 2408,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "SpringSecurity",
+      "duration": 28933,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education #book #SprinSecurityInAction",
+        "duration": 28933,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "work",
+      "duration": 87051,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#TestCompany #trainings",
+        "duration": 8135,
+        "subRows": null
+      },
+      {
+        "tag": "#meeting",
+        "duration": 13200,
+        "subRows": null
+      },
+      {
+        "tag": "#TestCompany",
+        "duration": 6006,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "book",
+      "duration": 28933,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education #SpringSecurity #SprinSecurityInAction",
+        "duration": 28933,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "trainings",
+      "duration": 8135,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#TestCompany #work",
+        "duration": 8135,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "italki",
+      "duration": 3600,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#English #education",
+        "duration": 3600,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "html/css",
+      "duration": 69160,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education #EducationCompany",
+        "duration": 69160,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "computerNetworking",
+      "duration": 41005,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education #educative.io",
+        "duration": 41005,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "leetcode",
+      "duration": 36001,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#algorithms #education",
+        "duration": 36001,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "pomodoro",
+      "duration": 337634,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#python",
+        "duration": 9581,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "YouTube",
+      "duration": 1200,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#English #education",
+        "duration": 1200,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "SprinSecurityInAction",
+      "duration": 28933,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education #SpringSecurity #book",
+        "duration": 28933,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "educative.io",
+      "duration": 190315,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education #computerNetworking",
+        "duration": 41005,
+        "subRows": null
+      },
+      {
+        "tag": "#education #JavaScript #JavaScriptReact",
+        "duration": 48082,
+        "subRows": null
+      },
+      {
+        "tag": "#education #JavaScript",
+        "duration": 22905,
+        "subRows": null
+      },
+      {
+        "tag": "#education #concurrency",
+        "duration": 63855,
+        "subRows": null
+      },
+      {
+        "tag": "#python #education",
+        "duration": 9647,
+        "subRows": null
+      },
+      {
+        "tag": "#algorithms #education",
+        "duration": 2413,
+        "subRows": null
+      },
+      {
+        "tag": "#education #aws",
+        "duration": 2408,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "concurrency",
+      "duration": 63855,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education #educative.io",
+        "duration": 63855,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "English",
+      "duration": 4800,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education #YouTube",
+        "duration": 1200,
+        "subRows": null
+      },
+      {
+        "tag": "#education #italki",
+        "duration": 3600,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "JavaScript",
+      "duration": 73390,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education",
+        "duration": 2403,
+        "subRows": null
+      },
+      {
+        "tag": "#education #JavaScriptReact #educative.io",
+        "duration": 48082,
+        "subRows": null
+      },
+      {
+        "tag": "#education #educative.io",
+        "duration": 22905,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "JavaScriptReact",
+      "duration": 48082,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education #JavaScript #educative.io",
+        "duration": 48082,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "aws",
+      "duration": 6034,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education",
+        "duration": 3626,
+        "subRows": null
+      },
+      {
+        "tag": "#education #educative.io",
+        "duration": 2408,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "meeting",
+      "duration": 13200,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#work",
+        "duration": 13200,
+        "subRows": null
+      }
+    ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "EducationCompany",
+      "duration": 69160,
+      "subRows": null
+    },
+    "mappedTagsReportRows": [
+      {
+        "tag": "#education #html/css",
+        "duration": 69160,
+        "subRows": null
+      }
+    ]
+  }
+]

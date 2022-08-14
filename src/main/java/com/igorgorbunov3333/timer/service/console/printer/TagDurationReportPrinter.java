@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportDto;
 import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportRowDto;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.service.tag.report.TagDurationReporter;
+import com.igorgorbunov3333.timer.service.tag.report.TagDurationReportsComposer;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,10 +20,10 @@ import java.util.List;
 @AllArgsConstructor
 public class TagDurationReportPrinter {
 
-    private final TagDurationReporter tagDurationReporter;
+    private final TagDurationReportsComposer tagDurationReportsComposer;
 
     public void print(List<PomodoroDto> pomodoro) {
-        List<TagDurationReportDto> tagDurationReports = tagDurationReporter.report(pomodoro);
+        List<TagDurationReportDto> tagDurationReports = tagDurationReportsComposer.compose(pomodoro);
 
         SimplePrinter.printParagraph();
         SimplePrinter.print("Duration by tags report:");
@@ -33,7 +33,7 @@ public class TagDurationReportPrinter {
             String mainTag = tagDurationReportItem.getMainTagReportRow().getTag();
             String mainTagDuration = SecondsFormatter.formatInHours(tagDurationReportItem.getMainTagReportRow().getDuration());
 
-            reportRows.add(new ReportRow(mainTag, mainTagDuration, true));
+            reportRows.add(new ReportRow(mainTag, mainTagDuration, true, List.of()));
 
             List<TagDurationReportRowDto> neighbouringTagDurations = tagDurationReportItem.getMappedTagsReportRows();
 
@@ -42,7 +42,7 @@ public class TagDurationReportPrinter {
                     String tag = neighboringTag.getTag();
                     String neighboringTagDuration = SecondsFormatter.formatInHours(neighboringTag.getDuration());
 
-                    reportRows.add(new ReportRow("-".repeat(4) + tag, neighboringTagDuration, false));
+                    reportRows.add(new ReportRow("-".repeat(4) + tag, neighboringTagDuration, false, buildSubRows(neighboringTag.getSubRows(), 2)));
                 }
             }
         }
@@ -56,21 +56,42 @@ public class TagDurationReportPrinter {
         String space = StringUtils.SPACE;
         String dash = "-";
         for (ReportRow row : reportRows) {
-            if (row.mainTag) {
-                SimplePrinter.printParagraph();
-            }
-
-            SimplePrinter.printWithoutCarriageOffset(row.getTagRow());
-
-            int additionalSpaces = maxTagLength - row.getTagRow().length();
-
-            String indentToRepeat = row.mainTag ? dash : space;
-            SimplePrinter.printWithoutCarriageOffset(indentToRepeat.repeat(Math.max(0, additionalSpaces)));
-
-            SimplePrinter.print(row.durationRow);
+            printRow(maxTagLength, space, dash, row);
         }
 
         SimplePrinter.printParagraph();
+    }
+
+    private void printRow(int maxTagLength, String space, String dash, ReportRow row) {
+        if (row.mainTag) {
+            SimplePrinter.printParagraph();
+        }
+
+        SimplePrinter.printWithoutCarriageOffset(row.getTagRow());
+
+        int additionalSpaces = maxTagLength - row.getTagRow().length();
+
+        String indentToRepeat = row.mainTag ? dash : space;
+        SimplePrinter.printWithoutCarriageOffset(indentToRepeat.repeat(Math.max(0, additionalSpaces)));
+
+        SimplePrinter.print(row.durationRow);
+
+        for (ReportRow subRow : row.getSubRows()) {
+            printRow(maxTagLength, space, dash, subRow);
+        }
+    }
+
+    private List<ReportRow> buildSubRows(List<TagDurationReportRowDto> rows, int nestingLevel) {
+        List<ReportRow> reportRows = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(rows)) {
+            for (TagDurationReportRowDto row : rows) {
+                ReportRow newRow = new ReportRow("-".repeat(4 * nestingLevel) + row.getTag(), SecondsFormatter.formatInHours(row.getDuration()),
+                        false, buildSubRows(row.getSubRows(), nestingLevel + 1));
+                reportRows.add(newRow);
+            }
+        }
+
+        return reportRows;
     }
 
     @Getter
@@ -80,6 +101,7 @@ public class TagDurationReportPrinter {
         private final String tagRow;
         private final String durationRow;
         private final boolean mainTag;
+        private final List<ReportRow> subRows;
 
     }
 

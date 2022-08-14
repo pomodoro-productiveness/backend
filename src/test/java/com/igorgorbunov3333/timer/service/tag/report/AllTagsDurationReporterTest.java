@@ -28,10 +28,10 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TagDurationReporterTest {
+class AllTagsDurationReporterTest {
 
     @InjectMocks
-    private TagDurationReporter testee;
+    private AllTagsDurationReporter testee;
 
     @Mock
     private TagToTagsFromPomodoroMappingsBuilder tagToTagsFromPomodoroMappingsBuilder;
@@ -39,7 +39,7 @@ class TagDurationReporterTest {
     @Test
     void report_WhenPomodoroExists_ThenReturnReportRows() throws JsonProcessingException {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        InputStream is = classloader.getResourceAsStream("data/service/tag/report/TagDurationReport_weekly_pomodoro.json");
+        InputStream is = classloader.getResourceAsStream("data/service/tag/report/AllTagsDurationReporter_weekly_pomodoro.json");
         String stringPomodoro = new BufferedReader(new InputStreamReader(is))
                 .lines()
                 .collect(Collectors.joining(StringUtils.LF));
@@ -61,7 +61,7 @@ class TagDurationReporterTest {
         );
         when(tagToTagsFromPomodoroMappingsBuilder.buildTagMappings(pomodoro)).thenReturn(tagMappings);
 
-        List<TagDurationReportDto> actual = testee.report(pomodoro);
+        List<TagDurationReportDto> actual = testee.reportForEachTag(pomodoro);
 
         assertThat(actual).containsExactlyInAnyOrderElementsOf(buildExpectedReports());
     }
@@ -122,7 +122,7 @@ class TagDurationReporterTest {
     }
 
     private TagDurationReportRowDto buildReportRow(String tag, long duration) {
-        return new TagDurationReportRowDto(tag, duration);
+        return new TagDurationReportRowDto(tag, duration, null, null);
     }
 
 }
