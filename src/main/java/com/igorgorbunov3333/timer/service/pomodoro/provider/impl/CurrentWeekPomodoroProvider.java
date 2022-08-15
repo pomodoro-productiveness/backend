@@ -4,7 +4,6 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.period.CurrentWeekDaysProvidable;
-import com.igorgorbunov3333.timer.service.pomodoro.period.WeekStartDayProvidable;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.PomodoroProvider;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 @Getter
 @Service
 @AllArgsConstructor
-public class CurrentWeekPomodoroProvider implements PomodoroProvider, CurrentWeekDaysProvidable, WeekStartDayProvidable {
+public class CurrentWeekPomodoroProvider implements PomodoroProvider, CurrentWeekDaysProvidable {
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroMapper pomodoroMapper;
@@ -48,6 +47,12 @@ public class CurrentWeekPomodoroProvider implements PomodoroProvider, CurrentWee
                 .atZone(currentZoneId);
 
         return provide(start, end, pomodoroTag);
+    }
+
+    private LocalDate provideStartDayOfWeek() {
+        LocalDate currentDay = getCurrentTimeService().getCurrentDateTime().toLocalDate();
+
+        return currentDay.with(DayOfWeek.MONDAY);
     }
 
     public Map<DayOfWeek, List<PomodoroDto>> provideCurrentWeekPomodorosByDays() {

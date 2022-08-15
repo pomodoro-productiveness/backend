@@ -70,7 +70,7 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
             Map.Entry<PeriodDto, List<PomodoroDto>> chosenPeriodToMonthlyPomodoro = numberedPeriodsByMonthlyPomodoro.get(numberAnswer);
 
             if (chosenPeriodToMonthlyPomodoro != null) {
-                monthlyPomodoroReportPrinter.print(chosenPeriodToMonthlyPomodoro.getValue());
+                monthlyPomodoroReportPrinter.print(chosenPeriodToMonthlyPomodoro.getKey(), chosenPeriodToMonthlyPomodoro.getValue());
                 break;
             } else {
                 SimplePrinter.print(String.format("No month under the number %d", numberAnswer));

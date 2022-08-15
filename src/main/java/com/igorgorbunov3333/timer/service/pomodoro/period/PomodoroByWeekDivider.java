@@ -8,8 +8,11 @@ import lombok.Getter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,42 +25,56 @@ public class PomodoroByWeekDivider {
     @Getter
     private final CurrentTimeService currentTimeService;
 
-    public Map<PeriodDto, List<PomodoroDto>> divide(List<PomodoroDto> pomodoro) {
+    public Map<PeriodDto, List<PomodoroDto>> divide(PeriodDto monthPeriod, List<PomodoroDto> pomodoro) {
         if (CollectionUtils.isEmpty(pomodoro)) {
             return Map.of();
         }
 
-        PomodoroDto weekFirstPomodoro = pomodoro.get(0);
-        LocalDate lastPomodoroDate = pomodoro.get(pomodoro.size() - 1).getStartTime().toLocalDate();
-
-        LocalDate currentStartOfWeek = weekFirstPomodoro.getStartTime().toLocalDate();
+        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();
+        List<PeriodDto> weekPeriods = divideForWeeklyPeriods(monthPeriod, today);
 
         Map<PeriodDto, List<PomodoroDto>> periods = new LinkedHashMap<>();
-        while (true) {
-            int currentDayWeek = weekFirstPomodoro.getStartTime().getDayOfWeek().getValue();
-            LocalDate currentEndOfWeek = currentStartOfWeek.plusDays(7 - currentDayWeek);
-            if (currentEndOfWeek.isAfter(lastPomodoroDate)) {
-                currentEndOfWeek = lastPomodoroDate;
-            }
 
-            LocalDate startDatePeriod = currentStartOfWeek;
-            LocalDate endDatePeriod = currentEndOfWeek;
-            List<PomodoroDto> weeklyPomodoro = pomodoro.stream()
-                    .filter(p -> !p.getStartTime().toLocalDate().isBefore(startDatePeriod)
-                            && !p.getStartTime().toLocalDate().isAfter(endDatePeriod))
+        for (PeriodDto currentWeekPeriod : weekPeriods) {
+            List<PomodoroDto> currentWeekPomodoro = pomodoro.stream()
+                    .filter(p -> !p.getStartTime().toLocalDateTime().isBefore(currentWeekPeriod.getStart())
+                            && !p.getEndTime().toLocalDateTime().isAfter(currentWeekPeriod.getEnd()))
                     .collect(Collectors.toList());
-
-            PeriodDto currentPeriod = new PeriodDto(currentStartOfWeek.atStartOfDay(), currentEndOfWeek.atTime(LocalTime.MAX));
-            periods.put(currentPeriod, weeklyPomodoro);
-
-            currentStartOfWeek = currentEndOfWeek.plusDays(1L);
-            if (currentStartOfWeek.isAfter(lastPomodoroDate)) {
-                break;
-            }
-            weekFirstPomodoro = pomodoro.get(pomodoro.indexOf(weeklyPomodoro.get(weeklyPomodoro.size() - 1)) + 1);
+            periods.put(currentWeekPeriod, currentWeekPomodoro);
         }
 
         return periods;
+    }
+
+    private List<PeriodDto> divideForWeeklyPeriods(PeriodDto inputPeriod, LocalDate today) {
+        LocalDate startDate = inputPeriod.getStart().toLocalDate();
+        LocalDate endDate = inputPeriod.getEnd().toLocalDate();
+
+        List<PeriodDto> periods = new ArrayList<>();
+        LocalDate current = startDate;
+
+        while (!current.isAfter(endDate)) {
+            PeriodDto period = getWeekByDate(current);
+
+            if (period.getEnd().toLocalDate().isAfter(today)) {
+                period = new PeriodDto(period.getStart(), today.atTime(LocalTime.MAX));
+            }
+
+            periods.add(period);
+
+            current = period.getEnd().toLocalDate().plusDays(1L);
+        }
+
+        return periods;
+    }
+
+    private PeriodDto getWeekByDate(LocalDate date) {
+        LocalDate startOfWeek = date.with(DayOfWeek.MONDAY);
+
+        LocalDateTime periodStart = startOfWeek.atStartOfDay();
+        LocalDateTime periodEnd = startOfWeek.plusDays(DayOfWeek.SATURDAY.getValue()).atTime(LocalTime.MAX);
+
+        return new PeriodDto(periodStart, periodEnd);
     }
 
 }

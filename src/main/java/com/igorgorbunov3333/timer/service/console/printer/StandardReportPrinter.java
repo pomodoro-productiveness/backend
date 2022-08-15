@@ -24,10 +24,6 @@ public class StandardReportPrinter {
     private final PomodoroStandardReporter pomodoroStandardReporter;
 
     public void print(PeriodDto period, List<PomodoroDto> pomodoro) {
-        if (CollectionUtils.isEmpty(pomodoro)) {
-            return;
-        }
-
         PomodoroStandardReportDto report = pomodoroStandardReporter.report(period, pomodoro);
 
         Map<String, AbstractStandardReportDto> reports = new LinkedHashMap<>();
