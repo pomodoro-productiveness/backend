@@ -63,7 +63,7 @@ public class TagDurationReportPrinter {
     }
 
     private void printRow(int maxTagLength, String space, String dash, ReportRow row) {
-        if (row.mainTag && !CollectionUtils.isEmpty(row.getSubRows())) {
+        if (row.mainTag) {
             SimplePrinter.printParagraph();
         }
 
