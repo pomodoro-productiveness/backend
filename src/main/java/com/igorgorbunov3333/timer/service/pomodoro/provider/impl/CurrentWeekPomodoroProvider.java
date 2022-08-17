@@ -55,12 +55,12 @@ public class CurrentWeekPomodoroProvider implements PomodoroProvider, CurrentWee
         return currentDay.with(DayOfWeek.MONDAY);
     }
 
-    public Map<DayOfWeek, List<PomodoroDto>> provideCurrentWeekPomodorosByDays() {
-        List<PomodoroDto> weeklyPomodoros = provide(null);
-        if (weeklyPomodoros.isEmpty()) {
+    public Map<DayOfWeek, List<PomodoroDto>> provideCurrentWeekPomodoroByDays() {
+        List<PomodoroDto> weeklyPomodoro = provide(null);
+        if (weeklyPomodoro.isEmpty()) {
             return Map.of();
         }
-        Map<DayOfWeek, List<PomodoroDto>> daysOfWeekToPomodoros = getDaysOfWeekToPomodoros(weeklyPomodoros);
+        Map<DayOfWeek, List<PomodoroDto>> daysOfWeekToPomodoros = getDaysOfWeekToPomodoros(weeklyPomodoro);
         return new TreeMap<>(daysOfWeekToPomodoros);
     }
 

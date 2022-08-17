@@ -51,7 +51,7 @@ public class TagDurationReportPrinter {
                 .mapToInt(row -> row.getTagRow().length())
                 .max()
                 .orElse(0)
-                + 1;
+                + 6;
 
         String space = StringUtils.SPACE;
         String dash = "-";
@@ -63,7 +63,7 @@ public class TagDurationReportPrinter {
     }
 
     private void printRow(int maxTagLength, String space, String dash, ReportRow row) {
-        if (row.mainTag) {
+        if (row.mainTag && !CollectionUtils.isEmpty(row.getSubRows())) {
             SimplePrinter.printParagraph();
         }
 

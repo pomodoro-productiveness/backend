@@ -30,7 +30,7 @@ public class YearCommandProcessor implements CommandProcessor {
 
     private final StandardReportPrinter standardReportPrinter;
     private final TagDurationReportPrinter tagDurationReportPrinter;
-    private final PomodoroByMonthsDivider divider;
+    private final PomodoroByMonthsDivider pomodoroByMonthsDivider;
     private final CurrentYearPomodoroProvider currentYearPomodoroProvider;
     private final CurrentTimeService currentTimeService;
 
@@ -43,7 +43,7 @@ public class YearCommandProcessor implements CommandProcessor {
 
         List<PomodoroDto> yearlyPomodoro = currentYearPomodoroProvider.provide(null);
 
-        Map<PeriodDto, List<PomodoroDto>> monthlyPomodoro = divider.divide(yearlyPomodoro);
+        Map<PeriodDto, List<PomodoroDto>> monthlyPomodoro = pomodoroByMonthsDivider.divide(yearlyPomodoro);
 
         int counter = 0;
         for (Map.Entry<PeriodDto, List<PomodoroDto>> entry: monthlyPomodoro.entrySet()) {

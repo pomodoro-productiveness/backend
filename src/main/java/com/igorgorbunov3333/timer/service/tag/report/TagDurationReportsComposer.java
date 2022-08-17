@@ -64,14 +64,37 @@ public class TagDurationReportsComposer {
             fixedMergedReports.add(new TagDurationReportDto(mergedReport.getMainTagReportRow(), fixedRows));
         }
 
+        fixedMergedReports.sort(Comparator.comparing(r -> r.getMainTagReportRow().getTag()));
+
         return fixedMergedReports;
     }
 
     private List<TagDurationReportDto> getRootReports(List<TagDurationReportDto> reports,
                                                       Map<String, TagDurationReportDto> tagsToReports) {
-        return reports.stream()
-                .filter(report -> isRootReport(report, tagsToReports))
-                .collect(Collectors.toList());
+        List<TagDurationReportDto> rootReports = new LinkedList<>();
+        Map<Long, TagDurationReportDto> durationToReports = new HashMap<>();
+        for (TagDurationReportDto report : reports) {
+            if (isRootReport(report, tagsToReports)) {
+                long reportDuration = report.getMainTagReportRow().getDuration();
+
+                if (durationToReports.containsKey(reportDuration)) {
+                    TagDurationReportDto reportWithSameDuration = durationToReports.get(reportDuration);
+
+                    rootReports.remove(reportWithSameDuration);
+
+                    TagDurationReportRowDto reportWithSameDurationMainRow = reportWithSameDuration.getMainTagReportRow();
+                    reportWithSameDurationMainRow.setTag(reportWithSameDurationMainRow.getTag() + " #" + report.getMainTagReportRow().getTag());
+                    reportWithSameDuration = new TagDurationReportDto(reportWithSameDurationMainRow, reportWithSameDuration.getMappedTagsReportRows());
+
+                    rootReports.add(reportWithSameDuration);
+                } else {
+                    rootReports.add(report);
+                    durationToReports.put(reportDuration, report);
+                }
+            }
+        }
+
+        return rootReports;
     }
 
     private boolean isRootReport(TagDurationReportDto report, Map<String, TagDurationReportDto> tagsToReports) {
@@ -191,10 +214,19 @@ public class TagDurationReportsComposer {
                                        Map<String, ProcessedTagsContainer> processedTags,
                                        Map<String, TagDurationReportDto> tagsToReports) {
         ProcessedTagsContainer processedTagsContainer = processedTags.get(targetRow.getTag());
-        TagDurationReportRowDto tagDurationReportRow = tagsToReports.get(targetRow.getTag()).getMainTagReportRow();
+
+        long targetRowDuration = getTargetRowDuration(targetRow.getTag(), tagsToReports);
 
         return processedTagsContainer != null
-                && processedTagsContainer.getDuration() == tagDurationReportRow.getDuration();
+                && processedTagsContainer.getDuration() == targetRowDuration;
+    }
+
+    private long getTargetRowDuration(String targetTagName, Map<String, TagDurationReportDto> tagsToReports) {
+        String[] tags = targetTagName.split(" #");
+
+        return tagsToReports.get(tags[0])
+                .getMainTagReportRow()
+                .getDuration();
     }
 
     private Set<String> mapToTagNames(TagDurationReportRowDto mappedReportRow) {

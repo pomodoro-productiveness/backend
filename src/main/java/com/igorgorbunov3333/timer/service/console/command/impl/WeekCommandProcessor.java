@@ -36,7 +36,7 @@ public class WeekCommandProcessor implements CommandProcessor, CurrentWeekDaysPr
     @Override
     @Transactional(readOnly = true)
     public void process() {
-        Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoro = currentWeekLocalPomodoroProvider.provideCurrentWeekPomodorosByDays();
+        Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoro = currentWeekLocalPomodoroProvider.provideCurrentWeekPomodoroByDays();
         if (weeklyPomodoro.isEmpty()) {
             SimplePrinter.print("No weekly pomodoro");
         }

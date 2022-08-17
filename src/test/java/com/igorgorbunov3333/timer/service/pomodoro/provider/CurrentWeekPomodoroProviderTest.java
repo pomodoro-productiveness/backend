@@ -51,7 +51,7 @@ class CurrentWeekPomodoroProviderTest {
         ZonedDateTime end = currentDayTime.toLocalDate().atTime(LocalTime.MAX).atZone(CURRENT_ZONE_ID);
         when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start, end)).thenReturn(List.of());
 
-        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodorosByDays();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodoroByDays();
 
         assertThat(actual).isEmpty();
     }
@@ -74,7 +74,7 @@ class CurrentWeekPomodoroProviderTest {
         when(pomodoroMapper.mapToDto(firstPomodoro)).thenReturn(firstPomodoroDto);
         when(pomodoroMapper.mapToDto(secondPomodoro)).thenReturn(secondPomodoroDto);
 
-        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodorosByDays();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodoroByDays();
 
         assertThat(actual)
                 .containsExactlyEntriesOf(Map.of(DayOfWeek.MONDAY, List.of(firstPomodoroDto, secondPomodoroDto)));
@@ -103,7 +103,7 @@ class CurrentWeekPomodoroProviderTest {
         when(pomodoroMapper.mapToDto(secondDayPomodoro)).thenReturn(secondPomodoroDto);
         when(pomodoroMapper.mapToDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
 
-        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodorosByDays();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodoroByDays();
 
         Map<DayOfWeek, List<PomodoroDto>> expected = Map.of(
                 DayOfWeek.MONDAY, List.of(firstPomodoroDto),
@@ -133,7 +133,7 @@ class CurrentWeekPomodoroProviderTest {
         when(pomodoroMapper.mapToDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
         when(pomodoroMapper.mapToDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
 
-        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodorosByDays();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodoroByDays();
 
         Map<DayOfWeek, List<PomodoroDto>> expected = Map.of(
                 DayOfWeek.MONDAY, List.of(firstPomodoroDto),
@@ -190,7 +190,7 @@ class CurrentWeekPomodoroProviderTest {
         when(pomodoroMapper.mapToDto(sixthDayPomodoro)).thenReturn(sixthPomodoroDto);
         when(pomodoroMapper.mapToDto(seventhDayPomodoro)).thenReturn(seventhPomodoroDto);
 
-        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodorosByDays();
+        Map<DayOfWeek, List<PomodoroDto>> actual = testee.provideCurrentWeekPomodoroByDays();
 
         Map<DayOfWeek, List<PomodoroDto>> expected = Map.of(
                 DayOfWeek.MONDAY, List.of(firstPomodoroDto),
