@@ -40,7 +40,6 @@ public class PomodoroPrinter {
         if (!CollectionUtils.isEmpty(pomodoro.getTags())) {
             tagLine = "#" + pomodoro.getTags().stream()
                     .map(PomodoroTagDto::getName)
-                    .sorted()
                     .collect(Collectors.joining(" #"));
         }
 

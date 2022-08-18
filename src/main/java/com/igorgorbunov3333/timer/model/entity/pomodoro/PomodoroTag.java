@@ -18,7 +18,7 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class PomodoroTag {
+public class PomodoroTag implements Comparable<PomodoroTag> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +30,8 @@ public class PomodoroTag {
     @Setter
     private boolean removed;
 
+    @Override
+    public int compareTo(PomodoroTag tag) {
+        return this.getName().toLowerCase().compareTo(tag.getName().toLowerCase());
+    }
 }

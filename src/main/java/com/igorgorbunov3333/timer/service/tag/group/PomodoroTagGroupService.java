@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,7 +23,10 @@ public class PomodoroTagGroupService {
     private final PomodoroTagRepository pomodoroTagRepository;
 
     public List<PomodoroTagGroup> getLatestTagGroups() {
-        return pomodoroTagGroupRepository.findTop10ByOrderByOrderNumberDesc();
+        return pomodoroTagGroupRepository.findTop10ByOrderByOrderNumberDesc()
+                .stream()
+                .map(this::getSortedTags)
+                .collect(Collectors.toList());
     }
 
     public void saveTagGroup(Set<String> tags) {
@@ -74,6 +78,12 @@ public class PomodoroTagGroupService {
         return pomodoroTagGroupRepository.findAll().stream()
                 .filter(group -> group.getPomodoroTags().stream().map(PomodoroTag::getName).collect(Collectors.toSet()).equals(tagNames))
                 .findFirst();
+    }
+
+    private PomodoroTagGroup getSortedTags(PomodoroTagGroup tagGroup) {
+        Set<PomodoroTag> tags = new TreeSet<>(tagGroup.getPomodoroTags());
+
+        return new PomodoroTagGroup(tagGroup.getId(), tags, tagGroup.getOrderNumber());
     }
 
 }

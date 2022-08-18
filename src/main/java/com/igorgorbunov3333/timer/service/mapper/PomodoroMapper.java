@@ -7,6 +7,7 @@ import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,7 @@ public class PomodoroMapper {
 
         return tags.stream()
                 .map(tagMapper::mapToDto)
+                .sorted(Comparator.comparing(tag -> tag.getName().toLowerCase()))
                 .collect(Collectors.toList());
     }
 

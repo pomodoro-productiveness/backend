@@ -49,7 +49,6 @@ public class TagPomodoroSessionMapper extends AbstractLineProvider implements Nu
 
         Function<PomodoroTagGroup, List<String>> extractorFunction = group -> group.getPomodoroTags().stream()
                 .map(PomodoroTag::getName)
-                .sorted()
                 .collect(Collectors.toList());
         ListOfItemsPrinter.print(pomodoroTagGroupMap, extractorFunction);
 
