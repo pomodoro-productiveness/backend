@@ -12,6 +12,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
 @Component
 @AllArgsConstructor
 public class TagDurationReportsComposer {
+
+    private static final String TOTAL_REPORT_ROW_NAME = "Total";
 
     private final AllTagsDurationReporter allTagsDurationReporter;
 
@@ -58,15 +61,18 @@ public class TagDurationReportsComposer {
             rowsToParentRows.put(rootReport.getMainTagReportRow(), List.of(new ParentWithChildrenContainer(null, rootReport.getMappedTagsReportRows())));
         }
 
-        List<TagDurationReportDto> fixedMergedReports = new ArrayList<>();
+        List<TagDurationReportDto> composedMergedReports = new ArrayList<>();
         for (TagDurationReportDto mergedReport : mergedReports) {
             List<TagDurationReportRowDto> fixedRows = clearDuplicatesAndFixRowsDuration(mergedReport.getMappedTagsReportRows(), rowsToParentRows);
-            fixedMergedReports.add(new TagDurationReportDto(mergedReport.getMainTagReportRow(), fixedRows));
+            composedMergedReports.add(new TagDurationReportDto(mergedReport.getMainTagReportRow(), fixedRows));
         }
 
-        fixedMergedReports.sort(Comparator.comparing(r -> r.getMainTagReportRow().getTag()));
+        composedMergedReports.sort(Comparator.comparing(r -> r.getMainTagReportRow().getTag()));
 
-        return fixedMergedReports;
+        TagDurationReportDto totalReport = buildTotalReport(composedMergedReports);
+        composedMergedReports.add(totalReport);
+
+        return composedMergedReports;
     }
 
     private List<TagDurationReportDto> getRootReports(List<TagDurationReportDto> reports,
@@ -372,14 +378,27 @@ public class TagDurationReportsComposer {
         return count;
     }
 
+    private TagDurationReportDto buildTotalReport(List<TagDurationReportDto> reports) {
+        long duration = 0;
+        for (TagDurationReportDto report : reports) {
+            duration += report.getMainTagReportRow().getDuration();
+        }
+
+        TagDurationReportRowDto totalReportRow =
+                new TagDurationReportRowDto(TOTAL_REPORT_ROW_NAME, duration, Collections.emptyList(), null);
+
+        return new TagDurationReportDto(totalReportRow, List.of());
+    }
+
     @Getter
     @AllArgsConstructor
     @EqualsAndHashCode(of = "processedTag")
     private static class ProcessedTagsContainer {
 
-        private final String processedTag;
-        private final long duration;
 
+        private final String processedTag;
+
+        private final long duration;
     }
 
     @Getter

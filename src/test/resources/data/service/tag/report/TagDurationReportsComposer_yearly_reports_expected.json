@@ -135,5 +135,13 @@
         "subRows": []
       }
     ]
+  },
+  {
+    "mainTagReportRow": {
+      "tag": "Total",
+      "duration": 783732,
+      "subRows": null
+    },
+    "mappedTagsReportRows": []
   }
 ]
