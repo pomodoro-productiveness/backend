@@ -1,147 +1,135 @@
 [
   {
-    "mainTagReportRow": {
-      "tag": "education",
-      "duration": 359047,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "education",
+    "duration": 359047,
+    "mappedRows": [
       {
         "tag": "English",
         "duration": 4800,
-        "subRows": [
+        "mappedRows": [
           {
             "tag": "YouTube",
             "duration": 1200,
-            "subRows": []
+            "mappedRows": []
           },
           {
             "tag": "italki",
             "duration": 3600,
-            "subRows": []
+            "mappedRows": []
           }
         ]
       },
       {
         "tag": "html/css #EducationCompany",
         "duration": 69160,
-        "subRows": []
+        "mappedRows": []
       },
       {
         "tag": "educative.io",
         "duration": 190315,
-        "subRows": [
+        "mappedRows": [
           {
             "tag": "computerNetworking",
             "duration": 41005,
-            "subRows": []
+            "mappedRows": []
           },
           {
             "tag": "JavaScript",
             "duration": 70987,
-            "subRows": [
+            "mappedRows": [
               {
                 "tag": "JavaScriptReact",
                 "duration": 48082,
-                "subRows": []
+                "mappedRows": []
               }
             ]
           },
           {
             "tag": "concurrency",
             "duration": 63855,
-            "subRows": []
+            "mappedRows": []
           },
           {
             "tag": "python",
             "duration": 9647,
-            "subRows": []
+            "mappedRows": []
           },
           {
             "tag": "algorithms",
             "duration": 2413,
-            "subRows": []
+            "mappedRows": []
           },
           {
             "tag": "aws",
             "duration": 2408,
-            "subRows": []
+            "mappedRows": []
           }
         ]
       },
       {
         "tag": "JavaScript",
         "duration": 2403,
-        "subRows": []
+        "mappedRows": []
       },
       {
         "tag": "aws",
         "duration": 3626,
-        "subRows": []
+        "mappedRows": []
       },
       {
         "tag": "algorithms",
         "duration": 46816,
-        "subRows": [
+        "mappedRows": [
           {
             "tag": "leetcode",
             "duration": 36001,
-            "subRows": []
+            "mappedRows": []
           }
         ]
       },
       {
         "tag": "SpringSecurity #book #SprinSecurityInAction",
         "duration": 28933,
-        "subRows": []
+        "mappedRows": []
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "work",
-      "duration": 87051,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "work",
+    "duration": 87051,
+    "mappedRows": [
       {
         "tag": "TestCompany",
         "duration": 14141,
-        "subRows": [
+        "mappedRows": [
           {
             "tag": "trainings",
             "duration": 8135,
-            "subRows": []
+            "mappedRows": []
           }
         ]
       },
       {
         "tag": "meeting",
         "duration": 13200,
-        "subRows": []
+        "mappedRows": []
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "pomodoro",
-      "duration": 337634,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "pomodoro",
+    "duration": 337634,
+    "mappedRows": [
       {
         "tag": "python",
         "duration": 9581,
-        "subRows": []
+        "mappedRows": []
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "Total",
-      "duration": 783732,
-      "subRows": null
-    },
-    "mappedTagsReportRows": []
+    "tag": "Total",
+    "duration": 783732,
+    "mappedRows": []
   }
 ]

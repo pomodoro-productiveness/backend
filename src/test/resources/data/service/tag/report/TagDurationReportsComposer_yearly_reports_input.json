@@ -1,473 +1,351 @@
 [
   {
-    "mainTagReportRow": {
-      "tag": "TestCompany",
-      "duration": 14141,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "TestCompany",
+    "duration": 14141,
+    "mappedRows": [
       {
         "tag": "#work #trainings",
-        "duration": 8135,
-        "subRows": null
+        "duration": 8135
       },
       {
         "tag": "#work",
-        "duration": 6006,
-        "subRows": null
+        "duration": 6006
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "algorithms",
-      "duration": 49229,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "algorithms",
+    "duration": 49229,
+    "mappedRows": [
       {
         "tag": "#education #leetcode",
-        "duration": 36001,
-        "subRows": null
+        "duration": 36001
       },
       {
         "tag": "#education #educative.io",
-        "duration": 2413,
-        "subRows": null
+        "duration": 2413
       },
       {
         "tag": "#education",
-        "duration": 10815,
-        "subRows": null
+        "duration": 10815
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "python",
-      "duration": 19228,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "python",
+    "duration": 19228,
+    "mappedRows": [
       {
         "tag": "#pomodoro",
-        "duration": 9581,
-        "subRows": null
+        "duration": 9581
       },
       {
         "tag": "#education #educative.io",
-        "duration": 9647,
-        "subRows": null
+        "duration": 9647
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "education",
-      "duration": 359047,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "education",
+    "duration": 359047,
+    "mappedRows": [
       {
         "tag": "#English #YouTube",
-        "duration": 1200,
-        "subRows": null
+        "duration": 1200
       },
       {
         "tag": "#English #italki",
-        "duration": 3600,
-        "subRows": null
+        "duration": 3600
       },
       {
         "tag": "#html/css #EducationCompany",
-        "duration": 69160,
-        "subRows": null
+        "duration": 69160
       },
       {
         "tag": "#JavaScript #JavaScriptReact #educative.io",
-        "duration": 48082,
-        "subRows": null
+        "duration": 48082
       },
       {
         "tag": "#aws",
-        "duration": 3626,
-        "subRows": null
+        "duration": 3626
       },
       {
         "tag": "#JavaScript #educative.io",
-        "duration": 22905,
-        "subRows": null
+        "duration": 22905
       },
       {
         "tag": "#educative.io #concurrency",
-        "duration": 63855,
-        "subRows": null
+        "duration": 63855
       },
       {
         "tag": "#algorithms #educative.io",
-        "duration": 2413,
-        "subRows": null
+        "duration": 2413
       },
       {
         "tag": "#SpringSecurity #book #SprinSecurityInAction",
-        "duration": 28933,
-        "subRows": null
+        "duration": 28933
       },
       {
         "tag": "#algorithms #leetcode",
-        "duration": 36001,
-        "subRows": null
+        "duration": 36001
       },
       {
         "tag": "#JavaScript",
-        "duration": 2403,
-        "subRows": null
+        "duration": 2403
       },
       {
         "tag": "#computerNetworking #educative.io",
-        "duration": 41005,
-        "subRows": null
+        "duration": 41005
       },
       {
         "tag": "#python #educative.io",
-        "duration": 9647,
-        "subRows": null
+        "duration": 9647
       },
       {
         "tag": "#algorithms",
-        "duration": 10815,
-        "subRows": null
+        "duration": 10815
       },
       {
         "tag": "#aws #educative.io",
-        "duration": 2408,
-        "subRows": null
+        "duration": 2408
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "SpringSecurity",
-      "duration": 28933,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "SpringSecurity",
+    "duration": 28933,
+    "mappedRows": [
       {
         "tag": "#education #book #SprinSecurityInAction",
-        "duration": 28933,
-        "subRows": null
+        "duration": 28933
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "work",
-      "duration": 87051,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "work",
+    "duration": 87051,
+    "mappedRows": [
       {
         "tag": "#TestCompany #trainings",
-        "duration": 8135,
-        "subRows": null
+        "duration": 8135
       },
       {
         "tag": "#meeting",
-        "duration": 13200,
-        "subRows": null
+        "duration": 13200
       },
       {
         "tag": "#TestCompany",
-        "duration": 6006,
-        "subRows": null
+        "duration": 6006
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "book",
-      "duration": 28933,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "book",
+    "duration": 28933,
+    "mappedRows": [
       {
         "tag": "#education #SpringSecurity #SprinSecurityInAction",
-        "duration": 28933,
-        "subRows": null
+        "duration": 28933
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "trainings",
-      "duration": 8135,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "trainings",
+    "duration": 8135,
+    "mappedRows": [
       {
         "tag": "#TestCompany #work",
-        "duration": 8135,
-        "subRows": null
+        "duration": 8135
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "italki",
-      "duration": 3600,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "italki",
+    "duration": 3600,
+    "mappedRows": [
       {
         "tag": "#English #education",
-        "duration": 3600,
-        "subRows": null
+        "duration": 3600
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "html/css",
-      "duration": 69160,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "html/css",
+    "duration": 69160,
+    "mappedRows": [
       {
         "tag": "#education #EducationCompany",
-        "duration": 69160,
-        "subRows": null
+        "duration": 69160
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "computerNetworking",
-      "duration": 41005,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "computerNetworking",
+    "duration": 41005,
+    "mappedRows": [
       {
         "tag": "#education #educative.io",
-        "duration": 41005,
-        "subRows": null
+        "duration": 41005
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "leetcode",
-      "duration": 36001,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "leetcode",
+    "duration": 36001,
+    "mappedRows": [
       {
         "tag": "#algorithms #education",
-        "duration": 36001,
-        "subRows": null
+        "duration": 36001
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "pomodoro",
-      "duration": 337634,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "pomodoro",
+    "duration": 337634,
+    "mappedRows": [
       {
         "tag": "#python",
-        "duration": 9581,
-        "subRows": null
+        "duration": 9581
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "YouTube",
-      "duration": 1200,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "YouTube",
+    "duration": 1200,
+    "mappedRows": [
       {
         "tag": "#English #education",
-        "duration": 1200,
-        "subRows": null
+        "duration": 1200
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "SprinSecurityInAction",
-      "duration": 28933,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "SprinSecurityInAction",
+    "duration": 28933,
+    "mappedRows": [
       {
         "tag": "#education #SpringSecurity #book",
-        "duration": 28933,
-        "subRows": null
+        "duration": 28933
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "educative.io",
-      "duration": 190315,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "educative.io",
+    "duration": 190315,
+    "mappedRows": [
       {
         "tag": "#education #computerNetworking",
-        "duration": 41005,
-        "subRows": null
+        "duration": 41005
       },
       {
         "tag": "#education #JavaScript #JavaScriptReact",
-        "duration": 48082,
-        "subRows": null
+        "duration": 48082
       },
       {
         "tag": "#education #JavaScript",
-        "duration": 22905,
-        "subRows": null
+        "duration": 22905
       },
       {
         "tag": "#education #concurrency",
-        "duration": 63855,
-        "subRows": null
+        "duration": 63855
       },
       {
         "tag": "#python #education",
-        "duration": 9647,
-        "subRows": null
+        "duration": 9647
       },
       {
         "tag": "#algorithms #education",
-        "duration": 2413,
-        "subRows": null
+        "duration": 2413
       },
       {
         "tag": "#education #aws",
-        "duration": 2408,
-        "subRows": null
+        "duration": 2408
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "concurrency",
-      "duration": 63855,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "concurrency",
+    "duration": 63855,
+    "mappedRows": [
       {
         "tag": "#education #educative.io",
-        "duration": 63855,
-        "subRows": null
+        "duration": 63855
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "English",
-      "duration": 4800,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "English",
+    "duration": 4800,
+    "mappedRows": [
       {
         "tag": "#education #YouTube",
-        "duration": 1200,
-        "subRows": null
+        "duration": 1200
       },
       {
         "tag": "#education #italki",
-        "duration": 3600,
-        "subRows": null
+        "duration": 3600
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "JavaScript",
-      "duration": 73390,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "JavaScript",
+    "duration": 73390,
+    "mappedRows": [
       {
         "tag": "#education",
-        "duration": 2403,
-        "subRows": null
+        "duration": 2403
       },
       {
         "tag": "#education #JavaScriptReact #educative.io",
-        "duration": 48082,
-        "subRows": null
+        "duration": 48082
       },
       {
         "tag": "#education #educative.io",
-        "duration": 22905,
-        "subRows": null
+        "duration": 22905
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "JavaScriptReact",
-      "duration": 48082,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "JavaScriptReact",
+    "duration": 48082,
+    "mappedRows": [
       {
         "tag": "#education #JavaScript #educative.io",
-        "duration": 48082,
-        "subRows": null
+        "duration": 48082
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "aws",
-      "duration": 6034,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "aws",
+    "duration": 6034,
+    "mappedRows": [
       {
         "tag": "#education",
-        "duration": 3626,
-        "subRows": null
+        "duration": 3626
       },
       {
         "tag": "#education #educative.io",
-        "duration": 2408,
-        "subRows": null
+        "duration": 2408
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "meeting",
-      "duration": 13200,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "meeting",
+    "duration": 13200,
+    "mappedRows": [
       {
         "tag": "#work",
-        "duration": 13200,
-        "subRows": null
+        "duration": 13200
       }
     ]
   },
   {
-    "mainTagReportRow": {
-      "tag": "EducationCompany",
-      "duration": 69160,
-      "subRows": null
-    },
-    "mappedTagsReportRows": [
+    "tag": "EducationCompany",
+    "duration": 69160,
+    "mappedRows": [
       {
         "tag": "#education #html/css",
-        "duration": 69160,
-        "subRows": null
+        "duration": 69160
       }
     ]
   }

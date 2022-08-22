@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportDto;
 import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportRowDto;
 import com.igorgorbunov3333.timer.service.tag.TagToTagsFromPomodoroMappingsBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -61,62 +60,76 @@ class AllTagsDurationReporterTest {
         );
         when(tagToTagsFromPomodoroMappingsBuilder.buildTagMappings(pomodoro)).thenReturn(tagMappings);
 
-        List<TagDurationReportDto> actual = testee.reportForEachTag(pomodoro);
+        List<TagDurationReportRowDto> actual = testee.reportForEachTag(pomodoro);
 
         assertThat(actual).containsExactlyInAnyOrderElementsOf(buildExpectedReports());
     }
 
-    private List<TagDurationReportDto> buildExpectedReports() {
-        List<TagDurationReportDto> reports = new ArrayList<>();
+    private List<TagDurationReportRowDto> buildExpectedReports() {
+        List<TagDurationReportRowDto> reports = new ArrayList<>();
 
-        reports.add(new TagDurationReportDto(
-                buildReportRow("book", 15673),
+        reports.add(new TagDurationReportRowDto(
+                "book", 15673,
                 List.of(
                         buildReportRow("#education #SpringSecurity", 15673)
-                )));
+                ),
+                null));
 
-        reports.add(new TagDurationReportDto(
-                buildReportRow("pomodoro", 28858),
-                List.of()
+        reports.add(new TagDurationReportRowDto(
+                "pomodoro", 28858,
+                List.of(),
+                null
         ));
 
-        reports.add(new TagDurationReportDto(
-                buildReportRow("educativePlatform", 2413),
+        reports.add(new TagDurationReportRowDto(
+                "educativePlatform", 2413,
                 List.of(
                         buildReportRow("#algorithms #education", 2413)
-                )));
+                ),
+                null
+        ));
 
-        reports.add(new TagDurationReportDto(
-                buildReportRow("SpringSecurity", 15673),
+        reports.add(new TagDurationReportRowDto(
+                "SpringSecurity", 15673,
                 List.of(
                         buildReportRow("#education #book", 15673)
-                )));
+                ),
+                null
+        ));
 
-        reports.add(new TagDurationReportDto(
-                buildReportRow("html/css", 6807),
+        reports.add(new TagDurationReportRowDto(
+                "html/css", 6807,
                 List.of(
                         buildReportRow("#education #EducativeCompany", 6807)
-                )));
+                ),
+                null
+        ));
 
-        reports.add(new TagDurationReportDto(
-                buildReportRow("algorithms", 2413),
+        reports.add(new TagDurationReportRowDto(
+                "algorithms", 2413,
                 List.of(
                         buildReportRow("#education #educativePlatform", 2413)
-                )));
+                ),
+                null
+        ));
 
-        reports.add(new TagDurationReportDto(
-                buildReportRow("EducativeCompany", 6807),
+        reports.add(new TagDurationReportRowDto(
+                "EducativeCompany", 6807,
                 List.of(
                         buildReportRow("#education #html/css", 6807)
-                )));
+                ),
+                null
+        ));
 
-        reports.add(new TagDurationReportDto(
-                buildReportRow("education", 24893),
+        reports.add(new TagDurationReportRowDto(
+                "education", 24893,
                 List.of(
                         buildReportRow("#algorithms #educativePlatform", 2413),
                         buildReportRow("#EducativeCompany #html/css", 6807),
                         buildReportRow("#SpringSecurity #book", 15673)
-                )));
+                ),
+                null
+        ));
 
         return reports;
     }

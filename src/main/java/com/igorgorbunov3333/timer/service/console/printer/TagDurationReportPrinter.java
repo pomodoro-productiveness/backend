@@ -1,7 +1,6 @@
 package com.igorgorbunov3333.timer.service.console.printer;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportDto;
 import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportRowDto;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.tag.report.TagDurationReportsComposer;
@@ -23,26 +22,26 @@ public class TagDurationReportPrinter {
     private final TagDurationReportsComposer tagDurationReportsComposer;
 
     public void print(List<PomodoroDto> pomodoro) {
-        List<TagDurationReportDto> tagDurationReports = tagDurationReportsComposer.compose(pomodoro);
+        List<TagDurationReportRowDto> tagDurationReportRows = tagDurationReportsComposer.compose(pomodoro);
 
         SimplePrinter.printParagraph();
         SimplePrinter.print("Duration by tags report:");
 
         List<ReportRow> reportRows = new ArrayList<>();
-        for (TagDurationReportDto tagDurationReportItem : tagDurationReports) {
-            String mainTag = tagDurationReportItem.getMainTagReportRow().getTag();
-            String mainTagDuration = SecondsFormatter.formatInHours(tagDurationReportItem.getMainTagReportRow().getDuration());
+        for (TagDurationReportRowDto tagDurationReportRowItem : tagDurationReportRows) {
+            String mainTag = tagDurationReportRowItem.getTag();
+            String mainTagDuration = SecondsFormatter.formatInHours(tagDurationReportRowItem.getDuration());
 
             reportRows.add(new ReportRow(mainTag, mainTagDuration, true, List.of()));
 
-            List<TagDurationReportRowDto> neighbouringTagDurations = tagDurationReportItem.getMappedTagsReportRows();
+            List<TagDurationReportRowDto> neighbouringTagDurations = tagDurationReportRowItem.getMappedRows();
 
             if (!CollectionUtils.isEmpty(neighbouringTagDurations)) {
                 for (TagDurationReportRowDto neighboringTag : neighbouringTagDurations) {
                     String tag = neighboringTag.getTag();
                     String neighboringTagDuration = SecondsFormatter.formatInHours(neighboringTag.getDuration());
 
-                    reportRows.add(new ReportRow("-".repeat(4) + tag, neighboringTagDuration, false, buildSubRows(neighboringTag.getSubRows(), 2)));
+                    reportRows.add(new ReportRow("-".repeat(4) + tag, neighboringTagDuration, false, buildSubRows(neighboringTag.getMappedRows(), 2)));
                 }
             }
         }
@@ -86,7 +85,7 @@ public class TagDurationReportPrinter {
         if (!CollectionUtils.isEmpty(rows)) {
             for (TagDurationReportRowDto row : rows) {
                 ReportRow newRow = new ReportRow("-".repeat(4 * nestingLevel) + row.getTag(), SecondsFormatter.formatInHours(row.getDuration()),
-                        false, buildSubRows(row.getSubRows(), nestingLevel + 1));
+                        false, buildSubRows(row.getMappedRows(), nestingLevel + 1));
                 reportRows.add(newRow);
             }
         }

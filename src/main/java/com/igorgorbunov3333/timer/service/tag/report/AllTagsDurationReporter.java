@@ -2,7 +2,6 @@ package com.igorgorbunov3333.timer.service.tag.report;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportDto;
 import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportRowDto;
 import com.igorgorbunov3333.timer.service.tag.TagToTagsFromPomodoroMappingsBuilder;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
@@ -23,7 +22,7 @@ public class AllTagsDurationReporter {
 
     private final TagToTagsFromPomodoroMappingsBuilder tagToTagsFromPomodoroMappingsBuilder;
 
-    public List<TagDurationReportDto> reportForEachTag(List<PomodoroDto> pomodoro) {
+    public List<TagDurationReportRowDto> reportForEachTag(List<PomodoroDto> pomodoro) {
         if (CollectionUtils.isEmpty(pomodoro)) {
             return List.of();
         }
@@ -31,44 +30,46 @@ public class AllTagsDurationReporter {
         return buildReports(pomodoro);
     }
 
-    private List<TagDurationReportDto> buildReports(List<PomodoroDto> pomodoro) {
+    private List<TagDurationReportRowDto> buildReports(List<PomodoroDto> pomodoro) {
         Map<String, Set<String>> tagToMappedTags = tagToTagsFromPomodoroMappingsBuilder.buildTagMappings(pomodoro);
 
         return tagToMappedTags.keySet().stream()
-                .map(tag -> buildSingleReport(tagToMappedTags, tag, pomodoro))
+                .map(tag -> buildSingleReportRow(tagToMappedTags, tag, pomodoro))
                 .collect(Collectors.toList());
     }
 
-    private TagDurationReportDto buildSingleReport(Map<String, Set<String>> tagToMappedTags,
-                                                   String mainTag,
-                                                   List<PomodoroDto> pomodoro) {
+    private TagDurationReportRowDto buildSingleReportRow(Map<String, Set<String>> tagToMappedTags,
+                                                         String mainTag,
+                                                         List<PomodoroDto> pomodoro) {
         List<PomodoroDto> tagPomodoro = filterPomodoro(pomodoro, p -> mapToTagNamesSet(p).contains(mainTag));
 
-        return buildSingleReport(tagToMappedTags, mainTag, pomodoro, tagPomodoro);
+        return buildSingleReportRow(tagToMappedTags, mainTag, pomodoro, tagPomodoro);
     }
 
-    private TagDurationReportDto buildSingleReport(Map<String, Set<String>> tagToMappedTags,
-                                                   String tag,
-                                                   List<PomodoroDto> allPomodoro,
-                                                   List<PomodoroDto> tagPomodoro) {
-        TagDurationReportRowDto mainTagReportRow = buildReportRow(tag, tagPomodoro);
-        List<TagDurationReportRowDto> mappedTagsReportRows = buildMappedTagsReportRows(tagToMappedTags, tag, allPomodoro, tagPomodoro);
+    private TagDurationReportRowDto buildSingleReportRow(Map<String, Set<String>> tagToMappedTags,
+                                                         String tag,
+                                                         List<PomodoroDto> allPomodoro,
+                                                         List<PomodoroDto> tagPomodoro) {
+        TagDurationReportRowDto reportRow = buildReportRow(tag, tagPomodoro);
+        List<TagDurationReportRowDto> mappedRows = buildMappedReportRows(tagToMappedTags, tag, allPomodoro, tagPomodoro);
 
-        return new TagDurationReportDto(mainTagReportRow, mappedTagsReportRows);
+        reportRow.setMappedRows(mappedRows);
+
+        return reportRow;
     }
 
-    private List<TagDurationReportRowDto> buildMappedTagsReportRows(Map<String, Set<String>> tagToMappedTags,
-                                                                    String tag,
-                                                                    List<PomodoroDto> pomodoro,
-                                                                    List<PomodoroDto> tagPomodoro) {
+    private List<TagDurationReportRowDto> buildMappedReportRows(Map<String, Set<String>> tagToMappedTags,
+                                                                String tag,
+                                                                List<PomodoroDto> pomodoro,
+                                                                List<PomodoroDto> tagPomodoro) {
         Set<Set<String>> mappedTagGroups = buildMappedTagGroups(tagToMappedTags, tag, tagPomodoro);
 
-        return buildMappedTagsReportRows(pomodoro, tag, mappedTagGroups);
+        return buildMappedReportRows(pomodoro, tag, mappedTagGroups);
     }
 
-    private List<TagDurationReportRowDto> buildMappedTagsReportRows(List<PomodoroDto> pomodoro,
-                                                                    String mainTag,
-                                                                    Set<Set<String>> mappedTagsGroups) {
+    private List<TagDurationReportRowDto> buildMappedReportRows(List<PomodoroDto> pomodoro,
+                                                                String mainTag,
+                                                                Set<Set<String>> mappedTagsGroups) {
         return mappedTagsGroups.stream()
                 .map(mappedTagGroup -> buildMappedTagReportRow(mappedTagGroup, mainTag, pomodoro))
                 .collect(Collectors.toList());

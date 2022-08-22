@@ -24,7 +24,7 @@ public class TagDurationReportRowDto {
     private long duration;
 
     @Setter
-    private List<TagDurationReportRowDto> subRows;
+    private List<TagDurationReportRowDto> mappedRows;
 
     @JsonIgnore
     private TagDurationReportRowDto parentRow;
