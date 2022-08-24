@@ -72,53 +72,46 @@ class AllTagsDurationReporterTest {
                 "book", 15673,
                 List.of(
                         buildReportRow("#education #SpringSecurity", 15673)
-                ),
-                null));
+                )));
 
         reports.add(new TagDurationReportRowDto(
                 "pomodoro", 28858,
-                List.of(),
-                null
+                List.of()
         ));
 
         reports.add(new TagDurationReportRowDto(
                 "educativePlatform", 2413,
                 List.of(
                         buildReportRow("#algorithms #education", 2413)
-                ),
-                null
+                )
         ));
 
         reports.add(new TagDurationReportRowDto(
                 "SpringSecurity", 15673,
                 List.of(
                         buildReportRow("#education #book", 15673)
-                ),
-                null
+                )
         ));
 
         reports.add(new TagDurationReportRowDto(
                 "html/css", 6807,
                 List.of(
                         buildReportRow("#education #EducativeCompany", 6807)
-                ),
-                null
+                )
         ));
 
         reports.add(new TagDurationReportRowDto(
                 "algorithms", 2413,
                 List.of(
                         buildReportRow("#education #educativePlatform", 2413)
-                ),
-                null
+                )
         ));
 
         reports.add(new TagDurationReportRowDto(
                 "EducativeCompany", 6807,
                 List.of(
                         buildReportRow("#education #html/css", 6807)
-                ),
-                null
+                )
         ));
 
         reports.add(new TagDurationReportRowDto(
@@ -127,15 +120,14 @@ class AllTagsDurationReporterTest {
                         buildReportRow("#algorithms #educativePlatform", 2413),
                         buildReportRow("#EducativeCompany #html/css", 6807),
                         buildReportRow("#SpringSecurity #book", 15673)
-                ),
-                null
+                )
         ));
 
         return reports;
     }
 
     private TagDurationReportRowDto buildReportRow(String tag, long duration) {
-        return new TagDurationReportRowDto(tag, duration, null, null);
+        return new TagDurationReportRowDto(tag, duration, null);
     }
 
 }

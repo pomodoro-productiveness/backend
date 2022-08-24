@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.igorgorbunov3333</groupId>
 	<artifactId>timer</artifactId>
-	<version>1.18.6</version>
+	<version>1.18.7</version>
 	<name>timer</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>

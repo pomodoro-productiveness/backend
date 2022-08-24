@@ -92,7 +92,7 @@ public class AllTagsDurationReporter {
 
     private TagDurationReportRowDto buildReportRow(String tag, List<PomodoroDto> pomodoro) {
         long duration = calculateDurationInSeconds(pomodoro);
-        return new TagDurationReportRowDto(tag, duration, null, null);
+        return new TagDurationReportRowDto(tag, duration, null);
     }
 
     private Set<Set<String>> buildMappedTagGroups(Map<String, Set<String>> tagToMappedTags,
