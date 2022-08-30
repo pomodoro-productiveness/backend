@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@EqualsAndHashCode
 @AllArgsConstructor
+@EqualsAndHashCode(of = "name")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class PomodoroTagDto {
 

@@ -55,8 +55,8 @@ public class DefaultPrinterService implements PrinterService {
         for (Map.Entry<DayOfWeek, List<PomodoroDto>> entry : weeklyPomodoro.entrySet()) {
             System.out.println();
             System.out.println(entry.getKey().toString());
-            List<PomodoroDto> dailyPomodoros = entry.getValue();
-            printPomodoroWithIdsAndTags(dailyPomodoros);
+            List<PomodoroDto> dailyPomodoro = entry.getValue();
+            printPomodoroWithIdsAndTags(dailyPomodoro);
         }
     }
 
