@@ -87,7 +87,8 @@ public class PomodoroPrinter {
             List<PomodoroTagDto> pomodoroTags = singlePomodoro.getTags();
 
             List<PomodoroTagDto> rearrangedTags = new ArrayList<>();
-            if (!Set.of(TagUtil.TAG_EDUCATION, TagUtil.TAG_WORK).contains(pomodoroTags.get(0).getName())
+            if (!CollectionUtils.isEmpty(pomodoroTags)
+                    && !Set.of(TagUtil.TAG_EDUCATION, TagUtil.TAG_WORK).contains(pomodoroTags.get(0).getName())
                     && containsTagNames(pomodoroTags, TagUtil.TAG_EDUCATION, TagUtil.TAG_WORK)) {
                 int mainTagIndex = getMainTagIndex(pomodoroTags);
                 if (mainTagIndex != -1) {
