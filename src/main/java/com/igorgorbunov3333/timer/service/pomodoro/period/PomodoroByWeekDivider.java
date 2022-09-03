@@ -46,9 +46,9 @@ public class PomodoroByWeekDivider {
         return periods;
     }
 
-    private List<PeriodDto> divideForWeeklyPeriods(PeriodDto inputPeriod, LocalDate today) {
-        LocalDate startDate = inputPeriod.getStart().toLocalDate();
-        LocalDate endDate = inputPeriod.getEnd().toLocalDate();
+    private List<PeriodDto> divideForWeeklyPeriods(PeriodDto monthPeriod, LocalDate today) {
+        LocalDate startDate = monthPeriod.getStart().toLocalDate();
+        LocalDate endDate = monthPeriod.getEnd().toLocalDate();
 
         List<PeriodDto> periods = new ArrayList<>();
         LocalDate current = startDate;
@@ -56,9 +56,18 @@ public class PomodoroByWeekDivider {
         while (!current.isAfter(endDate)) {
             PeriodDto period = getWeekByDate(current);
 
-            if (period.getEnd().toLocalDate().isAfter(today)) {
-                period = new PeriodDto(period.getStart(), today.atTime(LocalTime.MAX));
+            LocalDateTime startPeriod = period.getStart();
+            LocalDateTime endPeriod = period.getEnd();
+
+            if (startPeriod.isBefore(monthPeriod.getStart())) {
+                startPeriod = monthPeriod.getStart();
             }
+
+            if (endPeriod.toLocalDate().isAfter(today)) {
+                endPeriod = today.atTime(LocalTime.MAX);
+            }
+
+            period = new PeriodDto(startPeriod, endPeriod);
 
             periods.add(period);
 
