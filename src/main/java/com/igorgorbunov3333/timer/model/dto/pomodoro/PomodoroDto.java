@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -32,6 +33,7 @@ public class PomodoroDto implements TemporalObject {
 
     private List<PomodoroPauseDto> pomodoroPauses;
 
+    @Setter
     private List<PomodoroTagDto> tags;
 
     @Override

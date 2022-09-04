@@ -11,7 +11,6 @@ import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

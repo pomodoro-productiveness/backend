@@ -17,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -49,9 +48,9 @@ public class PomodoroPrinter {
             numberedPomodoroWithRearrangedTags.put(entry.getKey(), singlePomodoroWithRearrangedTags);
         }
 
-        Function<PomodoroDto, String> pomodoroExtractorFunction = this::mapToString;
+        Map<Integer, PomodoroDto> pomodoroWithAlignedTagsByLength = alignPomodoroTags(numberedPomodoroWithRearrangedTags);
 
-        ListOfItemsPrinter.print(numberedPomodoroWithRearrangedTags, pomodoroExtractorFunction);
+        ListOfItemsPrinter.print(numberedPomodoroWithRearrangedTags, this::mapToString);
     }
 
     private Map<PomodoroDto, List<PomodoroTagDto>> rearrange(List<PomodoroDto> pomodoro) {
@@ -72,7 +71,8 @@ public class PomodoroPrinter {
                 } else {
                     rearrangedPomodoroToTagsMap.put(pomodoroToRearrangeTags, pomodoroTagsToRearrange);
 
-                    List<PomodoroTagDto> rearrangedTags = rearrangeTags(currentPomodoroTags, mapTagsToNumbers(rearrangedPomodoroToTagsMap.get(pomodoroToRearrangeTags)));
+                    List<PomodoroTagDto> rearrangedTags = rearrangeTags(currentPomodoroTags,
+                            mapTagsToNumbers(rearrangedPomodoroToTagsMap.get(pomodoroToRearrangeTags)));
                     rearrangedPomodoroToTagsMap.put(currentPomodoro, rearrangedTags);
                 }
             }
@@ -234,6 +234,70 @@ public class PomodoroPrinter {
         int seconds = startTime.getSecond();
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    private Map<Integer, PomodoroDto> alignPomodoroTags(Map<Integer, PomodoroDto> numberedPomodoroWithRearrangedTags) {
+        Map<Integer, Integer> tagPositionToMaxTagLengthAtPositionMap =
+                getTagPositionToMaxTagLengthAtPositionMap(numberedPomodoroWithRearrangedTags);
+
+        return alignTags(numberedPomodoroWithRearrangedTags, tagPositionToMaxTagLengthAtPositionMap);
+    }
+
+    private Map<Integer, Integer> getTagPositionToMaxTagLengthAtPositionMap(Map<Integer, PomodoroDto> numberedPomodoroWithRearrangedTags) {
+        Map<Integer, Integer> tagMaxLengthForEachPosition = new LinkedHashMap<>();
+        for (Map.Entry<Integer, PomodoroDto> entry : numberedPomodoroWithRearrangedTags.entrySet()) {
+            PomodoroDto pomodoro = entry.getValue();
+
+            List<PomodoroTagDto> pomodoroTags = pomodoro.getTags();
+            for (int i = 0; i < pomodoroTags.size(); i++) {
+                Integer maxLengthForCurrentPosition = tagMaxLengthForEachPosition.get(i);
+
+                PomodoroTagDto currentTag = pomodoro.getTags().get(i);
+                String currentTagName = currentTag.getName();
+                if (maxLengthForCurrentPosition == null) {
+                    tagMaxLengthForEachPosition.put(i, currentTagName.length());
+                } else if (maxLengthForCurrentPosition < currentTagName.length()) {
+                    tagMaxLengthForEachPosition.put(i, currentTagName.length());
+                }
+            }
+        }
+        return tagMaxLengthForEachPosition;
+    }
+
+    private Map<Integer, PomodoroDto> alignTags(Map<Integer, PomodoroDto> numberedPomodoroWithRearrangedTags,
+                                                Map<Integer, Integer> tagPositionToMaxTagLengthAtPositionMap) {
+        for (Map.Entry<Integer, PomodoroDto> entry : numberedPomodoroWithRearrangedTags.entrySet()) {
+            PomodoroDto pomodoro = entry.getValue();
+
+            List<PomodoroTagDto> pomodoroTags = pomodoro.getTags();
+            List<PomodoroTagDto> updatedTags =
+                    updateTagNamesWithAdditionalSpacesToMaxLength(tagPositionToMaxTagLengthAtPositionMap, pomodoroTags);
+
+            pomodoro.setTags(updatedTags);
+        }
+
+        return numberedPomodoroWithRearrangedTags;
+    }
+
+    private List<PomodoroTagDto> updateTagNamesWithAdditionalSpacesToMaxLength(Map<Integer, Integer> tagPositionToMaxTagLengthAtPositionMap,
+                                                                               List<PomodoroTagDto> pomodoroTags) {
+        List<PomodoroTagDto> updatedTags = new ArrayList<>();
+        for (int i = 0; i < pomodoroTags.size(); i++) {
+            PomodoroTagDto currentTag = pomodoroTags.get(i);
+
+            String currentTagName = currentTag.getName();
+            String spaces = "";
+            if (tagPositionToMaxTagLengthAtPositionMap.get(i) != null) {
+                int lengthDifference = tagPositionToMaxTagLengthAtPositionMap.get(i) - currentTagName.length();
+
+                spaces += StringUtils.SPACE.repeat(lengthDifference);
+            }
+
+            currentTag = new PomodoroTagDto(currentTagName + spaces, currentTag.isRemoved());
+
+            updatedTags.add(currentTag);
+        }
+        return updatedTags;
     }
 
 }
