@@ -21,7 +21,7 @@ public class PauseCommandProcessor implements CommandProcessor {
         long durationInSeconds = pomodoroEngine.getPomodoroCurrentDuration();
 
         if (durationInSeconds <= pomodoroProperties.getDuration()) {
-            SimplePrinter.print(String.format("To pause a pomodoro, its duration must be greater than the specified minimum: [%d] seconds)",
+            SimplePrinter.print(String.format("To pause a pomodoro, its duration must be greater than the specified minimum: [%d] seconds",
                     pomodoroProperties.getDuration()));
 
             return;

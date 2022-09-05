@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.service.console.command.line.session;
 
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.model.entity.pomodoro.PomodoroTagGroup;
-import com.igorgorbunov3333.timer.service.console.command.line.provider.AbstractLineProvider;
+import com.igorgorbunov3333.timer.service.console.command.line.provider.BaseLineProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.printer.util.ListOfItemsPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 //TODO: refactor
 @Component
 @AllArgsConstructor
-public class TagPomodoroSessionMapper extends AbstractLineProvider implements NumberProvidable {
+public class TagPomodoroSessionMapper implements NumberProvidable, BaseLineProvider {
 
     @Getter
     private final CommandProvider commandProvider;

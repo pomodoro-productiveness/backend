@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.service.tag.provider;
 
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.service.console.command.line.provider.AbstractLineProvider;
+import com.igorgorbunov3333.timer.service.console.command.line.provider.BaseLineProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.impl.TagCreationSessionProcessor;
@@ -17,7 +17,7 @@ import java.util.Set;
 
 @Component
 @AllArgsConstructor
-public class TagsFromUserProvider extends AbstractLineProvider implements NumberProvidable {
+public class TagsFromUserProvider implements NumberProvidable, BaseLineProvider {
 
     @Getter
     private final CommandProvider commandProvider;

@@ -4,6 +4,6 @@ import org.springframework.stereotype.Component;
 
 //TODO: rename
 @Component
-public class CommandProvider extends AbstractLineProvider {
+public class CommandProvider implements BaseLineProvider {
 
 }
