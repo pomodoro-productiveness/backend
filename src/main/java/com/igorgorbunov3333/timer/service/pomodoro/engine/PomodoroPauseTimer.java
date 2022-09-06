@@ -19,7 +19,7 @@ public class PomodoroPauseTimer {
     public void conduct(int seconds) {
         long start = System.currentTimeMillis();
 
-        while (true) {
+        while (pomodoroEngine.isPomodoroCurrentlyRunning()) {
             long currentDurationInMilliseconds = System.currentTimeMillis() - start;
 
             if (currentDurationInMilliseconds >= (seconds * 1000L)) {
@@ -43,7 +43,9 @@ public class PomodoroPauseTimer {
             }
         }
 
-        pomodoroEngine.pausePomodoro();
+        if (pomodoroEngine.isPomodoroCurrentlyRunning()) {
+            pomodoroEngine.pausePomodoro();
+        }
     }
 
 }

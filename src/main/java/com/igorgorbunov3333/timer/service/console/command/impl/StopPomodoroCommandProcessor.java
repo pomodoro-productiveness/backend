@@ -43,13 +43,13 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
         if (pomodoroEngine.isPomodoroPaused()) {
             SimplePrinter.print("Pomodoro paused. Are you sure you want to stop pomodoro?");
             SimplePrinter.printYesNoQuestion();
-        }
 
-        String answer = provideLine();
+            String answer = provideLine();
 
-        if (!answer.startsWith("y")) {
-            SimplePrinter.print("Pomodoro stayed on pause!");
-            return;
+            if (!answer.startsWith("y")) {
+                SimplePrinter.print("Pomodoro stayed on pause!");
+                return;
+            }
         }
 
         PomodoroDto savedPomodoro;
