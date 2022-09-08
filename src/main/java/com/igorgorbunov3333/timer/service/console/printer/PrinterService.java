@@ -11,8 +11,6 @@ public interface PrinterService {
 
     void printFeaturesList();
 
-    void printSavedAndDailyPomodoroAfterStoppingPomodoro(PomodoroDto savedPomodoro, List<PomodoroDto> dailyPomodoro);
-
     void printPomodoroWithIdsAndTags(List<PomodoroDto> pomodoro);
 
     void printDayOfWeekToPomodoro(Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoro);

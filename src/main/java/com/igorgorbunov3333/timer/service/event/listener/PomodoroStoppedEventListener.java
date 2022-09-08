@@ -3,6 +3,8 @@ package com.igorgorbunov3333.timer.service.event.listener;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.event.PomodoroStoppedSpringEvent;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroSaver;
 import lombok.AllArgsConstructor;
@@ -23,8 +25,11 @@ public class PomodoroStoppedEventListener implements ApplicationListener<Pomodor
     public void onApplicationEvent(PomodoroStoppedSpringEvent event) {
         int pomodoroDuration = event.getPomodoroDuration();
         PomodoroDto savedPomodoro = pomodoroSaver.save(pomodoroDuration);
-        List<PomodoroDto> dailyPomodoro = currentDayLocalPomodoroProvider.provide(null);
-        printerService.printSavedAndDailyPomodoroAfterStoppingPomodoro(savedPomodoro, dailyPomodoro);
+        String successfullySavedMessage = PrintUtil.MESSAGE_POMODORO_SAVED + savedPomodoro;
+        SimplePrinter.print(successfullySavedMessage);
+        SimplePrinter.printParagraph();
+        List<PomodoroDto> pomodoro = currentDayLocalPomodoroProvider.provide(null);
+        printerService.printPomodoroWithIdsAndTags(pomodoro);
     }
 
 }

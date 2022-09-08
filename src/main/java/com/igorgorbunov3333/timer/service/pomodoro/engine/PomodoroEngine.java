@@ -101,9 +101,10 @@ public class PomodoroEngine {
                 player.play();
                 playerStarted = true;
             }
-            if (PomodoroState.currentPomodoroDurationInMilliseconds >= (pomodoroProperties.getAutomaticShutdownDuration() * 60 * 1000)) { //TODO: validate this value, it must be less then standard duration
+            if (PomodoroState.currentPomodoroDurationInMilliseconds >= (pomodoroProperties.getAutomaticShutdownDuration() * 60 * 1000)) { //TODO: validate this value, it must be less than standard duration
+                long durationInSeconds = PomodoroState.currentPomodoroDurationInMilliseconds / 1000;
                 stopPomodoro();
-                pomodoroStoppedSpringEventPublisher.publish((int) (PomodoroState.currentPomodoroDurationInMilliseconds / 1000));
+                pomodoroStoppedSpringEventPublisher.publish((int) durationInSeconds);
             }
         } while (PomodoroState.POMODORO_RUNNING.get());
     }
