@@ -11,12 +11,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,11 +43,9 @@ class TagDurationReportsComposerTest {
 
         List<TagDurationReportRowDto> expected = objectMapper.readValue(stringExpected, new TypeReference<>() {
         });
-//        List<TagDurationReportRowDto> expectedRows = extractAllRows(expected);
 
         List<TagDurationReportRowDto> actual = testee.compose(List.of());
 
-//        List<TagDurationReportRowDto> actualRows = extractAllRows(actual);
         assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     }
 
@@ -60,30 +56,6 @@ class TagDurationReportsComposerTest {
         return new BufferedReader(new InputStreamReader(is))
                 .lines()
                 .collect(Collectors.joining(StringUtils.LF));
-    }
-
-//    private List<TagDurationReportRowDto> extractAllRows(List<TagDurationReportRowDto> reportsRows) {
-//        List<TagDurationReportRowDto> extracted = reportsRows.stream()
-//                .map(TagDurationReportRowDto::getMainTagReportRow)
-//                .collect(Collectors.toList());
-//
-//        for (TagDurationReportDto report : reportsRows) {
-//            extracted.addAll(extract(report.getMappedTagsReportRows()));
-//        }
-//
-//        return extracted;
-//    }
-
-    private List<TagDurationReportRowDto> extract(List<TagDurationReportRowDto> subRows) {
-        List<TagDurationReportRowDto> extracted = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(subRows)) {
-            for (TagDurationReportRowDto row : subRows) {
-                extracted.add(row);
-                extracted.addAll(extract(row.getMappedRows()));
-            }
-        }
-
-        return extracted;
     }
 
 }
