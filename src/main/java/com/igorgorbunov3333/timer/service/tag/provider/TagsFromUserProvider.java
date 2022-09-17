@@ -28,10 +28,15 @@ public class TagsFromUserProvider implements NumberProvidable, BaseLineProvider 
         Set<String> chosenTags = new HashSet<>();
 
         while (true) {
+            SimplePrinter.printParagraph();
             SimplePrinter.print("Do you want to create new tag?");
             SimplePrinter.printYesNoQuestion();
 
+            SimplePrinter.printParagraph();
+
             String answer = provideLine();
+
+            SimplePrinter.printParagraph();
 
             if (answer.startsWith("y")) {
                 tagCreationSessionProcessor.process(null);
@@ -47,6 +52,8 @@ public class TagsFromUserProvider implements NumberProvidable, BaseLineProvider 
 
             ListOfItemsPrinter.print(numberedTags, PomodoroTagDto::getName);
 
+            SimplePrinter.printParagraph();
+
             int chosenNumber = provideNumber();
 
             if (chosenNumber < 1) {
@@ -60,6 +67,8 @@ public class TagsFromUserProvider implements NumberProvidable, BaseLineProvider 
             } else {
                 SimplePrinter.print(String.format("Incorrect number [%d]", chosenNumber));
             }
+
+            SimplePrinter.printParagraph();
         }
 
         return chosenTags;

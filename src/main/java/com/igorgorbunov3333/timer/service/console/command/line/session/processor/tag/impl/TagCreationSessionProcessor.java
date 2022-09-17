@@ -28,6 +28,8 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
     public void process(Map<Integer, PomodoroTagDto> tagsWithNumbers) {
         SimplePrinter.print("Please provide tag name");
 
+        SimplePrinter.printParagraph();
+
         String tagNameAnswer = provideAndValidateTagName();
         if (tagNameAnswer == null) {
             return;
@@ -41,6 +43,7 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
         }
 
         if (savedTagName != null) {
+            SimplePrinter.printParagraph();
             SimplePrinter.print(String.format("Tag with name [%s] successfully saved", savedTagName));
         }
 
@@ -57,11 +60,17 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
             }
 
             if (tagNameAnswer.length() > TAG_MAX_LENGTH) {
+                SimplePrinter.printParagraph();
                 SimplePrinter.print(String.format("Tag name size must not be more then %d characters", TAG_MAX_LENGTH));
+                SimplePrinter.printParagraph();
             } else if (StringUtils.isEmpty(tagNameAnswer)) {
+                SimplePrinter.printParagraph();
                 SimplePrinter.print("Tag must not be empty, please try again or press \"e\" to exit");
+                SimplePrinter.printParagraph();
             } else if (tagService.exists(tagNameAnswer)) {
+                SimplePrinter.printParagraph();
                 SimplePrinter.print(String.format("Tag with name %s already exists", tagNameAnswer));
+                SimplePrinter.printParagraph();
             } else {
                 return tagNameAnswer;
             }

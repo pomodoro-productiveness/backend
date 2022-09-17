@@ -54,7 +54,10 @@ public class TagPomodoroSessionMapper implements NumberProvidable, BaseLineProvi
 
         PomodoroTagGroup chosenTagGroup;
         while (true) {
+            SimplePrinter.printParagraph();
             SimplePrinter.print("Please choose tags group by it's number or press \"e\" to map by other tags");
+            SimplePrinter.printParagraph();
+
             int numberAnswer = provideNumber();
 
             if (numberAnswer != -1) {
@@ -82,10 +85,15 @@ public class TagPomodoroSessionMapper implements NumberProvidable, BaseLineProvi
         while (true) {
             tags = tagsFromUserProvider.provideTagsFromUser();
 
+            SimplePrinter.printParagraph();
+
             SimplePrinter.print("Following tags [" + tags + "] will be mapped to pomodoro. Do you confirm?");
             SimplePrinter.printYesNoQuestion();
+            SimplePrinter.printParagraph();
 
             String answer = provideLine();
+
+            SimplePrinter.printParagraph();
 
             if (answer.startsWith("y")) {
                 break;

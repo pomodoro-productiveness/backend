@@ -23,7 +23,9 @@ public interface NumberProvidable {
                     return response;
                 }
             } catch (NumberFormatException e) {
+                SimplePrinter.printParagraph();
                 SimplePrinter.print("Incorrect format, please enter a number again or press \"e\" to exit");
+                SimplePrinter.printParagraph();
             }
         }
     }
