@@ -63,6 +63,7 @@ public class TagPomodoroSessionMapper implements NumberProvidable, BaseLineProvi
             if (numberAnswer != -1) {
                 chosenTagGroup = pomodoroTagGroupMap.get(numberAnswer);
 
+                SimplePrinter.printParagraph();
                 if (chosenTagGroup == null) {
                     SimplePrinter.print(String.format("No such group with number [%d]", numberAnswer)); //TODO: move to PrintUtil all messages related to incorrect number
                 } else {
