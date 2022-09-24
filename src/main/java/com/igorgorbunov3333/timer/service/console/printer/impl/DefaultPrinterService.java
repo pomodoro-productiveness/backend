@@ -9,7 +9,6 @@ import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,10 +42,10 @@ public class DefaultPrinterService implements PrinterService {
     }
 
     @Override
-    public void printDayOfWeekToPomodoro(Map<DayOfWeek, List<PomodoroDto>> weeklyPomodoro) {
-        for (Map.Entry<DayOfWeek, List<PomodoroDto>> entry : weeklyPomodoro.entrySet()) {
+    public void printDayOfWeekToPomodoro(Map<String, List<PomodoroDto>> weeklyPomodoro) {
+        for (Map.Entry<String, List<PomodoroDto>> entry : weeklyPomodoro.entrySet()) {
             System.out.println();
-            System.out.println(entry.getKey().toString());
+            System.out.println(entry.getKey());
             List<PomodoroDto> dailyPomodoro = entry.getValue();
             printPomodoroWithIdsAndTags(dailyPomodoro);
         }

@@ -1,9 +1,13 @@
 package com.igorgorbunov3333.timer.service.pomodoro.provider.impl;
 
+import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.period.DailyPomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.period.WeeklyPomodoroDto;
+import com.igorgorbunov3333.timer.model.entity.dayoff.DayOff;
+import com.igorgorbunov3333.timer.repository.DayOffRepository;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.period.CurrentWeekDaysProvidable;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.PomodoroProvider;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
@@ -11,28 +15,29 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Getter
 @Service
 @AllArgsConstructor
-public class CurrentWeekPomodoroProvider implements PomodoroProvider, CurrentWeekDaysProvidable {
+public class CurrentWeekPomodoroProvider implements PomodoroProvider {
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroMapper pomodoroMapper;
     private final CurrentTimeService currentTimeService;
     private final TagService tagService;
+    private final DayOffRepository dayOffRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -49,37 +54,80 @@ public class CurrentWeekPomodoroProvider implements PomodoroProvider, CurrentWee
         return provide(start, end, pomodoroTag);
     }
 
+    public WeeklyPomodoroDto provideWeeklyPomodoro() {
+        List<PomodoroDto> weeklyPomodoro = provide(null);
+
+        if (weeklyPomodoro.isEmpty()) {
+            return WeeklyPomodoroDto.buildEmpty();
+        }
+
+        PeriodDto period = getCurrentPeriod();
+        List<DailyPomodoroDto> weeklyPomodoroDto = provideWeeklyPomodoro(weeklyPomodoro, period);
+
+        return new WeeklyPomodoroDto(weeklyPomodoroDto, period);
+    }
+
     private LocalDate provideStartDayOfWeek() {
         LocalDate currentDay = getCurrentTimeService().getCurrentDateTime().toLocalDate();
 
         return currentDay.with(DayOfWeek.MONDAY);
     }
 
-    public Map<DayOfWeek, List<PomodoroDto>> provideCurrentWeekPomodoroByDays() {
-        List<PomodoroDto> weeklyPomodoro = provide(null);
-        if (weeklyPomodoro.isEmpty()) {
-            return Map.of();
+    private List<DailyPomodoroDto> provideWeeklyPomodoro(List<PomodoroDto> weeklyPomodoro, PeriodDto period) {
+        List<DayOff> dayOffs = dayOffRepository.findByDayGreaterThanEqualAndDayLessThanEqualOrderByDay(
+                period.getStart().toLocalDate(),
+                period.getEnd().toLocalDate()
+        );
+        List<LocalDate> dayOffsDates = dayOffs.stream()
+                .map(DayOff::getDay)
+                .collect(Collectors.toList());
+
+        Map<LocalDate, List<PomodoroDto>> datesToPomodoro = new LinkedHashMap<>();
+        for (PomodoroDto pomodoro : weeklyPomodoro) {
+            LocalDate pomodoroDate = pomodoro.getStartTime().toLocalDate();
+            List<PomodoroDto> datePomodoro = datesToPomodoro.get(pomodoroDate);
+
+            if (CollectionUtils.isEmpty(datePomodoro)) {
+                datePomodoro = new ArrayList<>();
+            }
+
+            datePomodoro.add(pomodoro);
+
+            datesToPomodoro.put(pomodoroDate, datePomodoro);
         }
-        Map<DayOfWeek, List<PomodoroDto>> daysOfWeekToPomodoros = getDaysOfWeekToPomodoros(weeklyPomodoro);
-        return new TreeMap<>(daysOfWeekToPomodoros);
+
+        List<DailyPomodoroDto> dailyPomodoro = new ArrayList<>();
+        for (Map.Entry<LocalDate, List<PomodoroDto>> entry : datesToPomodoro.entrySet()) {
+            boolean dayOff = dayOffsDates.contains(entry.getKey());
+            DayOfWeek dayOfWeek = getDayOfWeek(entry.getKey());
+
+            DailyPomodoroDto currentDailyPomodoro = new DailyPomodoroDto(
+                    entry.getValue(),
+                    dayOff,
+                    dayOfWeek,
+                    entry.getKey()
+            );
+
+            dailyPomodoro.add(currentDailyPomodoro);
+        }
+
+        return dailyPomodoro;
     }
 
-    private Map<DayOfWeek, List<PomodoroDto>> getDaysOfWeekToPomodoros(List<PomodoroDto> weeklyPomodoros) {
-        List<DayOfWeek> daysOfWeek = provideDaysOfCurrentWeek();
+    private PeriodDto getCurrentPeriod() {
+        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();
 
-        Map<DayOfWeek, List<PomodoroDto>> dayOfWeekToPomodoros = weeklyPomodoros.stream()
-                .collect(Collectors.groupingBy(pomodoro -> pomodoro.getStartTime().getDayOfWeek()));
+        DayOfWeek currentWeekDays = getDayOfWeek(today);
 
-        return daysOfWeek.stream()
-                .map(dayOfWeek -> new AbstractMap.SimpleEntry<>(
-                        dayOfWeek,
-                        getDailyPomodoro(dayOfWeekToPomodoros, dayOfWeek)))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        LocalDate startPeriod = today.minusDays(currentWeekDays.getValue() - 1);
+
+        return new PeriodDto(startPeriod.atStartOfDay(), today.atTime(LocalTime.MAX));
     }
 
-    private List<PomodoroDto> getDailyPomodoro(Map<DayOfWeek, List<PomodoroDto>> dayOfWeekToPomodoro,
-                                               DayOfWeek dayOfWeek) {
-        return dayOfWeekToPomodoro.computeIfAbsent(dayOfWeek, k -> new ArrayList<>());
+    private DayOfWeek getDayOfWeek(LocalDate date) {
+        int dayOfWeek = date.getDayOfWeek().getValue();
+
+        return DayOfWeek.of(dayOfWeek);
     }
 
 }

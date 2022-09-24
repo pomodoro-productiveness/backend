@@ -10,4 +10,6 @@ public interface DayOffRepository extends JpaRepository<DayOff, Long> {
 
     List<DayOff> findByDayGreaterThanEqualOrderByDay(LocalDate day);
 
+    List<DayOff> findByDayGreaterThanEqualAndDayLessThanEqualOrderByDay(LocalDate start, LocalDate end);
+
 }
