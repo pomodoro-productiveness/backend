@@ -10,7 +10,6 @@ import com.igorgorbunov3333.timer.service.pomodoro.report.PomodoroStandardReport
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;

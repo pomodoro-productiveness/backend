@@ -7,8 +7,8 @@ import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandP
 import com.igorgorbunov3333.timer.service.console.printer.util.ListOfItemsPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.updater.LocalPomodoroUpdater;
-import com.igorgorbunov3333.timer.service.tag.provider.TagsFromUserProvider;
 import com.igorgorbunov3333.timer.service.tag.group.PomodoroTagGroupService;
+import com.igorgorbunov3333.timer.service.tag.provider.TagsFromUserProvider;
 import com.igorgorbunov3333.timer.service.util.NumberToItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

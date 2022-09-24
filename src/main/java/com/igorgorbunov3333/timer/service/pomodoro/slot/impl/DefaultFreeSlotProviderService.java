@@ -2,8 +2,8 @@ package com.igorgorbunov3333.timer.service.pomodoro.slot.impl;
 
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.service.exception.FreeSlotException;
-import com.igorgorbunov3333.timer.service.pomodoro.slot.FreeSlotProviderService;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
+import com.igorgorbunov3333.timer.service.pomodoro.slot.FreeSlotProviderService;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,8 @@
 package com.igorgorbunov3333.timer.service.console.command.line;
 
+import com.igorgorbunov3333.timer.service.console.command.CommandCoordinator;
 import com.igorgorbunov3333.timer.service.console.command.CurrentCommandStorage;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
-import com.igorgorbunov3333.timer.service.console.command.CommandCoordinator;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
