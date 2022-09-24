@@ -96,8 +96,11 @@ public class CurrentWeekPomodoroProvider implements PomodoroProvider {
             datesToPomodoro.put(pomodoroDate, datePomodoro);
         }
 
+        Map<LocalDate, List<PomodoroDto>> datesToPomodoroWithDaysWithoutPomodoro =
+                addDatesWithoutPomodoro(datesToPomodoro, period);
+
         List<DailyPomodoroDto> dailyPomodoro = new ArrayList<>();
-        for (Map.Entry<LocalDate, List<PomodoroDto>> entry : datesToPomodoro.entrySet()) {
+        for (Map.Entry<LocalDate, List<PomodoroDto>> entry : datesToPomodoroWithDaysWithoutPomodoro.entrySet()) {
             boolean dayOff = dayOffsDates.contains(entry.getKey());
             DayOfWeek dayOfWeek = getDayOfWeek(entry.getKey());
 
@@ -112,6 +115,28 @@ public class CurrentWeekPomodoroProvider implements PomodoroProvider {
         }
 
         return dailyPomodoro;
+    }
+
+    private Map<LocalDate, List<PomodoroDto>> addDatesWithoutPomodoro(Map<LocalDate, List<PomodoroDto>> datesToPomodoro,
+                                                                      PeriodDto period) {
+        Map<LocalDate, List<PomodoroDto>> datesToPomodoroWithDaysWithoutPomodoro = new LinkedHashMap<>();
+
+        LocalDate startDate = period.getStart().toLocalDate();
+        LocalDate endDate = period.getEnd().toLocalDate();
+        for (LocalDate current = startDate;
+             current.isBefore(endDate.plusDays(1L));
+             current = current.plusDays(1L)) {
+
+            List<PomodoroDto> dailyPomodoro = datesToPomodoro.get(current);
+
+            if (dailyPomodoro == null) {
+                dailyPomodoro = new ArrayList<>();
+            }
+
+            datesToPomodoroWithDaysWithoutPomodoro.put(current, dailyPomodoro);
+        }
+
+        return datesToPomodoroWithDaysWithoutPomodoro;
     }
 
     private PeriodDto getCurrentPeriod() {
