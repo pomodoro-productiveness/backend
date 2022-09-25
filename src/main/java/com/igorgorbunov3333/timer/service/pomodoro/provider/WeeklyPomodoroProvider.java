@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.service.pomodoro.provider.impl;
+package com.igorgorbunov3333.timer.service.pomodoro.provider;
 
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
@@ -8,13 +8,12 @@ import com.igorgorbunov3333.timer.model.entity.dayoff.DayOff;
 import com.igorgorbunov3333.timer.repository.DayOffRepository;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.PomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByWeekDivider;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.DayOfWeek;
@@ -31,31 +30,17 @@ import java.util.stream.Collectors;
 @Getter
 @Service
 @AllArgsConstructor
-public class CurrentWeekPomodoroProvider implements PomodoroProvider {
+public class WeeklyPomodoroProvider implements BasePomodoroProvider {
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroMapper pomodoroMapper;
     private final CurrentTimeService currentTimeService;
     private final TagService tagService;
     private final DayOffRepository dayOffRepository;
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<PomodoroDto> provide(String pomodoroTag) {
-        LocalDate startDayOfWeek = provideStartDayOfWeek();
-
-        ZoneId currentZoneId = ZoneId.systemDefault();
-        ZonedDateTime start = startDayOfWeek.atStartOfDay().atZone(currentZoneId);
-        ZonedDateTime end = currentTimeService.getCurrentDateTime()
-                .toLocalDate()
-                .atTime(LocalTime.MAX)
-                .atZone(currentZoneId);
-
-        return provide(start, end, pomodoroTag);
-    }
+    private final PomodoroByWeekDivider pomodoroByWeekDivider;
 
     public WeeklyPomodoroDto provideWeeklyPomodoro() {
-        List<PomodoroDto> weeklyPomodoro = provide(null);
+        List<PomodoroDto> weeklyPomodoro = provide();
 
         if (weeklyPomodoro.isEmpty()) {
             return WeeklyPomodoroDto.buildEmpty();
@@ -65,6 +50,37 @@ public class CurrentWeekPomodoroProvider implements PomodoroProvider {
         List<DailyPomodoroDto> weeklyPomodoroDto = provideWeeklyPomodoro(weeklyPomodoro, period);
 
         return new WeeklyPomodoroDto(weeklyPomodoroDto, period);
+    }
+
+    private List<PomodoroDto> provide() {
+        LocalDate startDayOfWeek = provideStartDayOfWeek();
+
+        ZoneId currentZoneId = ZoneId.systemDefault();
+        ZonedDateTime start = startDayOfWeek.atStartOfDay().atZone(currentZoneId);
+        ZonedDateTime end = currentTimeService.getCurrentDateTime()
+                .toLocalDate()
+                .atTime(LocalTime.MAX)
+                .atZone(currentZoneId);
+
+        return provide(start, end, null);
+    }
+
+    public List<WeeklyPomodoroDto> provideWeeklyPomodoroForPeriod(PeriodDto period, List<PomodoroDto> pomodoro) {
+        List<PeriodDto> weeks = pomodoroByWeekDivider.dividePeriodByWeeks(period);
+
+        List<WeeklyPomodoroDto> weeklyPomodoroDto = new ArrayList<>();
+        for (PeriodDto currentWeek : weeks) {
+            List<PomodoroDto> weeklyPomodoro = pomodoro.stream()
+                    .filter(p -> !p.getStartTime().toLocalDateTime().isBefore(currentWeek.getStart())
+                            && !p.getEndTime().toLocalDateTime().isAfter(currentWeek.getEnd()))
+                    .collect(Collectors.toList());
+
+            List<DailyPomodoroDto> weeklyDailyPomodoro = provideWeeklyPomodoro(weeklyPomodoro, currentWeek);
+
+            weeklyPomodoroDto.add(new WeeklyPomodoroDto(weeklyDailyPomodoro, currentWeek));
+        }
+
+        return weeklyPomodoroDto;
     }
 
     private LocalDate provideStartDayOfWeek() {

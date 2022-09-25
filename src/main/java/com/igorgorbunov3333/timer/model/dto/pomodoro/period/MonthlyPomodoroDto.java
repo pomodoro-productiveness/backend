@@ -10,18 +10,14 @@ import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
-public class WeeklyPomodoroDto {
+public class MonthlyPomodoroDto {
 
-    private final List<DailyPomodoroDto> dailyPomodoro;
-    private final PeriodDto period;
-
-    public static WeeklyPomodoroDto buildEmpty() {
-        return new WeeklyPomodoroDto(List.of(), null);
-    }
+    private List<WeeklyPomodoroDto> weeklyPomodoro;
+    private PeriodDto period;
 
     public List<PomodoroDto> getPomodoro() {
-        return dailyPomodoro.stream()
-                .flatMap(p -> p.getPomodoro().stream())
+        return weeklyPomodoro.stream()
+                .flatMap(weeklyPomodoroDto -> weeklyPomodoroDto.getPomodoro().stream())
                 .collect(Collectors.toList());
     }
 

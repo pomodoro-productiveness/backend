@@ -8,7 +8,7 @@ import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.StandardReportPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.TagDurationReportPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentWeekPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.WeeklyPomodoroProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ public class WeekCommandProcessor implements CommandProcessor {
     private static final String DAY_OFF = "DAY_OFF";
     private static final String SEPARATOR = "----------------------";
 
-    private final CurrentWeekPomodoroProvider currentWeekLocalPomodoroProvider;
+    private final WeeklyPomodoroProvider currentWeekLocalPomodoroProvider;
     private final PrinterService printerService;
     private final StandardReportPrinter standardReportPrinter;
     private final TagDurationReportPrinter tagDurationReportPrinter;
@@ -58,7 +58,7 @@ public class WeekCommandProcessor implements CommandProcessor {
 
     private Map<String, List<PomodoroDto>> mapToDayOfWeekWithDayOffToPomodoro(WeeklyPomodoroDto weeklyPomodoroDto) {
         Map<String, List<PomodoroDto>> result = new LinkedHashMap<>();
-        for (DailyPomodoroDto dailyPomodoro : weeklyPomodoroDto.getPomodoro()) {
+        for (DailyPomodoroDto dailyPomodoro : weeklyPomodoroDto.getDailyPomodoro()) {
             String row = dailyPomodoro.getDayOfWeek().name();
 
             if (dailyPomodoro.isDayOff()) {

@@ -7,7 +7,6 @@ import com.igorgorbunov3333.timer.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.repository.DayOffRepository;
 import com.igorgorbunov3333.timer.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentWeekPomodoroProvider;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CurrentWeekPomodoroProviderTest {
+class WeeklyPomodoroProviderTest {
 
     private static final ZoneId CURRENT_ZONE_ID = ZoneId.of("Europe/Kiev");
 
@@ -43,7 +42,7 @@ class CurrentWeekPomodoroProviderTest {
     private DayOffRepository dayOffRepository;
 
     @InjectMocks
-    private CurrentWeekPomodoroProvider testee;
+    private WeeklyPomodoroProvider testee;
 
     @Test
     void provideWeeklyPomodoro_WhenNoWeeklyPomodoro_ThenReturnEmptyMap() {
@@ -80,7 +79,7 @@ class CurrentWeekPomodoroProviderTest {
 
         WeeklyPomodoroDto actual = testee.provideWeeklyPomodoro();
 
-        assertThat(actual.getPomodoro())
+        assertThat(actual.getDailyPomodoro())
                 .extracting(dailyPomodoro -> Tuple.tuple(dailyPomodoro.getPomodoro(), dailyPomodoro.isDayOff(), dailyPomodoro.getDayOfWeek(), dailyPomodoro.getDate()))
                 .containsExactlyElementsOf(List.of(Tuple.tuple(List.of(firstPomodoroDto, secondPomodoroDto), false, DayOfWeek.MONDAY, localDateTime.toLocalDate())));
     }
@@ -110,7 +109,7 @@ class CurrentWeekPomodoroProviderTest {
 
         WeeklyPomodoroDto actual = testee.provideWeeklyPomodoro();
 
-        assertThat(actual.getPomodoro())
+        assertThat(actual.getDailyPomodoro())
                 .extracting(dailyPomodoro -> Tuple.tuple(dailyPomodoro.getPomodoro(), dailyPomodoro.isDayOff(), dailyPomodoro.getDayOfWeek(), dailyPomodoro.getDate()))
                 .containsExactlyElementsOf(List.of(
                         Tuple.tuple(List.of(firstPomodoroDto), false, DayOfWeek.MONDAY, start.toLocalDate()),
@@ -141,7 +140,7 @@ class CurrentWeekPomodoroProviderTest {
 
         WeeklyPomodoroDto actual = testee.provideWeeklyPomodoro();
 
-        assertThat(actual.getPomodoro())
+        assertThat(actual.getDailyPomodoro())
                 .extracting(dailyPomodoro -> Tuple.tuple(dailyPomodoro.getPomodoro(), dailyPomodoro.isDayOff(), dailyPomodoro.getDayOfWeek(), dailyPomodoro.getDate()))
                 .containsExactlyElementsOf(List.of(
                         Tuple.tuple(List.of(firstPomodoroDto), false, DayOfWeek.MONDAY, start.toLocalDate()),
@@ -199,7 +198,7 @@ class CurrentWeekPomodoroProviderTest {
 
         WeeklyPomodoroDto actual = testee.provideWeeklyPomodoro();
 
-        assertThat(actual.getPomodoro())
+        assertThat(actual.getDailyPomodoro())
                 .extracting(dailyPomodoro -> Tuple.tuple(dailyPomodoro.getPomodoro(), dailyPomodoro.isDayOff(), dailyPomodoro.getDayOfWeek(), dailyPomodoro.getDate()))
                 .containsExactlyElementsOf(List.of(
                         Tuple.tuple(List.of(firstPomodoroDto), false, DayOfWeek.MONDAY, start.toLocalDate()),
@@ -267,7 +266,7 @@ class CurrentWeekPomodoroProviderTest {
 
         WeeklyPomodoroDto actual = testee.provideWeeklyPomodoro();
 
-        assertThat(actual.getPomodoro())
+        assertThat(actual.getDailyPomodoro())
                 .extracting(dailyPomodoro -> Tuple.tuple(dailyPomodoro.getPomodoro(), dailyPomodoro.isDayOff(), dailyPomodoro.getDayOfWeek(), dailyPomodoro.getDate()))
                 .containsExactlyElementsOf(List.of(
                         Tuple.tuple(List.of(firstPomodoroDto), false, DayOfWeek.MONDAY, start.toLocalDate()),

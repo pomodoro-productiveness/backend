@@ -2,6 +2,7 @@ package com.igorgorbunov3333.timer.service.console.command.line.session.processo
 
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.period.MonthlyPomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.month.MonthSessionProcessor;
@@ -9,6 +10,7 @@ import com.igorgorbunov3333.timer.service.console.printer.MonthlyPomodoroReportP
 import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByMonthsDivider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.MonthlyPomodoroProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +33,7 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
     private final MonthlyPomodoroReportPrinter monthlyPomodoroReportPrinter;
     @Getter
     private final CommandProvider commandProvider;
+    private final MonthlyPomodoroProvider monthlyPomodoroProvider;
 
     @Override
     public void process(List<PomodoroDto> pomodoro) {
@@ -70,7 +73,12 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
             Map.Entry<PeriodDto, List<PomodoroDto>> chosenPeriodToMonthlyPomodoro = numberedPeriodsByMonthlyPomodoro.get(numberAnswer);
 
             if (chosenPeriodToMonthlyPomodoro != null) {
-                monthlyPomodoroReportPrinter.print(chosenPeriodToMonthlyPomodoro.getKey(), chosenPeriodToMonthlyPomodoro.getValue());
+                MonthlyPomodoroDto monthlyPomodoroDto = monthlyPomodoroProvider.provideMonthlyPomodoro(
+                        chosenPeriodToMonthlyPomodoro.getKey(),
+                        chosenPeriodToMonthlyPomodoro.getValue()
+                );
+
+                monthlyPomodoroReportPrinter.print(monthlyPomodoroDto);
                 break;
             } else {
                 SimplePrinter.print(String.format("No month under the number %d", numberAnswer));
