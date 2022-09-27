@@ -11,8 +11,9 @@ import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
@@ -31,34 +32,45 @@ public class MonthlyPomodoroProvider implements BasePomodoroProvider {
     private final TagService tagService;
     private final WeeklyPomodoroProvider weeklyPomodoroProvider;
 
-    public MonthlyPomodoroDto provideMonthlyPomodoro(PeriodDto period, List<PomodoroDto> pomodoro) {
+    public MonthlyPomodoroDto providePomodoroForMonth(YearMonth month, List<PomodoroDto> pomodoro) {
         List<WeeklyPomodoroDto> weeklyPomodoro =
-                weeklyPomodoroProvider.provideWeeklyPomodoroForPeriod(period, pomodoro);
+                weeklyPomodoroProvider.provideWeeklyPomodoroForPeriod(month, pomodoro);
+
+        if (CollectionUtils.isEmpty(weeklyPomodoro)) {
+            return MonthlyPomodoroDto.buildEmpty();
+        }
+
+        LocalDateTime start = weeklyPomodoro.get(0).getPeriod().getStart();
+        LocalDateTime end = weeklyPomodoro.get(weeklyPomodoro.size() - 1).getPeriod().getEnd();
+
+        PeriodDto period = new PeriodDto(start, end);
 
         return new MonthlyPomodoroDto(weeklyPomodoro, period);
     }
 
-    public MonthlyPomodoroDto provideCurrentMonthlyPomodoro(List<PomodoroDto> pomodoro) {
-        PeriodDto currentMonthPeriod = getCurrentMonthPeriod();
+    public MonthlyPomodoroDto provideCurrentMonthPomodoro(List<PomodoroDto> pomodoro) {
+        LocalDateTime today = currentTimeService.getCurrentDateTime();
+
+        YearMonth currentMonth = YearMonth.from(today);
 
         List<PomodoroDto> monthlyPomodoro = pomodoro.stream()
-                .filter(p -> !p.getStartTime().toLocalDateTime().isBefore(currentMonthPeriod.getStart())
-                        && !p.getEndTime().toLocalDateTime().isAfter(currentMonthPeriod.getEnd()))
+                .filter(p -> !p.getStartTime().toLocalDateTime().isBefore(currentMonth.atDay(1).atStartOfDay())
+                        && !p.getEndTime().toLocalDateTime().isAfter(today.toLocalDate().atTime(LocalTime.MAX)))
                 .collect(Collectors.toList());
 
         List<WeeklyPomodoroDto> weeklyPomodoro =
-                weeklyPomodoroProvider.provideWeeklyPomodoroForPeriod(currentMonthPeriod, monthlyPomodoro);
+                weeklyPomodoroProvider.provideWeeklyPomodoroForPeriod(currentMonth, monthlyPomodoro);
 
-        return new MonthlyPomodoroDto(weeklyPomodoro, currentMonthPeriod);
-    }
+        if (CollectionUtils.isEmpty(weeklyPomodoro)) {
+            return MonthlyPomodoroDto.buildEmpty();
+        }
 
-    private PeriodDto getCurrentMonthPeriod() {
-        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate(); //TODO: extract common code
+        PeriodDto period = new PeriodDto(
+                weeklyPomodoro.get(0).getPeriod().getStart(),
+                weeklyPomodoro.get(weeklyPomodoro.size() - 1).getPeriod().getEnd()
+        );
 
-        YearMonth yearMonth = YearMonth.from(today); //TODO: extract common code
-        LocalDate startDayOfMonth = yearMonth.atDay(1); //TODO: extract common code
-
-        return new PeriodDto(startDayOfMonth.atStartOfDay(), today.atTime(LocalTime.MAX));
+        return new MonthlyPomodoroDto(weeklyPomodoro, period);
     }
 
 }

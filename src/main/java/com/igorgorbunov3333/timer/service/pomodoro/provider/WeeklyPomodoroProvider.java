@@ -18,7 +18,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -65,8 +67,22 @@ public class WeeklyPomodoroProvider implements BasePomodoroProvider {
         return provide(start, end, null);
     }
 
-    public List<WeeklyPomodoroDto> provideWeeklyPomodoroForPeriod(PeriodDto period, List<PomodoroDto> pomodoro) {
-        List<PeriodDto> weeks = pomodoroByWeekDivider.dividePeriodByWeeks(period);
+    public List<WeeklyPomodoroDto> provideWeeklyPomodoroForPeriod(YearMonth month, List<PomodoroDto> pomodoro) {
+        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();
+
+        LocalDate periodEnd;
+        if (YearMonth.from(today).isAfter(month)) {
+            periodEnd = month.atEndOfMonth();
+        } else {
+            periodEnd = today;
+        }
+
+        PeriodDto monthPeriod = new PeriodDto(
+                month.atDay(1).atStartOfDay(),
+                periodEnd.atTime(LocalTime.MAX)
+        );
+
+        List<PeriodDto> weeks = pomodoroByWeekDivider.dividePeriodByWeeks(monthPeriod);
 
         List<WeeklyPomodoroDto> weeklyPomodoroDto = new ArrayList<>();
         for (PeriodDto currentWeek : weeks) {

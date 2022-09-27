@@ -30,7 +30,7 @@ public class PomodoroMapper {
 
     private List<PomodoroTagDto> mapPomodoroTagToDto(List<PomodoroTag> tags) {
         if (tags == null) {
-            return null;
+            return List.of();
         }
 
         return tags.stream()

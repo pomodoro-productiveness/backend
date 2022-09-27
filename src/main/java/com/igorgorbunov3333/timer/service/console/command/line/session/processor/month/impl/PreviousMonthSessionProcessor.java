@@ -1,6 +1,5 @@
 package com.igorgorbunov3333.timer.service.console.command.line.session.processor.month.impl;
 
-import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.period.MonthlyPomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
@@ -16,7 +15,7 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.time.Month;
+import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -37,13 +36,13 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
 
     @Override
     public void process(List<PomodoroDto> pomodoro) {
-        Map<PeriodDto, List<PomodoroDto>> periodByPomodoro = pomodoroByMonthsDivider.divide(pomodoro);
+        Map<YearMonth, List<PomodoroDto>> monthByPomodoro = pomodoroByMonthsDivider.divide(pomodoro);
 
-        periodByPomodoro.remove(
-                periodByPomodoro.keySet().stream()
-                        .sorted(Comparator.comparing(PeriodDto::getStart))
+        monthByPomodoro.remove(
+                monthByPomodoro.keySet().stream()
+                        .sorted(Comparator.naturalOrder())
                         .collect(Collectors.toList())
-                        .get(periodByPomodoro.size() - 1)
+                        .get(monthByPomodoro.size() - 1)
         );
 
         SimplePrinter.printParagraph();
@@ -51,10 +50,10 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
         SimplePrinter.printParagraph();
 
         int count = 0;
-        Map<Integer, Map.Entry<PeriodDto, List<PomodoroDto>>> numberedPeriodsByMonthlyPomodoro = new LinkedHashMap<>();
-        for (Map.Entry<PeriodDto, List<PomodoroDto>> entry : periodByPomodoro.entrySet()) {
+        Map<Integer, Map.Entry<YearMonth, List<PomodoroDto>>> numberedPeriodsByMonthlyPomodoro = new LinkedHashMap<>();
+        for (Map.Entry<YearMonth, List<PomodoroDto>> entry : monthByPomodoro.entrySet()) {
             SimplePrinter.print(++count + PrintUtil.DOT + StringUtils.SPACE
-                    + Month.from(entry.getKey().getStart())
+                    + entry.getKey().getMonth()
                     .getDisplayName(TextStyle.FULL, Locale.getDefault())
                     .toUpperCase());
 
@@ -70,10 +69,10 @@ public class PreviousMonthSessionProcessor implements MonthSessionProcessor, Num
                 return;
             }
 
-            Map.Entry<PeriodDto, List<PomodoroDto>> chosenPeriodToMonthlyPomodoro = numberedPeriodsByMonthlyPomodoro.get(numberAnswer);
+            Map.Entry<YearMonth, List<PomodoroDto>> chosenPeriodToMonthlyPomodoro = numberedPeriodsByMonthlyPomodoro.get(numberAnswer);
 
             if (chosenPeriodToMonthlyPomodoro != null) {
-                MonthlyPomodoroDto monthlyPomodoroDto = monthlyPomodoroProvider.provideMonthlyPomodoro(
+                MonthlyPomodoroDto monthlyPomodoroDto = monthlyPomodoroProvider.providePomodoroForMonth(
                         chosenPeriodToMonthlyPomodoro.getKey(),
                         chosenPeriodToMonthlyPomodoro.getValue()
                 );

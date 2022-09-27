@@ -1,6 +1,5 @@
 package com.igorgorbunov3333.timer.service.pomodoro.period;
 
-import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
@@ -22,48 +21,35 @@ public class PomodoroByMonthsDivider {
 
     private final CurrentTimeService currentTimeService;
 
-    public Map<PeriodDto, List<PomodoroDto>> divide(List<PomodoroDto> pomodoro) {
+    public Map<YearMonth, List<PomodoroDto>> divide(List<PomodoroDto> pomodoro) {
         LocalDateTime localTime = currentTimeService.getCurrentDateTime();
         YearMonth currentYearMonth = YearMonth.from(localTime);
 
         LocalDate yearStart = LocalDate.of(currentYearMonth.getYear(), 1, 1);
         LocalDate today = localTime.toLocalDate();
 
-        List<PeriodDto> monthlyPeriods = new ArrayList<>();
+        List<YearMonth> months = new ArrayList<>();
 
         LocalDate current = yearStart;
         while (!current.isAfter(today)) {
-            PeriodDto monthPeriod = getCurrentMonthByDate(current);
+            YearMonth month = YearMonth.from(current);
 
-            if (current.isAfter(today)) {
-                monthPeriod = new PeriodDto(monthPeriod.getStart(), today.atTime(LocalTime.MAX));
-            }
+            months.add(month);
 
-            monthlyPeriods.add(monthPeriod);
-
-            current = monthPeriod.getEnd().toLocalDate().plusDays(1L);
+            current = month.atEndOfMonth().plusDays(1L);
         }
 
-        Map<PeriodDto, List<PomodoroDto>> periodsByPomodoro = new LinkedHashMap<>();
-        for (PeriodDto period : monthlyPeriods) {
+        Map<YearMonth, List<PomodoroDto>> periodsByPomodoro = new LinkedHashMap<>();
+        for (YearMonth month : months) {
             List<PomodoroDto> monthlyPomodoro = pomodoro.stream()
-                    .filter(p -> !p.getStartTime().toLocalDateTime().isBefore(period.getStart())
-                            && !p.getStartTime().toLocalDateTime().isAfter(period.getEnd()))
+                    .filter(p -> !p.getStartTime().toLocalDateTime().isBefore(month.atDay(1).atStartOfDay())
+                            && !p.getStartTime().toLocalDateTime().isAfter(month.atEndOfMonth().atTime(LocalTime.MAX)))
                     .collect(Collectors.toList());
 
-            periodsByPomodoro.put(period, monthlyPomodoro);
+            periodsByPomodoro.put(month, monthlyPomodoro);
         }
 
         return periodsByPomodoro;
-    }
-
-    private PeriodDto getCurrentMonthByDate(LocalDate date) {
-        YearMonth currentMonth = YearMonth.from(date);
-
-        LocalDateTime startPeriod = currentMonth.atDay(1).atStartOfDay();
-        LocalDateTime endPeriod = currentMonth.atEndOfMonth().atTime(LocalTime.MAX);
-
-        return new PeriodDto(startPeriod, endPeriod);
     }
 
 }

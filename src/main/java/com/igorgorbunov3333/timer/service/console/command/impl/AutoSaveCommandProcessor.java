@@ -99,7 +99,7 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
         } catch (FreeSlotException e) {
             String errorMessage = e.getMessage();
             SimplePrinter.print(errorMessage);
-            return null;
+            return List.of();
         }
     }
 

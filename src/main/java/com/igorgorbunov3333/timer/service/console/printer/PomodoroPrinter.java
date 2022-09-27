@@ -48,7 +48,7 @@ public class PomodoroPrinter {
             numberedPomodoroWithRearrangedTags.put(entry.getKey(), singlePomodoroWithRearrangedTags);
         }
 
-        Map<Integer, PomodoroDto> pomodoroWithAlignedTagsByLength = alignPomodoroTags(numberedPomodoroWithRearrangedTags);
+        alignPomodoroTags(numberedPomodoroWithRearrangedTags);
 
         ListOfItemsPrinter.print(numberedPomodoroWithRearrangedTags, this::mapToString);
     }

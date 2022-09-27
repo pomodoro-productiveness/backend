@@ -16,20 +16,16 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class MonthlyPomodoroDto {
+public class YearlyPomodoroDto {
 
-    private List<WeeklyPomodoroDto> weeklyPomodoro;
+    private List<MonthlyPomodoroDto> monthlyPomodoro;
     private PeriodDto period;
 
     @JsonIgnore
     public List<PomodoroDto> getPomodoro() {
-        return weeklyPomodoro.stream()
-                .flatMap(weeklyPomodoroDto -> weeklyPomodoroDto.getPomodoro().stream())
+        return monthlyPomodoro.stream()
+                .flatMap(p -> p.getPomodoro().stream())
                 .collect(Collectors.toList());
-    }
-
-    public static MonthlyPomodoroDto buildEmpty() {
-        return new MonthlyPomodoroDto(List.of(), null);
     }
 
 }

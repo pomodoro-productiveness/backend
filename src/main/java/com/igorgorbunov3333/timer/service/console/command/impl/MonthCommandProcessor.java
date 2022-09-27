@@ -1,12 +1,13 @@
 package com.igorgorbunov3333.timer.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.model.dto.pomodoro.period.YearlyPomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
 import com.igorgorbunov3333.timer.service.console.command.line.session.coordinator.MonthSessionCommandCoordinator;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentYearPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.YearlyPomodoroProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MonthCommandProcessor implements CommandProcessor, NumberProvidable {
 
-    private final CurrentYearPomodoroProvider currentYearPomodoroProvider;
+    private final YearlyPomodoroProvider yearlyPomodoroProvider;
     @Getter
     private final CommandProvider commandProvider;
     private final MonthSessionCommandCoordinator monthSessionCommandCoordinator;
@@ -26,7 +27,7 @@ public class MonthCommandProcessor implements CommandProcessor, NumberProvidable
     @Override
     @Transactional(readOnly = true)
     public void process() {
-        List<PomodoroDto> yearlyPomodoro = currentYearPomodoroProvider.provide(null);
+        YearlyPomodoroDto yearlyPomodoro = yearlyPomodoroProvider.provideCurrentYearPomodoro(null);
 
         while (true) {
             SimplePrinter.print("Choose an option how to display monthly pomodoro or \"e\" to exit");
@@ -44,7 +45,7 @@ public class MonthCommandProcessor implements CommandProcessor, NumberProvidable
             if (numberAnswer > 2) {
                 SimplePrinter.print("Wrong number. Try again");
             } else {
-                monthSessionCommandCoordinator.coordinate(String.valueOf(numberAnswer), yearlyPomodoro);
+                monthSessionCommandCoordinator.coordinate(String.valueOf(numberAnswer), yearlyPomodoro.getPomodoro());
             }
         }
 

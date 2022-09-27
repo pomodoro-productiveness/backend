@@ -18,7 +18,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class TagCreationSessionProcessor implements TagSessionProcessor {
 
-    private final static int TAG_MAX_LENGTH = 30;
+    private static final int TAG_MAX_LENGTH = 30;
 
     private final TagService tagService;
     private final CommandProvider commandProvider;

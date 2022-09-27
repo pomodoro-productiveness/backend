@@ -20,7 +20,7 @@ public class CurrentMonthSessionProcessor implements MonthSessionProcessor {
 
     @Override
     public void process(List<PomodoroDto> pomodoro) {
-        MonthlyPomodoroDto monthlyPomodoroDto = monthlyPomodoroProvider.provideCurrentMonthlyPomodoro(pomodoro);
+        MonthlyPomodoroDto monthlyPomodoroDto = monthlyPomodoroProvider.provideCurrentMonthPomodoro(pomodoro);
 
         monthlyPomodoroReportPrinter.print(monthlyPomodoroDto);
 

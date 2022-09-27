@@ -45,6 +45,8 @@ public class PomodoroByWeekDivider {
 
             if (endPeriod.toLocalDate().isAfter(today)) {
                 endPeriod = today.atTime(LocalTime.MAX);
+            } else if (endPeriod.toLocalDate().isAfter(endDate)) {
+                endPeriod = endDate.atTime(LocalTime.MAX);
             }
 
             period = new PeriodDto(startPeriod, endPeriod);
