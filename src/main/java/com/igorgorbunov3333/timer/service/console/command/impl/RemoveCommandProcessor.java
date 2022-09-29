@@ -23,7 +23,6 @@ public class RemoveCommandProcessor implements CommandProcessor, NumberProvidabl
 
     @Override
     public void process() {
-        SimplePrinter.printParagraph();
         SimplePrinter.print("Choose pomodoro to remove:");
 
         PomodoroDto chosenPomodoro = dailySinglePomodoroFromUserProvider.provide();
@@ -32,18 +31,22 @@ public class RemoveCommandProcessor implements CommandProcessor, NumberProvidabl
             return;
         }
 
+        SimplePrinter.printParagraph();
         SimplePrinter.print("Are you sure you want to delete pomodoro " + chosenPomodoro);
         SimplePrinter.printYesNoQuestion();
+        SimplePrinter.printParagraph();
 
         String answer = commandProvider.provideLine();
 
         if (!answer.toLowerCase().startsWith("y")) {
+            SimplePrinter.printParagraph();
             SimplePrinter.print("Pomodoro will not be deleted");
             return;
         }
 
         pomodoroRemover.remove(chosenPomodoro.getId());
 
+        SimplePrinter.printParagraph();
         SimplePrinter.print("Pomodoro [" + chosenPomodoro + "] removed successfully");
     }
 

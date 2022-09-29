@@ -254,9 +254,7 @@ public class PomodoroPrinter {
 
                 PomodoroTagDto currentTag = pomodoro.getTags().get(i);
                 String currentTagName = currentTag.getName();
-                if (maxLengthForCurrentPosition == null) {
-                    tagMaxLengthForEachPosition.put(i, currentTagName.length());
-                } else if (maxLengthForCurrentPosition < currentTagName.length()) {
+                if (maxLengthForCurrentPosition == null || maxLengthForCurrentPosition < currentTagName.length()) {
                     tagMaxLengthForEachPosition.put(i, currentTagName.length());
                 }
             }
