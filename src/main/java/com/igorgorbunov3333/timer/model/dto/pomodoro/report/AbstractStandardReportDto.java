@@ -10,5 +10,6 @@ public abstract class AbstractStandardReportDto {
     private final int standardAmount;
     private final int differenceAmount;
     private final int actualAmount;
+    private final double ratio;
 
 }
