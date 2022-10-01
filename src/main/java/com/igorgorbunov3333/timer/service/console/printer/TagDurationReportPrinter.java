@@ -57,8 +57,6 @@ public class TagDurationReportPrinter {
         for (ReportRow row : reportRows) {
             printRow(maxTagLength, space, dash, row);
         }
-
-        SimplePrinter.printParagraph();
     }
 
     private void printRow(int maxTagLength, String space, String dash, ReportRow row) {

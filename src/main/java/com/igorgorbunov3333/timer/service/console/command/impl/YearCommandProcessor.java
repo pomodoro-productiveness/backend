@@ -29,9 +29,16 @@ public class YearCommandProcessor implements CommandProcessor {
         YearlyPomodoroDto yearlyPomodoro = yearlyPomodoroProvider.provideCurrentYearPomodoro(null);
 
         int counter = 0;
+        boolean first = true;
         for (MonthlyPomodoroDto monthlyPomodoro : yearlyPomodoro.getMonthlyPomodoro()) {
             Month month = Month.from(monthlyPomodoro.getPeriod().getStart());
-            SimplePrinter.printParagraph();
+
+            if (!first) {
+                SimplePrinter.printParagraph();
+            } else {
+                first = false;
+            }
+
             SimplePrinter.print(++counter + PrintUtil.DOT + StringUtils.SPACE +  month.getDisplayName(TextStyle.FULL, Locale.getDefault()).toUpperCase());
             standardReportPrinter.print(monthlyPomodoro.getPeriod(), monthlyPomodoro.getPomodoro());
             tagDurationReportPrinter.print(monthlyPomodoro.getPomodoro());

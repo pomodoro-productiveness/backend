@@ -4,6 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.service.console.printer.PomodoroPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
+import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
@@ -21,19 +22,19 @@ public class DefaultPrinterService implements PrinterService {
 
     @Override
     public void printFeaturesList() {
-        System.out.println("1. start");
-        System.out.println("2. stop");
-        System.out.println("3. current time");
-        System.out.println("4. pomodoro today");
-        System.out.println("5. pomodoro today extended");
-        System.out.println("6. pomodoro for the current month");
-        System.out.println("Type \"help\" to list all available features");
-        System.out.println("Type \"remove\" to remove latest pomodoro or specify pomodoro id. For example \"remove 10\"");
-        System.out.println("Type \"save\" for saving pomodoro automatically. Specify number after whitespace to save multiple pomodoro");
-        System.out.println("Type \"week\" to list all pomodoros for current week");
-        System.out.println("Type \"year\" to list all pomodoros for current year");
-        System.out.println("Type \"tag\" to enter tag menu");
-        System.out.println("Type \"e\" to exit");
+        SimplePrinter.print("1. start");
+        SimplePrinter.print("2. stop");
+        SimplePrinter.print("3. current time");
+        SimplePrinter.print("4. pomodoro today");
+        SimplePrinter.print("5. pomodoro today extended");
+        SimplePrinter.print("6. pomodoro for the current month");
+        SimplePrinter.print("Type \"help\" to list all available features");
+        SimplePrinter.print("Type \"remove\" to remove latest pomodoro or specify pomodoro id. For example \"remove 10\"");
+        SimplePrinter.print("Type \"save\" for saving pomodoro automatically. Specify number after whitespace to save multiple pomodoro");
+        SimplePrinter.print("Type \"week\" to list all pomodoros for current week");
+        SimplePrinter.print("Type \"year\" to list all pomodoros for current year");
+        SimplePrinter.print("Type \"tag\" to enter tag menu");
+        SimplePrinter.print("Type \"e\" to exit");
     }
 
     @Override
@@ -43,9 +44,14 @@ public class DefaultPrinterService implements PrinterService {
 
     @Override
     public void printDayOfWeekToPomodoro(Map<String, List<PomodoroDto>> weeklyPomodoro) {
+        boolean first = true;
         for (Map.Entry<String, List<PomodoroDto>> entry : weeklyPomodoro.entrySet()) {
-            System.out.println();
-            System.out.println(entry.getKey());
+            if (!first) {
+                SimplePrinter.printParagraph();
+            } else {
+                first = false;
+            }
+            SimplePrinter.print(entry.getKey());
             List<PomodoroDto> dailyPomodoro = entry.getValue();
             printPomodoroWithIdsAndTags(dailyPomodoro);
         }
@@ -53,7 +59,7 @@ public class DefaultPrinterService implements PrinterService {
 
     private void printPomodoroListWithIdsAndTags(List<PomodoroDto> pomodoroList) {
         if (pomodoroList.isEmpty()) {
-            System.out.println(PrintUtil.MESSAGE_NO_POMODORO);
+            SimplePrinter.print(PrintUtil.MESSAGE_NO_POMODORO);
             return;
         }
         long pomodoroDurationInSeconds = 0;
@@ -68,8 +74,8 @@ public class DefaultPrinterService implements PrinterService {
 
         pomodoroPrinter.print(numberToPomodoro);
 
-        System.out.println("Pomodoro amount - " + pomodoroList.size());
-        System.out.println("Total time - " + SecondsFormatter.formatInHours(pomodoroDurationInSeconds));
+        SimplePrinter.print("Pomodoro amount - " + pomodoroList.size());
+        SimplePrinter.print("Total time - " + SecondsFormatter.formatInHours(pomodoroDurationInSeconds));
     }
 
 }
