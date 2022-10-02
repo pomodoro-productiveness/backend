@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.model.event.PomodoroStoppedSpringEvent;
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.saver.PomodoroSaver;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationListener;
@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PomodoroStoppedEventListener implements ApplicationListener<PomodoroStoppedSpringEvent> {
 
-    private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
+    private final DailyPomodoroProvider currentDayLocalPomodoroProvider;
     private final PomodoroSaver pomodoroSaver;
     private final PrinterService printerService;
 
@@ -28,7 +28,7 @@ public class PomodoroStoppedEventListener implements ApplicationListener<Pomodor
         String successfullySavedMessage = PrintUtil.MESSAGE_POMODORO_SAVED + savedPomodoro;
         SimplePrinter.print(successfullySavedMessage);
         SimplePrinter.printParagraph();
-        List<PomodoroDto> pomodoro = currentDayLocalPomodoroProvider.provide(null);
+        List<PomodoroDto> pomodoro = currentDayLocalPomodoroProvider.provideForCurrentDay(null);
         printerService.printPomodoroWithIdsAndTags(pomodoro);
     }
 

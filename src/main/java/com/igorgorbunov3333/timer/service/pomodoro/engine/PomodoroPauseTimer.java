@@ -38,6 +38,7 @@ public class PomodoroPauseTimer {
                 player.stop();
 
                 SimplePrinter.print(String.format("Pomodoro paused at %s", pomodoroEngineService.getPomodoroCurrentDuration()));
+                SimplePrinter.printParagraph();
 
                 break;
             }

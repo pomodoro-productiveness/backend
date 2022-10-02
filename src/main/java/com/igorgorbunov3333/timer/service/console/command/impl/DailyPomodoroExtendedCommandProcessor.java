@@ -8,7 +8,7 @@ import com.igorgorbunov3333.timer.service.console.printer.StandardReportPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyPomodoroProvider;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor {
 
     private final PomodoroEngineService pomodoroEngineService;
     private final PomodoroEngine pomodoroEngine;
-    private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
+    private final DailyPomodoroProvider currentDayLocalPomodoroProvider;
     private final PrinterService printerService;
     private final StandardReportPrinter standardReportPrinter;
     private final CurrentTimeService currentTimeService;
@@ -32,7 +32,7 @@ public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor {
     @Override
     @Transactional(readOnly = true)
     public void process() {
-        List<PomodoroDto> pomodoro = currentDayLocalPomodoroProvider.provide(null);
+        List<PomodoroDto> pomodoro = currentDayLocalPomodoroProvider.provideForCurrentDay(null);
 
         printerService.printPomodoroWithIdsAndTags(pomodoro);
 

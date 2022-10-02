@@ -8,7 +8,7 @@ import com.igorgorbunov3333.timer.service.console.command.line.session.processor
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.DailySinglePomodoroFromUserProvider;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyPomodoroProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class TagRemappingSessionProcessor extends AbstractPomodoroSessionMapper implements TagSessionProcessor {
 
     @Getter
-    private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
+    private final DailyPomodoroProvider currentDayLocalPomodoroProvider;
     @Getter
     private final PrinterService printerService;
     @Getter

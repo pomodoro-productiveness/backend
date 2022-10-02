@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandP
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
 import com.igorgorbunov3333.timer.service.console.printer.PomodoroPrinter;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyPomodoroProvider;
 import com.igorgorbunov3333.timer.service.util.NumberToItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,14 +19,14 @@ import java.util.Map;
 @AllArgsConstructor
 public class DailySinglePomodoroFromUserProvider implements NumberProvidable {
 
-    private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
+    private final DailyPomodoroProvider currentDayLocalPomodoroProvider;
 
     @Getter
     private final CommandProvider commandProvider;
     private final PomodoroPrinter pomodoroPrinter;
 
     public PomodoroDto provide() {
-        List<PomodoroDto> dailyPomodoro = currentDayLocalPomodoroProvider.provide(null);
+        List<PomodoroDto> dailyPomodoro = currentDayLocalPomodoroProvider.provideForCurrentDay(null);
 
         if (CollectionUtils.isEmpty(dailyPomodoro)) {
             SimplePrinter.print("There are no daily pomodoro");

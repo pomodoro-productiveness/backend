@@ -11,7 +11,7 @@ import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.service.pomodoro.engine.PomodoroEngineService;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyPomodoroProvider;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +30,7 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
     @Getter
     private final PrinterService printerService;
     @Getter
-    private final CurrentDayPomodoroProvider currentDayLocalPomodoroProvider;
+    private final DailyPomodoroProvider currentDayLocalPomodoroProvider;
     @Getter
     private final TagPomodoroSessionMapper tagPomodoroSessionMapper;
     private final StandardReportPrinter standardReportPrinter;
@@ -43,6 +43,7 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
         if (pomodoroEngine.isPomodoroPaused()) {
             SimplePrinter.print("Pomodoro paused. Are you sure you want to stop pomodoro?");
             SimplePrinter.printYesNoQuestion();
+            SimplePrinter.printParagraph();
 
             String answer = provideLine();
 

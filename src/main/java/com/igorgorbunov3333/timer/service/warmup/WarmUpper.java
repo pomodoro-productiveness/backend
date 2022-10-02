@@ -1,6 +1,7 @@
 package com.igorgorbunov3333.timer.service.warmup;
 
 import com.igorgorbunov3333.timer.service.dayoff.DayOffSynchronizer;
+import com.igorgorbunov3333.timer.service.message.DailyMessageSender;
 import com.igorgorbunov3333.timer.service.pomodoro.calendar.PomodoroCalendarEventProcessor;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ public class WarmUpper {
 
     private final PomodoroCalendarEventProcessor pomodoroCalendarEventProcessor;
     private final DayOffSynchronizer dayOffSynchronizer;
+    private final DailyMessageSender dailyMessageSender;
 
     @EventListener({ContextRefreshedEvent.class})
     void onStartup() {
@@ -23,6 +25,7 @@ public class WarmUpper {
 
         pomodoroCalendarEventProcessor.process();
         dayOffSynchronizer.synchronize();
+        dailyMessageSender.send();
 
         log.info("WarmUpper successfully finished");
     }

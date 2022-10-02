@@ -17,7 +17,11 @@ public class EducationTimeStandardReportCalculator implements EducationStandardA
     public EducationTimeStandardReportDto calculate(PeriodDto period, int pomodoroAmount) {
         int standardAmount = calculateEducationStandardAmount(period);
         int balanceAmount = pomodoroAmount - standardAmount;
-        double ratio = (double) pomodoroAmount / standardAmount;
+        double ratio = 0.0;
+
+        if (standardAmount > 0) {
+            ratio = (double) pomodoroAmount / standardAmount;
+        }
 
         return new EducationTimeStandardReportDto(standardAmount, balanceAmount, pomodoroAmount, ratio);
     }

@@ -5,13 +5,13 @@ import com.igorgorbunov3333.timer.service.console.command.line.session.TagPomodo
 import com.igorgorbunov3333.timer.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.CurrentDayPomodoroProvider;
+import com.igorgorbunov3333.timer.service.pomodoro.provider.impl.DailyPomodoroProvider;
 
 import java.util.List;
 
 public abstract class AbstractPomodoroSessionMapper {
 
-    public abstract CurrentDayPomodoroProvider getCurrentDayLocalPomodoroProvider();
+    public abstract DailyPomodoroProvider getCurrentDayLocalPomodoroProvider();
     public abstract PrinterService getPrinterService();
     public abstract TagPomodoroSessionMapper getTagPomodoroSessionMapper();
 
@@ -26,11 +26,11 @@ public abstract class AbstractPomodoroSessionMapper {
 
         getTagPomodoroSessionMapper().addTagToPomodoro(pomodoroId);
 
-        return getAndPrintDailyPomodoro();
+        return getAndPrintCurrentDayPomodoro();
     }
 
-    private List<PomodoroDto> getAndPrintDailyPomodoro() {
-        List<PomodoroDto> pomodoro = getCurrentDayLocalPomodoroProvider().provide(null);
+    private List<PomodoroDto> getAndPrintCurrentDayPomodoro() {
+        List<PomodoroDto> pomodoro = getCurrentDayLocalPomodoroProvider().provideForCurrentDay(null);
         getPrinterService().printPomodoroWithIdsAndTags(pomodoro);
 
         return pomodoro;
