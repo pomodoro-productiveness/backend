@@ -70,7 +70,7 @@ public class DailyMessageSender {
                 + ", in percents: " + (int) (reportDto.getEducation().getRatio() * 100) + "%";
         String generalStandardRow = "General standard: "
                 + reportDto.getAmount().getActualAmount()
-                + "/" + reportDto.getEducation().getStandardAmount() + StringUtils.SPACE
+                + "/" + reportDto.getAmount().getStandardAmount() + StringUtils.SPACE
                 + ", in percents: " + (int) (reportDto.getAmount().getRatio() * 100) + "%";
 
         return String.join("\n", header, workStandardRow, educationStandardRow, generalStandardRow);

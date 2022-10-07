@@ -26,13 +26,7 @@ public class GeneralAmountStandardReportCalculator implements WorkStandardAmount
 
         int balance = pomodoroAmount - generalStandardAmount;
 
-        double ratio = 0.0;
-
-        if (generalStandardAmount > 0) {
-            ratio = (double) pomodoroAmount / generalStandardAmount;
-        }
-
-        return new GeneralAmountStandardReportDto(generalStandardAmount, balance, pomodoroAmount, ratio);
+        return new GeneralAmountStandardReportDto(generalStandardAmount, balance, pomodoroAmount);
     }
 
 }

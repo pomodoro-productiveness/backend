@@ -20,13 +20,8 @@ public class WorkTimeStandardReportCalculator implements WorkStandardAmountCalcu
     public WorkTimeStandardReportDto calculate(PeriodDto period, int pomodoroAmount, List<LocalDate> dayOffs) {
         int standardAmount = calculateWorkStandardAmount(period, dayOffs);
         int balanceAmount = pomodoroAmount - standardAmount;
-        double ratio = 0.0;
 
-        if (standardAmount > 0) {
-            ratio = (double) pomodoroAmount / standardAmount;
-        }
-
-        return new WorkTimeStandardReportDto(standardAmount, balanceAmount, pomodoroAmount, ratio);
+        return new WorkTimeStandardReportDto(standardAmount, balanceAmount, pomodoroAmount);
     }
 
 }
