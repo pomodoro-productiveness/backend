@@ -13,6 +13,7 @@ import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
@@ -33,8 +34,12 @@ public class MonthlyPomodoroProvider implements BasePomodoroProvider {
     private final WeeklyPomodoroProvider weeklyPomodoroProvider;
 
     public MonthlyPomodoroDto providePomodoroForMonth(YearMonth month, List<PomodoroDto> pomodoro) {
+        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();
+
+        PeriodDto monthPeriod = getMonthPeriod(month, today);
+
         List<WeeklyPomodoroDto> weeklyPomodoro =
-                weeklyPomodoroProvider.provideWeeklyPomodoroForPeriod(month, pomodoro);
+                weeklyPomodoroProvider.provideWeeklyPomodoroForPeriod(pomodoro, monthPeriod);
 
         if (CollectionUtils.isEmpty(weeklyPomodoro)) {
             return MonthlyPomodoroDto.buildEmpty();
@@ -53,13 +58,15 @@ public class MonthlyPomodoroProvider implements BasePomodoroProvider {
 
         YearMonth currentMonth = YearMonth.from(today);
 
+        PeriodDto monthPeriod = getMonthPeriod(currentMonth, today.toLocalDate());
+
         List<PomodoroDto> monthlyPomodoro = pomodoro.stream()
                 .filter(p -> !p.getStartTime().toLocalDateTime().isBefore(currentMonth.atDay(1).atStartOfDay())
                         && !p.getEndTime().toLocalDateTime().isAfter(today.toLocalDate().atTime(LocalTime.MAX)))
                 .collect(Collectors.toList());
 
         List<WeeklyPomodoroDto> weeklyPomodoro =
-                weeklyPomodoroProvider.provideWeeklyPomodoroForPeriod(currentMonth, monthlyPomodoro);
+                weeklyPomodoroProvider.provideWeeklyPomodoroForPeriod(monthlyPomodoro, monthPeriod);
 
         if (CollectionUtils.isEmpty(weeklyPomodoro)) {
             return MonthlyPomodoroDto.buildEmpty();
@@ -71,6 +78,20 @@ public class MonthlyPomodoroProvider implements BasePomodoroProvider {
         );
 
         return new MonthlyPomodoroDto(weeklyPomodoro, period);
+    }
+
+    private PeriodDto getMonthPeriod(YearMonth month, LocalDate today) {
+        LocalDate periodEnd;
+        if (YearMonth.from(today).isAfter(month)) {
+            periodEnd = month.atEndOfMonth();
+        } else {
+            periodEnd = today;
+        }
+
+        return new PeriodDto(
+                month.atDay(1).atStartOfDay(),
+                periodEnd.atTime(LocalTime.MAX)
+        );
     }
 
 }

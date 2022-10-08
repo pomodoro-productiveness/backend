@@ -33,7 +33,7 @@ public class WeekCommandProcessor implements CommandProcessor {
     @Override
     @Transactional(readOnly = true)
     public void process() {
-        WeeklyPomodoroDto weeklyPomodoroDto = currentWeekLocalPomodoroProvider.provideWeeklyPomodoro();
+        WeeklyPomodoroDto weeklyPomodoroDto = currentWeekLocalPomodoroProvider.provideCurrentWeekPomodoro();
 
         Map<String, List<PomodoroDto>> weeklyPomodoro = mapToDayOfWeekWithDayOffToPomodoro(weeklyPomodoroDto);
 

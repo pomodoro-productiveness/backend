@@ -54,7 +54,7 @@ class WeeklyPomodoroProviderTest {
         ZonedDateTime end = currentDayTime.toLocalDate().atTime(LocalTime.MAX).atZone(CURRENT_ZONE_ID);
         when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(start, end)).thenReturn(List.of());
 
-        WeeklyPomodoroDto actual = testee.provideWeeklyPomodoro();
+        WeeklyPomodoroDto actual = testee.provideCurrentWeekPomodoro();
 
         assertThat(actual.getPomodoro()).isEmpty();
     }
@@ -77,7 +77,7 @@ class WeeklyPomodoroProviderTest {
         when(pomodoroMapper.mapToDto(firstPomodoro)).thenReturn(firstPomodoroDto);
         when(pomodoroMapper.mapToDto(secondPomodoro)).thenReturn(secondPomodoroDto);
 
-        WeeklyPomodoroDto actual = testee.provideWeeklyPomodoro();
+        WeeklyPomodoroDto actual = testee.provideCurrentWeekPomodoro();
 
         assertThat(actual.getDailyPomodoro())
                 .extracting(dailyPomodoro -> Tuple.tuple(dailyPomodoro.getPomodoro(), dailyPomodoro.isDayOff(), dailyPomodoro.getDayOfWeek(), dailyPomodoro.getDate()))
@@ -107,7 +107,7 @@ class WeeklyPomodoroProviderTest {
         when(pomodoroMapper.mapToDto(secondDayPomodoro)).thenReturn(secondPomodoroDto);
         when(pomodoroMapper.mapToDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
 
-        WeeklyPomodoroDto actual = testee.provideWeeklyPomodoro();
+        WeeklyPomodoroDto actual = testee.provideCurrentWeekPomodoro();
 
         assertThat(actual.getDailyPomodoro())
                 .extracting(dailyPomodoro -> Tuple.tuple(dailyPomodoro.getPomodoro(), dailyPomodoro.isDayOff(), dailyPomodoro.getDayOfWeek(), dailyPomodoro.getDate()))
@@ -138,7 +138,7 @@ class WeeklyPomodoroProviderTest {
         when(pomodoroMapper.mapToDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
         when(pomodoroMapper.mapToDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
 
-        WeeklyPomodoroDto actual = testee.provideWeeklyPomodoro();
+        WeeklyPomodoroDto actual = testee.provideCurrentWeekPomodoro();
 
         assertThat(actual.getDailyPomodoro())
                 .extracting(dailyPomodoro -> Tuple.tuple(dailyPomodoro.getPomodoro(), dailyPomodoro.isDayOff(), dailyPomodoro.getDayOfWeek(), dailyPomodoro.getDate()))
@@ -196,7 +196,7 @@ class WeeklyPomodoroProviderTest {
         when(pomodoroMapper.mapToDto(sixthDayPomodoro)).thenReturn(sixthPomodoroDto);
         when(pomodoroMapper.mapToDto(seventhDayPomodoro)).thenReturn(seventhPomodoroDto);
 
-        WeeklyPomodoroDto actual = testee.provideWeeklyPomodoro();
+        WeeklyPomodoroDto actual = testee.provideCurrentWeekPomodoro();
 
         assertThat(actual.getDailyPomodoro())
                 .extracting(dailyPomodoro -> Tuple.tuple(dailyPomodoro.getPomodoro(), dailyPomodoro.isDayOff(), dailyPomodoro.getDayOfWeek(), dailyPomodoro.getDate()))
@@ -264,7 +264,7 @@ class WeeklyPomodoroProviderTest {
         when(dayOffRepository.findByDayGreaterThanEqualAndDayLessThanEqualOrderByDay(start.toLocalDate(), end.toLocalDate()))
                 .thenReturn(List.of(dayOffMock));
 
-        WeeklyPomodoroDto actual = testee.provideWeeklyPomodoro();
+        WeeklyPomodoroDto actual = testee.provideCurrentWeekPomodoro();
 
         assertThat(actual.getDailyPomodoro())
                 .extracting(dailyPomodoro -> Tuple.tuple(dailyPomodoro.getPomodoro(), dailyPomodoro.isDayOff(), dailyPomodoro.getDayOfWeek(), dailyPomodoro.getDate()))

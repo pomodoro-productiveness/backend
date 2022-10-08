@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.service.pomodoro.period;
+package com.igorgorbunov3333.timer.service.period;
 
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
@@ -15,10 +15,19 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class PomodoroByWeekDivider {
+public class WeekPeriodHelper {
 
     @Getter
     private final CurrentTimeService currentTimeService;
+
+    public PeriodDto providePreviousWeekPeriod() {
+        LocalDate currentDate = currentTimeService.getCurrentDateTime().toLocalDate();
+
+        DayOfWeek currentDateDayOfWeek = DayOfWeek.from(currentDate);
+        LocalDate previousWeekSunday = currentDate.minusDays(currentDateDayOfWeek.getValue());
+
+        return getWeekByDate(previousWeekSunday);
+    }
 
     public List<PeriodDto> dividePeriodByWeeks(PeriodDto period) {
         LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();

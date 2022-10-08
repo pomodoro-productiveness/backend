@@ -12,7 +12,7 @@ import com.igorgorbunov3333.timer.repository.PomodoroTagRepository;
 import com.igorgorbunov3333.timer.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.service.mapper.TagMapper;
 import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByMonthsDivider;
-import com.igorgorbunov3333.timer.service.pomodoro.period.PomodoroByWeekDivider;
+import com.igorgorbunov3333.timer.service.period.WeekPeriodHelper;
 import com.igorgorbunov3333.timer.service.tag.TagService;
 import com.igorgorbunov3333.timer.service.tag.impl.DefaultTagService;
 import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
         MonthlyPomodoroProvider.class,
         TagMapper.class,
         WeeklyPomodoroProvider.class,
-        PomodoroByWeekDivider.class
+        WeekPeriodHelper.class
 })
 class YearlyPomodoroProviderIT {
 
