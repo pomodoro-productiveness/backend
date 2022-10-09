@@ -22,7 +22,9 @@ public class TagRemovingSessionProcessor implements TagSessionProcessor, NumberP
 
     @Override
     public void process(Map<Integer, PomodoroTagDto> tags) {
+        SimplePrinter.printParagraph();
         SimplePrinter.print("Enter the tag number to remove tag or press \"e\" to exit");
+        SimplePrinter.printParagraph();
 
         PomodoroTagDto chosenTag;
         while (true) {
@@ -41,6 +43,7 @@ public class TagRemovingSessionProcessor implements TagSessionProcessor, NumberP
 
         tagService.removeTag(chosenTag.getName());
 
+        SimplePrinter.printParagraph();
         SimplePrinter.print("Pomodoro tag successfully removed");
     }
 

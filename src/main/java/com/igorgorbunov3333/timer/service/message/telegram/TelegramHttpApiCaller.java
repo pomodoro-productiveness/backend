@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.service.message;
+package com.igorgorbunov3333.timer.service.message.telegram;
 
 import com.igorgorbunov3333.timer.config.properties.TelegramProperties;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.Map;
 @Slf4j
 @Component
 @AllArgsConstructor
-public class TelegramMessageSender {
+public class TelegramHttpApiCaller {
 
     private final TelegramProperties telegramProperties;
 

@@ -24,9 +24,11 @@ public class TagCommandSessionStarter {
         SimplePrinter.print("Press 3 to remap tags for pomodoro");
         SimplePrinter.print("Press 4 to update tag group");
         SimplePrinter.print("You may exit by pressing \"e\" to save current changes");
+        SimplePrinter.printParagraph();
 
         String answer = commandProvider.provideLine();
         if (answer.startsWith("e")) {
+            SimplePrinter.printParagraph();
             SimplePrinter.print("Tag menu abandoned"); //TODO: message duplication
             return true;
         }
@@ -34,6 +36,7 @@ public class TagCommandSessionStarter {
         boolean successfullyChosen = tagCommandSessionCoordinator.coordinate(answer, numberedTags);
 
         if (!successfullyChosen) {
+            SimplePrinter.printParagraph();
             SimplePrinter.print("Incorrect option, please retry or press \"e\" to exit");
             return false;
         }

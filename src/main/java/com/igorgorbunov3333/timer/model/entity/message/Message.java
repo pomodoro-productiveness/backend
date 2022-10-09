@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class Message {
+public class Message { //TODO: rename to smt else cause this entity doesn't contain message itself but just send date and period info
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,0 +1,48 @@
+package com.igorgorbunov3333.timer.service.message;
+
+import com.igorgorbunov3333.timer.model.entity.enums.MessagePeriod;
+import com.igorgorbunov3333.timer.model.entity.message.Message;
+import com.igorgorbunov3333.timer.repository.MessageRepository;
+import com.igorgorbunov3333.timer.service.message.pomodoro.report.impl.DailyPomodoroStandardReportMessageProvider;
+import com.igorgorbunov3333.timer.service.message.pomodoro.report.impl.WeekPomodoroStandardReportMessageProvider;
+import com.igorgorbunov3333.timer.service.message.telegram.TelegramHttpApiCaller;
+import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+
+@Slf4j
+@Component
+@AllArgsConstructor
+public class PomodoroStandardReportMessageSender {
+
+    private final DailyPomodoroStandardReportMessageProvider dailyPomodoroStandardReportMessageProvider;
+    private final WeekPomodoroStandardReportMessageProvider weekPomodoroStandardReportMessageProvider;
+    private final MessageRepository messageRepository;
+    private final TelegramHttpApiCaller telegramHttpApiCaller;
+    private final CurrentTimeService currentTimeService;
+
+    public void send() {
+        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();
+        LocalDate reportDate = today.minusDays(1L);
+        boolean messagePresentForDate = messageRepository.existsByDate(reportDate);
+        if (messagePresentForDate) {
+            log.debug("Message for [{}] is already present, skip sending...", reportDate);
+            return;
+        }
+
+        String dailyReportMessage = dailyPomodoroStandardReportMessageProvider.provide(reportDate);
+        String weeklyReportMessage = weekPomodoroStandardReportMessageProvider.provide(reportDate);
+
+        String finalMessage = String.join("\n\n", dailyReportMessage, weeklyReportMessage);
+
+        telegramHttpApiCaller.send(finalMessage);
+
+        Message message = new Message(null, reportDate, MessagePeriod.DAY);
+
+        messageRepository.save(message);
+    }
+
+}

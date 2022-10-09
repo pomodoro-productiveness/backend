@@ -31,7 +31,8 @@ public class TagRemappingSessionProcessor extends AbstractPomodoroSessionMapper 
 
     @Override
     public void process(Map<Integer, PomodoroTagDto> tagPositionToTags) {
-        SimplePrinter.print("Chose pomodoro to remap tags");
+        SimplePrinter.printParagraph();
+        SimplePrinter.print("Chose pomodoro to remap tags:");
         PomodoroDto chosenPomodoro = dailySinglePomodoroFromUserProvider.provide();
 
         if (chosenPomodoro != null) {

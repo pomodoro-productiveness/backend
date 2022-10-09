@@ -1,56 +1,62 @@
-package com.igorgorbunov3333.timer.service.message;
+package com.igorgorbunov3333.timer.service.message.pomodoro.report.impl;
 
 import com.igorgorbunov3333.timer.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.period.WeeklyPomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.report.PomodoroStandardReportDto;
-import com.igorgorbunov3333.timer.model.entity.enums.MessagePeriod;
-import com.igorgorbunov3333.timer.repository.MessageRepository;
 import com.igorgorbunov3333.timer.service.exception.MessageProcessingException;
+import com.igorgorbunov3333.timer.service.message.pomodoro.report.MessageProvider;
 import com.igorgorbunov3333.timer.service.period.WeekPeriodHelper;
 import com.igorgorbunov3333.timer.service.pomodoro.provider.WeeklyPomodoroProvider;
 import com.igorgorbunov3333.timer.service.pomodoro.report.PomodoroStandardReporter;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class WeeklyMessageSender implements MessageSender {
+public class WeekPomodoroStandardReportMessageProvider implements MessageProvider {
 
-    @Getter
-    private final MessageRepository messageRepository;
     private final WeekPeriodHelper weekPeriodHelper;
-    private final WeeklyPomodoroProvider weeklyPomodoroProvider;
     private final PomodoroStandardReporter pomodoroStandardReporter;
-    @Getter
-    private final TelegramMessageSender telegramMessageSender;
+    private final WeeklyPomodoroProvider weeklyPomodoroProvider;
 
-    @Override
-    public MessagePeriod getMessagePeriod() {
-        return MessagePeriod.WEEK;
+    public String provide(LocalDate reportDate) {
+        if (isStartOfWeek(reportDate)) {
+            return buildMessageForPreviousWeek();
+        }
+
+        WeeklyPomodoroDto weeklyPomodoroDto = weeklyPomodoroProvider.provideCurrentWeekPomodoro();
+
+        return buildReportMessage(weeklyPomodoroDto);
     }
 
-    @Override
-    public void send(LocalDate reportDate) {
+    private String buildMessageForPreviousWeek() {
         PeriodDto previousWeekPeriod = weekPeriodHelper.providePreviousWeekPeriod();
-
         List<WeeklyPomodoroDto> weeklyPomodoroDtoList = weeklyPomodoroProvider.provideWeeklyPomodoroForPeriod(previousWeekPeriod);
 
         if (CollectionUtils.isEmpty(weeklyPomodoroDtoList)) {
             throw new MessageProcessingException("No WeeklyPomodoroDto for period " + previousWeekPeriod);
         }
 
-        WeeklyPomodoroDto weeklyPomodoroDto = weeklyPomodoroDtoList.get(0);
+        return buildReportMessage(weeklyPomodoroDtoList.get(0));
+    }
 
+    private String buildReportMessage(WeeklyPomodoroDto weeklyPomodoroDto) {
         PomodoroStandardReportDto report = pomodoroStandardReporter.report(weeklyPomodoroDto.getPeriod(), weeklyPomodoroDto.getPomodoro());
 
-        String header = "Report for " + weeklyPomodoroDto.getPeriod() + "\n";
+        PeriodDto period = weeklyPomodoroDto.getPeriod();
 
-        buildMessageAndSend(report, header, reportDate);
+        String header = "Report for period: " + period.getStart().toLocalDate() + "  -  " + period.getEnd().toLocalDate() + "\n";
+
+        return buildReportMessage(report, header);
+    }
+
+    private boolean isStartOfWeek(LocalDate today) {
+        return DayOfWeek.MONDAY.equals(today.getDayOfWeek());
     }
 
 }

@@ -26,8 +26,8 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW) //TODO: remove?
     public void process(Map<Integer, PomodoroTagDto> tagsWithNumbers) {
+        SimplePrinter.printParagraph();
         SimplePrinter.print("Please provide tag name");
-
         SimplePrinter.printParagraph();
 
         String tagNameAnswer = provideAndValidateTagName();
@@ -55,6 +55,7 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
             String tagNameAnswer = commandProvider.provideLine();
 
             if (tagNameAnswer.equalsIgnoreCase("e")) {
+                SimplePrinter.printParagraph();
                 SimplePrinter.print("Tag menu abandoned"); //TODO: message duplication
                 return null;
             }

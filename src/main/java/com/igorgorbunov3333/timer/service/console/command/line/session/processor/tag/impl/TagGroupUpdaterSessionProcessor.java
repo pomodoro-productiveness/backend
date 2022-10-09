@@ -36,6 +36,7 @@ public class TagGroupUpdaterSessionProcessor implements TagSessionProcessor, Num
     @Override
     @Transactional
     public void process(Map<Integer, PomodoroTagDto> tagPositionToTags) {
+        SimplePrinter.printParagraph();
         SimplePrinter.print("Chose tag group to update:");
 
         List<PomodoroTagGroup> tagGroups = pomodoroTagGroupRepository.findAll();
@@ -47,6 +48,8 @@ public class TagGroupUpdaterSessionProcessor implements TagSessionProcessor, Num
                 group -> group.getPomodoroTags().stream()
                         .map(PomodoroTag::getName)
                         .collect(Collectors.toList()));
+
+        SimplePrinter.printParagraph();
 
         PomodoroTagGroup chosenTagGroup;
         while (true) {
@@ -73,6 +76,7 @@ public class TagGroupUpdaterSessionProcessor implements TagSessionProcessor, Num
 
         pomodoroTagGroupRepository.save(chosenTagGroup);
 
+        SimplePrinter.printParagraph();
         SimplePrinter.print("Pomodoro group successfully updated by following tags [" + newTags + "]");
     }
 
