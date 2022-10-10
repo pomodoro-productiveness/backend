@@ -25,7 +25,7 @@ public class WeekPomodoroStandardReportMessageProvider implements MessageProvide
     private final WeeklyPomodoroProvider weeklyPomodoroProvider;
 
     public String provide(LocalDate reportDate) {
-        if (isStartOfWeek(reportDate)) {
+        if (isStartOfWeek(reportDate.plusDays(1L))) {
             return buildMessageForPreviousWeek();
         }
 

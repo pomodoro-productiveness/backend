@@ -22,7 +22,7 @@ public class WeeklyPomodoroDto {
     private PeriodDto period;
 
     public static WeeklyPomodoroDto buildEmpty() {
-        return new WeeklyPomodoroDto(List.of(), null);
+        return new WeeklyPomodoroDto(List.of(), null); //TODO: build PeriodDto with current day start and end bounds instead of returning null
     }
 
     @JsonIgnore
