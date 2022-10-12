@@ -10,8 +10,11 @@ import com.igorgorbunov3333.timer.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -24,6 +27,7 @@ public class PomodoroStandardReportMessageSender {
     private final TelegramHttpApiCaller telegramHttpApiCaller;
     private final CurrentTimeService currentTimeService;
 
+    @Transactional
     public void send() {
         LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();
         LocalDate reportDate = today.minusDays(1L);
@@ -43,6 +47,15 @@ public class PomodoroStandardReportMessageSender {
         Message message = new Message(null, reportDate, MessagePeriod.DAY);
 
         messageRepository.save(message);
+
+        deleteOldMessages();
+    }
+
+    private void deleteOldMessages() {
+        List<Message> messagesToRemove = messageRepository.findAll();
+        messagesToRemove.sort(Comparator.comparing(Message::getDate));
+        messagesToRemove.remove(messagesToRemove.size() - 1);
+        messageRepository.deleteAll(messagesToRemove);
     }
 
 }
