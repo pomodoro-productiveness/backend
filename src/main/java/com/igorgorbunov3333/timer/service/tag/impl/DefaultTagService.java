@@ -50,7 +50,7 @@ public class DefaultTagService implements TagService {
         return pomodoroTagRepository.findAll().stream()
                 .filter(tag -> filterTag(tag, includeRemoved))
                 .map(tagMapper::mapToDto)
-                .sorted(Comparator.comparing(PomodoroTagDto::getName))
+                .sorted(Comparator.comparing(tag -> tag.getName().toLowerCase()))
                 .collect(Collectors.toList());
     }
 

@@ -25,7 +25,7 @@ public class TagCommandSessionStarter {
         ListOfItemsPrinter.print(tagsWithNumbers, PomodoroTagDto::getName);
 
         SimplePrinter.printParagraph();
-        SimplePrinter.print("Chose an option:");
+        SimplePrinter.print("Chose an action:");
         SimplePrinter.print("Press 1 to create a new tag");
         SimplePrinter.print("Press 2 to remove a tag");
         SimplePrinter.print("Press 3 to remap tags for pomodoro");
