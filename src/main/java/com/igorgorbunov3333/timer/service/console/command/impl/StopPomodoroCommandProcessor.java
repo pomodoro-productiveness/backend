@@ -47,7 +47,10 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
 
             String answer = provideLine();
 
-            if (!answer.startsWith("y")) {
+            if (answer.startsWith("y")) {
+                SimplePrinter.printParagraph();
+            } else {
+                SimplePrinter.printParagraph();
                 SimplePrinter.print("Pomodoro stayed on pause!");
                 return;
             }
@@ -62,6 +65,7 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
             SimplePrinter.print(errorMessage);
             return;
         }
+
         printSuccessfullySavedMessage(savedPomodoro);
 
         List<PomodoroDto> dailyPomodoro = startTagSessionAndPrintDailyPomodoro(List.of(savedPomodoro.getId()));

@@ -37,17 +37,24 @@ public class DailyPomodoroExtendedCommandProcessor implements CommandProcessor {
         printerService.printPomodoroWithIdsAndTags(pomodoro);
 
         if (pomodoroEngine.isPomodoroCurrentlyRunning()) {
-            String pomodoroCurrentDuration = pomodoroEngineService.getPomodoroCurrentDuration();
+            printPomodoroCurrentDuration("Duration of the running pomodoro: ");
+        }
 
-            SimplePrinter.printParagraph();
-
-            SimplePrinter.print("Currently running pomodoro duration: " + pomodoroCurrentDuration);
+        if (pomodoroEngine.isPomodoroPaused()) {
+            printPomodoroCurrentDuration("Duration of the paused pomodoro: ");
         }
 
         LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();
         PeriodDto period = new PeriodDto(currentDay.atStartOfDay(), currentDay.atTime(LocalTime.MAX));
 
         standardReportPrinter.print(period, pomodoro);
+    }
+
+    private void printPomodoroCurrentDuration(String message) {
+        String pomodoroCurrentDuration = pomodoroEngineService.getPomodoroCurrentDuration();
+
+        SimplePrinter.printParagraph();
+        SimplePrinter.print(message + pomodoroCurrentDuration);
     }
 
     @Override

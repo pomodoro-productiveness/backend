@@ -34,7 +34,7 @@ public class StartPomodoroCommandProcessor implements CommandProcessor {
             SimplePrinter.print(e.getMessage());
             return;
         }
-        SimplePrinter.print("Pomodoro started");
+        SimplePrinter.print("Pomodoro started:");
         pomodoroEngineService.printThreeSecondsOfPomodoroExecution();
     }
 
