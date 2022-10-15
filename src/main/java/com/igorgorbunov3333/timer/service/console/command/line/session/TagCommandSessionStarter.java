@@ -4,6 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.coordinator.TagCommandSessionCoordinator;
 import com.igorgorbunov3333.timer.service.console.printer.util.ListOfItemsPrinter;
+import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.tag.provider.TagProvider;
 import lombok.AllArgsConstructor;
@@ -36,7 +37,7 @@ public class TagCommandSessionStarter {
         String answer = commandProvider.provideLine();
         if (answer.startsWith("e")) {
             SimplePrinter.printParagraph();
-            SimplePrinter.print("Tag menu abandoned"); //TODO: message duplication
+            SimplePrinter.print(PrintUtil.LEFT_TAGS_MENU);
             return true;
         }
 

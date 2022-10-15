@@ -77,7 +77,8 @@ public class TagGroupUpdaterSessionProcessor implements TagSessionProcessor, Num
         pomodoroTagGroupRepository.save(chosenTagGroup);
 
         SimplePrinter.printParagraph();
-        SimplePrinter.print("Pomodoro group successfully updated by following tags [" + newTags + "]");
+        SimplePrinter.print("Pomodoro group successfully updated with the following tags: " + newTags);
+        SimplePrinter.printParagraph();
     }
 
     @Override

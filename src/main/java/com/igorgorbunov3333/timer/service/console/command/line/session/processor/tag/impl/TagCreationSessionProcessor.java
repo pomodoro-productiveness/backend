@@ -4,6 +4,7 @@ import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.BaseLineProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.TagSessionProcessor;
+import com.igorgorbunov3333.timer.service.console.printer.util.PrintUtil;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.service.exception.TagOperationException;
 import com.igorgorbunov3333.timer.service.tag.TagService;
@@ -55,7 +56,7 @@ public class TagCreationSessionProcessor implements TagSessionProcessor, BaseLin
 
             if (tagNameAnswer.equalsIgnoreCase("e")) {
                 SimplePrinter.printParagraph();
-                SimplePrinter.print("Tag menu abandoned"); //TODO: message duplication
+                SimplePrinter.print(PrintUtil.LEFT_TAGS_MENU);
                 return null;
             }
 

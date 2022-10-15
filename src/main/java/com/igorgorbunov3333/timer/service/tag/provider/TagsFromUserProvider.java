@@ -29,18 +29,17 @@ public class TagsFromUserProvider implements NumberProvidable, BaseLineProvider 
 
         while (true) {
             SimplePrinter.printParagraph();
-            SimplePrinter.print("Do you want to create new tag?");
+            SimplePrinter.print("Do you want to create a new tag?");
             SimplePrinter.printYesNoQuestion();
 
             SimplePrinter.printParagraph();
 
             String answer = provideLine();
 
-            SimplePrinter.printParagraph();
-
             if (answer.startsWith("y")) {
                 tagCreationSessionProcessor.process(null);
             } else {
+                SimplePrinter.printParagraph();
                 break;
             }
         }
@@ -48,7 +47,7 @@ public class TagsFromUserProvider implements NumberProvidable, BaseLineProvider 
         Map<Integer, PomodoroTagDto> numberedTags = tagProvider.provide();
 
         while (true) {
-            SimplePrinter.print("Choose tag or press \"e\" to finish");
+            SimplePrinter.print("Choose tag or press \"e\" to finish:");
 
             ListOfItemsPrinter.print(numberedTags, PomodoroTagDto::getName);
 
