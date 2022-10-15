@@ -1,6 +1,7 @@
 package com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.impl;
 
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
+import com.igorgorbunov3333.timer.service.console.command.line.provider.BaseLineProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.NumberProvidable;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.TagSessionProcessor;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
-public class TagRemovingSessionProcessor implements TagSessionProcessor, NumberProvidable {
+public class TagRemovingSessionProcessor implements TagSessionProcessor, NumberProvidable, BaseLineProvider {
 
     private final TagService tagService;
     @Getter
@@ -23,7 +24,7 @@ public class TagRemovingSessionProcessor implements TagSessionProcessor, NumberP
     @Override
     public void process(Map<Integer, PomodoroTagDto> tags) {
         SimplePrinter.printParagraph();
-        SimplePrinter.print("Enter the tag number to remove tag or press \"e\" to exit");
+        SimplePrinter.print("Enter the tag number to remove tag or press \"e\" to exit:");
         SimplePrinter.printParagraph();
 
         PomodoroTagDto chosenTag;
@@ -35,16 +36,29 @@ public class TagRemovingSessionProcessor implements TagSessionProcessor, NumberP
 
             chosenTag = tags.get(chosenNumber);
             if (chosenTag == null) {
-                SimplePrinter.print(String.format("No tag with number [%d]", chosenNumber));
+                SimplePrinter.printParagraph();
+                SimplePrinter.print(String.format("No tag with number [%d]!", chosenNumber));
+                SimplePrinter.printParagraph();
             } else {
                 break;
             }
         }
 
-        tagService.removeTag(chosenTag.getName());
+        String tagNameToRemove = chosenTag.getName();
 
         SimplePrinter.printParagraph();
-        SimplePrinter.print("Pomodoro tag successfully removed");
+        SimplePrinter.print(String.format("Are you sure you want to remove tag with name [%s]?", tagNameToRemove));
+        SimplePrinter.printYesNoQuestion();
+        SimplePrinter.printParagraph();
+
+        String answer = provideLine();
+
+        SimplePrinter.printParagraph();
+
+        if (answer.startsWith("y")) {
+            tagService.removeTag(tagNameToRemove);
+            SimplePrinter.print(String.format("Pomodoro tag [%s] successfully removed", tagNameToRemove));
+        }
     }
 
     @Override

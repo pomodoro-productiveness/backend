@@ -1,6 +1,7 @@
 package com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.impl;
 
 import com.igorgorbunov3333.timer.model.dto.tag.PomodoroTagDto;
+import com.igorgorbunov3333.timer.service.console.command.line.provider.BaseLineProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.service.console.command.line.session.processor.tag.TagSessionProcessor;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
-public class TagCreationSessionProcessor implements TagSessionProcessor {
+public class TagCreationSessionProcessor implements TagSessionProcessor, BaseLineProvider {
 
     private static final int TAG_MAX_LENGTH = 30;
 
@@ -27,7 +28,7 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
     @Transactional(propagation = Propagation.REQUIRES_NEW) //TODO: remove?
     public void process(Map<Integer, PomodoroTagDto> tagsWithNumbers) {
         SimplePrinter.printParagraph();
-        SimplePrinter.print("Please provide tag name");
+        SimplePrinter.print("Please provide a tag name:");
         SimplePrinter.printParagraph();
 
         String tagNameAnswer = provideAndValidateTagName();
@@ -43,10 +44,8 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
         }
 
         if (savedTagName != null) {
-            SimplePrinter.printParagraph();
             SimplePrinter.print(String.format("Tag with name [%s] successfully saved", savedTagName));
         }
-
     }
 
     //TODO: refactor
@@ -62,18 +61,36 @@ public class TagCreationSessionProcessor implements TagSessionProcessor {
 
             if (tagNameAnswer.length() > TAG_MAX_LENGTH) {
                 SimplePrinter.printParagraph();
-                SimplePrinter.print(String.format("Tag name size must not be more then %d characters", TAG_MAX_LENGTH));
+                SimplePrinter.print(String.format("Tag name size must not be more than %d symbols!", TAG_MAX_LENGTH));
+                SimplePrinter.printTryAgainMessage();
                 SimplePrinter.printParagraph();
             } else if (StringUtils.isEmpty(tagNameAnswer)) {
                 SimplePrinter.printParagraph();
-                SimplePrinter.print("Tag must not be empty, please try again or press \"e\" to exit");
+                SimplePrinter.print("Tag must not be empty!");
+                SimplePrinter.printTryAgainMessage();
                 SimplePrinter.printParagraph();
             } else if (tagService.exists(tagNameAnswer)) {
                 SimplePrinter.printParagraph();
-                SimplePrinter.print(String.format("Tag with name %s already exists", tagNameAnswer));
+                SimplePrinter.print(String.format("Tag with name [%s] already exists!", tagNameAnswer));
+                SimplePrinter.printTryAgainMessage();
                 SimplePrinter.printParagraph();
             } else {
-                return tagNameAnswer;
+                SimplePrinter.printParagraph();
+                SimplePrinter.print(String.format("Are you sure you want to save tag with name [%s]?", tagNameAnswer));
+                SimplePrinter.printYesNoQuestion();
+
+                SimplePrinter.printParagraph();
+
+                String answer = provideLine();
+
+                SimplePrinter.printParagraph();
+
+                if (answer.startsWith("y")) {
+                    return tagNameAnswer;
+                }
+
+                SimplePrinter.printTryAgainMessage();
+                SimplePrinter.printParagraph();
             }
         } while (true);
     }

@@ -9,6 +9,7 @@ public final class SimplePrinter {
 
     private static final String YES_NO_QUESTION = "Yes (y), No";
     private static final String INCORRECT_NUMBER = "Number [%d] is incorrect";
+    private static final String TRY_AGAIN_MESSAGE = "Please try again or press \"e\" to exit";
 
     public static void print(String message) {
         System.out.println(message);
@@ -24,6 +25,10 @@ public final class SimplePrinter {
 
     public static void printYesNoQuestion() {
         print(YES_NO_QUESTION);
+    }
+
+    public static void printTryAgainMessage() {
+        print(TRY_AGAIN_MESSAGE);
     }
 
     public static void printIncorrectNumber(int number) {
