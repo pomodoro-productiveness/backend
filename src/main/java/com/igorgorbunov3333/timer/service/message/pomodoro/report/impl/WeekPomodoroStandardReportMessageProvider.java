@@ -34,7 +34,11 @@ public class WeekPomodoroStandardReportMessageProvider implements MessageProvide
 
         WeeklyPomodoroDto weeklyPomodoroDto = weeklyPomodoroProvider.provideCurrentWeekPomodoro();
 
-        return buildReportMessage(weeklyPomodoroDto);
+        PeriodDto periodWithoutToday = new PeriodDto(
+                weeklyPomodoroDto.getPeriod().getStart(),
+                weeklyPomodoroDto.getPeriod().getEnd().minusDays(1L));
+
+        return buildReportMessage(weeklyPomodoroDto, periodWithoutToday);
     }
 
     private String buildMessageForPreviousWeek() {
@@ -45,23 +49,17 @@ public class WeekPomodoroStandardReportMessageProvider implements MessageProvide
             throw new MessageProcessingException("No WeeklyPomodoroDto for period " + previousWeekPeriod);
         }
 
-        return buildReportMessage(weeklyPomodoroDtoList.get(0));
+        return buildReportMessage(weeklyPomodoroDtoList.get(0), previousWeekPeriod);
     }
 
-    private String buildReportMessage(WeeklyPomodoroDto weeklyPomodoroDto) {
-        PeriodDto periodWithoutToday = getPeriodWithoutToday(weeklyPomodoroDto);
-        List<PomodoroDto> pomodoroWithoutToday = getPomodoroWithoutToday(weeklyPomodoroDto, periodWithoutToday.getEnd());
+    private String buildReportMessage(WeeklyPomodoroDto weeklyPomodoroDto, PeriodDto period) {
+        List<PomodoroDto> pomodoroWithoutToday = getPomodoroWithoutToday(weeklyPomodoroDto, period.getEnd());
 
-        PomodoroStandardReportDto report = pomodoroStandardReporter.report(periodWithoutToday, pomodoroWithoutToday);
+        PomodoroStandardReportDto report = pomodoroStandardReporter.report(period, pomodoroWithoutToday);
 
-        String header = "Report for: " + periodWithoutToday.getStart().toLocalDate() + "  -  " + periodWithoutToday.getEnd().toLocalDate() + "\n";
+        String header = "Report for: " + period.getStart().toLocalDate() + "  -  " + period.getEnd().toLocalDate() + "\n";
 
         return buildReportMessage(report, header);
-    }
-
-    private PeriodDto getPeriodWithoutToday(WeeklyPomodoroDto weeklyPomodoroDto) {
-        PeriodDto period = weeklyPomodoroDto.getPeriod();
-        return new PeriodDto(period.getStart(), period.getEnd().minusDays(1L));
     }
 
     private List<PomodoroDto> getPomodoroWithoutToday(WeeklyPomodoroDto weeklyPomodoroDto, LocalDateTime periodEnd) {
