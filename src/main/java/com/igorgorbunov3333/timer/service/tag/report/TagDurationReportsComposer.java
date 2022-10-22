@@ -5,20 +5,17 @@ import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportRowDto;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
@@ -34,77 +31,30 @@ public class TagDurationReportsComposer {
     private final AllTagsDurationReporter allTagsDurationReporter;
 
     public List<TagDurationReportRowDto> compose(List<PomodoroDto> pomodoro) {
-        List<TagDurationReportRowDtoClone> reportRows = allTagsDurationReporter.reportForEachTag(pomodoro).stream()
-                .map(this::mapToClone)
-                .collect(Collectors.toList());
+        List<TagDurationReportRowDto> reportRows = allTagsDurationReporter.reportForEachTag(pomodoro);
 
-        Map<String, TagDurationReportRowDtoClone> tagsToReportRows = reportRows.stream()
-                .collect(Collectors.toMap(TagDurationReportRowDtoClone::getTag, Function.identity()));
+        Map<String, TagDurationReportRowDto> tagsToReportRows = reportRows.stream()
+                .collect(Collectors.toMap(TagDurationReportRowDto::getTag, Function.identity()));
 
-        List<TagDurationReportRowDtoClone> rootReportRows = getRootReportRows(reportRows, tagsToReportRows);
+        List<TagDurationReportRowDto> rootReportRows = getRootReportRows(reportRows, tagsToReportRows);
+        List<TagDurationReportRowDto> mergedReportRows = mergeReportRows(tagsToReportRows, rootReportRows);
 
-        List<TagDurationReportRowDtoClone> mergedReportRows = mergeReportRows(tagsToReportRows, rootReportRows);
+        TagDurationReportRowDto totalReportRow = buildTotalReportRow(mergedReportRows);
+        mergedReportRows.add(totalReportRow);
 
-        List<TagDurationReportRowDtoClone> allRows = collectAllReportRows(mergedReportRows);
-
-        Map<TagDurationReportRowDtoClone, List<ParentWithChildrenContainer>> rowsToParentRows = new HashMap<>();
-        for (TagDurationReportRowDtoClone reportRow : allRows) {
-            List<ParentWithChildrenContainer> parentsWithChildren = rowsToParentRows.get(reportRow);
-
-            if (CollectionUtils.isEmpty(parentsWithChildren)) {
-                parentsWithChildren = new ArrayList<>();
-            }
-
-            ParentWithChildrenContainer parentWithChildrenContainer =
-                    new ParentWithChildrenContainer(reportRow.getParentRow(), reportRow.getMappedRows());
-            parentsWithChildren.add(parentWithChildrenContainer);
-
-            rowsToParentRows.put(reportRow, parentsWithChildren);
-        }
-
-        for (TagDurationReportRowDtoClone rootReport : mergedReportRows) {
-            ParentWithChildrenContainer parentWithChildrenContainer =
-                    new ParentWithChildrenContainer(null, rootReport.getMappedRows());
-            rowsToParentRows.put(rootReport, List.of(parentWithChildrenContainer));
-        }
-
-        List<TagDurationReportRowDtoClone> composedMergedReportsRows = new ArrayList<>();
-        for (TagDurationReportRowDtoClone mergedReportRow : mergedReportRows) {
-            List<TagDurationReportRowDtoClone> fixedRows =
-                    clearDuplicatesAndFixRowsDuration(mergedReportRow.getMappedRows(), rowsToParentRows);
-            mergedReportRow.setMappedRows(fixedRows);
-            composedMergedReportsRows.add(mergedReportRow);
-        }
-
-        composedMergedReportsRows.sort(Comparator.comparing(TagDurationReportRowDtoClone::getTag));
-
-        TagDurationReportRowDtoClone totalReportRow = buildTotalReportRow(composedMergedReportsRows);
-        composedMergedReportsRows.add(totalReportRow);
-
-        return mapToRows(composedMergedReportsRows);
+        return mergedReportRows;
     }
 
-    private TagDurationReportRowDtoClone mapToClone(TagDurationReportRowDto row) {
-        List<TagDurationReportRowDto> mappedRows = row.getMappedRows();
-
-        List<TagDurationReportRowDtoClone> mappedCloneRows = new ArrayList<>();
-        for (TagDurationReportRowDto mappedRow : mappedRows) {
-            mappedCloneRows.add(new TagDurationReportRowDtoClone(mappedRow.getTag(), mappedRow.getDuration(), List.of(), null));
-        }
-
-        return new TagDurationReportRowDtoClone(row.getTag(), row.getDuration(), mappedCloneRows, null);
-    }
-
-    private List<TagDurationReportRowDtoClone> getRootReportRows(List<TagDurationReportRowDtoClone> reportRows,
-                                                                 Map<String, TagDurationReportRowDtoClone> tagsToReportRows) {
-        List<TagDurationReportRowDtoClone> rootRows = new LinkedList<>();
-        Map<Long, TagDurationReportRowDtoClone> durationToReportRows = new HashMap<>();
-        for (TagDurationReportRowDtoClone row : reportRows) {
+    private List<TagDurationReportRowDto> getRootReportRows(List<TagDurationReportRowDto> reportRows,
+                                                            Map<String, TagDurationReportRowDto> tagsToReportRows) {
+        List<TagDurationReportRowDto> rootRows = new LinkedList<>();
+        Map<Long, TagDurationReportRowDto> durationToReportRows = new HashMap<>();
+        for (TagDurationReportRowDto row : reportRows) {
             if (isRootReportRow(row, tagsToReportRows)) {
                 long reportDuration = row.getDuration();
 
                 if (durationToReportRows.containsKey(reportDuration)) {
-                    TagDurationReportRowDtoClone reportWithSameDuration = durationToReportRows.get(reportDuration);
+                    TagDurationReportRowDto reportWithSameDuration = durationToReportRows.get(reportDuration);
 
                     rootRows.remove(reportWithSameDuration);
 
@@ -121,26 +71,25 @@ public class TagDurationReportsComposer {
         return rootRows;
     }
 
-    private boolean isRootReportRow(TagDurationReportRowDtoClone reportRow,
-                                    Map<String, TagDurationReportRowDtoClone> tagsToReportRows) {
+    private boolean isRootReportRow(TagDurationReportRowDto reportRow,
+                                    Map<String, TagDurationReportRowDto> tagsToReportRows) {
         return reportRow.getMappedRows().stream()
                 .allMatch(row -> isRootReportRow(reportRow, tagsToReportRows, row));
     }
 
-    private boolean isRootReportRow(TagDurationReportRowDtoClone reportRow,
-                                    Map<String, TagDurationReportRowDtoClone> tagsToReportRows,
-                                    TagDurationReportRowDtoClone mappedRow) {
+    private boolean isRootReportRow(TagDurationReportRowDto reportRow,
+                                    Map<String, TagDurationReportRowDto> tagsToReportRows,
+                                    TagDurationReportRowDto mappedRow) {
         return mapToTagNames(mappedRow).stream()
                 .map(tagsToReportRows::get)
                 .allMatch(row -> row.getDuration() <= reportRow.getDuration());
     }
 
-    private List<TagDurationReportRowDtoClone> mergeReportRows(Map<String, TagDurationReportRowDtoClone> tagsToReportRows,
-                                                               List<TagDurationReportRowDtoClone> reportRows) {
-        List<TagDurationReportRowDtoClone> mergedReportRows = new ArrayList<>();
-        for (TagDurationReportRowDtoClone rootReportRow : reportRows) {
-            List<TagDurationReportRowDtoClone> mappedRows =
-                    mapSubRows(rootReportRow, rootReportRow.getMappedRows(), tagsToReportRows, new HashMap<>());
+    private List<TagDurationReportRowDto> mergeReportRows(Map<String, TagDurationReportRowDto> tagsToReportRows,
+                                                          List<TagDurationReportRowDto> reportRows) {
+        List<TagDurationReportRowDto> mergedReportRows = new ArrayList<>();
+        for (TagDurationReportRowDto rootReportRow : reportRows) {
+            List<TagDurationReportRowDto> mappedRows = mapSubRows(rootReportRow, tagsToReportRows, new HashMap<>());
             rootReportRow.setMappedRows(mappedRows);
             mergedReportRows.add(rootReportRow);
         }
@@ -148,50 +97,83 @@ public class TagDurationReportsComposer {
         return mergedReportRows;
     }
 
-    public List<TagDurationReportRowDtoClone> mapSubRows(TagDurationReportRowDtoClone mainReportRow,
-                                                         List<TagDurationReportRowDtoClone> mappedReportRows,
-                                                         Map<String, TagDurationReportRowDtoClone> tagsToReportRows,
-                                                         Map<String, ProcessedTagsContainer> processedTags) {
-        List<TagDurationReportRowDtoClone> subRows = new ArrayList<>();
+    public List<TagDurationReportRowDto> mapSubRows(TagDurationReportRowDto mainReportRow,
+                                                    Map<String, TagDurationReportRowDto> tagsToReportRows,
+                                                    Map<String, List<ProcessedTagsContainer>> processedTags) {
+        List<TagDurationReportRowDto> subRows = new ArrayList<>();
 
-        if (CollectionUtils.isEmpty(mappedReportRows)) {
+        TagDurationReportRowDto tagDurationReportRow = tagsToReportRows.get(mainReportRow.getTag());
+
+        if (tagDurationReportRow == null || CollectionUtils.isEmpty(tagDurationReportRow.getMappedRows())) {
             return List.of();
         }
 
-        for (TagDurationReportRowDtoClone row : mappedReportRows) {
+        List<TagDurationReportRowDto> mappedRows = tagDurationReportRow.getMappedRows();
+        mappedRows.sort(Comparator.comparing(TagDurationReportRowDto::getDuration).reversed());
+
+        for (TagDurationReportRowDto row : tagDurationReportRow.getMappedRows()) {
             Set<String> tagNames = mapToTagNames(row);
 
-            Queue<TagDurationReportRowDtoClone> rows = getRowsByNames(tagsToReportRows, tagNames);
+            Queue<TagDurationReportRowDto> rows = getRowsByNames(tagsToReportRows, tagNames);
 
-            List<TagDurationReportRowDtoClone> currentRowSubRows = new LinkedList<>();
-            for (TagDurationReportRowDtoClone currentRow : rows) {
-                if (isAlreadyProcessed(currentRow, processedTags, tagsToReportRows)) {
+            List<TagDurationReportRowDto> currentRowSubRows = new LinkedList<>();
+            for (TagDurationReportRowDto currentRow : rows) {
+                long currentRowDuration = calculateDuration(currentRow, mainReportRow, tagsToReportRows, processedTags);
+
+                if (isAlreadyProcessed(currentRow, processedTags, currentRowDuration)) {
                     continue;
                 }
 
                 String currentRowTagName = currentRow.getTag();
 
-                if (currentRow.getDuration() < mainReportRow.getDuration()) {
+                if (currentRowDuration < mainReportRow.getDuration()) {
                     if (!currentRowSubRows.isEmpty()) {
-                        TagDurationReportRowDtoClone previousRow = currentRowSubRows.get(currentRowSubRows.size() - 1);
+                        TagDurationReportRowDto previousRow = currentRowSubRows.get(currentRowSubRows.size() - 1);
 
-                        if (previousRow.getDuration() == currentRow.getDuration()) {
-                            previousRow.setTag(previousRow.getTag() + " #" + currentRowTagName);
+                        if (previousRow.getDuration() == currentRowDuration) {
+                            String updatedTag = previousRow.getTag() + " #" + currentRowTagName;
+                            previousRow.setTag(updatedTag);
+
+                            List<ProcessedTagsContainer> processedTagsWithTagName = processedTags.get(previousRow.getTag());
+
+                            if (!CollectionUtils.isEmpty(processedTagsWithTagName)) {
+                                Optional<ProcessedTagsContainer> processedTagWithDurationOpt = processedTagsWithTagName.stream()
+                                        .filter(tag -> tag.getDuration() == previousRow.getDuration())
+                                        .findFirst();
+
+                                if (processedTagWithDurationOpt.isPresent()) {
+                                    List<ProcessedTagsContainer> processedContainers = processedTags.get(currentRowTagName);
+
+                                    if (!CollectionUtils.isEmpty(processedContainers)) {
+                                        processedContainers.add(new ProcessedTagsContainer(currentRowTagName, previousRow.getDuration()));
+                                    } else {
+                                        processedContainers = new ArrayList<>(List.of(new ProcessedTagsContainer(currentRowTagName, previousRow.getDuration())));
+                                    }
+
+                                    processedTags.put(currentRowTagName, processedContainers);
+                                }
+                            } else {
+                                processedTags.put(currentRowTagName, new ArrayList<>(List.of(new ProcessedTagsContainer(currentRowTagName, previousRow.getDuration()))));
+                            }
+
                             continue;
                         }
                     }
 
-                    long duration = calculateDuration(currentRow, mainReportRow, tagsToReportRows);
-
-                    currentRow = new TagDurationReportRowDtoClone(currentRowTagName, duration, currentRow.getMappedRows(), mainReportRow);
+                    currentRow = new TagDurationReportRowDto(currentRowTagName, currentRowDuration, currentRow.getMappedRows());
                     currentRowSubRows.add(currentRow);
 
-                    List<TagDurationReportRowDtoClone> currentTagNameMappedReportRows = tagsToReportRows.get(currentRowTagName)
-                            .getMappedRows();
-                    List<TagDurationReportRowDtoClone> currentRowSubRowsSubRows =
-                            mapSubRows(currentRow, currentTagNameMappedReportRows, tagsToReportRows, processedTags);
+                    List<TagDurationReportRowDto> currentRowSubRowsSubRows = mapSubRows(currentRow, tagsToReportRows, processedTags);
                     currentRow.setMappedRows(currentRowSubRowsSubRows);
-                    processedTags.put(currentRowTagName, new ProcessedTagsContainer(currentRowTagName, duration));
+
+                    List<ProcessedTagsContainer> processedTagContainers = processedTags.get(currentRowTagName);
+
+                    ProcessedTagsContainer newContainer = new ProcessedTagsContainer(currentRowTagName, currentRowDuration);
+                    if (!CollectionUtils.isEmpty(processedTagContainers)) {
+                        processedTagContainers.add(newContainer);
+                    } else {
+                        processedTags.put(currentRowTagName, new ArrayList<>(List.of(newContainer)));
+                    }
                 }
             }
             subRows.addAll(currentRowSubRows);
@@ -200,28 +182,33 @@ public class TagDurationReportsComposer {
         return subRows;
     }
 
-    private LinkedList<TagDurationReportRowDtoClone> getRowsByNames(Map<String, TagDurationReportRowDtoClone> tagsToRows,
-                                                                    Set<String> tagNames) {
+    private LinkedList<TagDurationReportRowDto> getRowsByNames(Map<String, TagDurationReportRowDto> tagsToRows,
+                                                               Set<String> tagNames) {
         return tagNames.stream()
                 .map(tagsToRows::get)
-                .sorted(Comparator.comparing(TagDurationReportRowDtoClone::getDuration).reversed())
+                .sorted(Comparator.comparing(TagDurationReportRowDto::getDuration).reversed())
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
-    private long calculateDuration(TagDurationReportRowDtoClone currentRow,
-                                   TagDurationReportRowDtoClone mainRow,
-                                   Map<String, TagDurationReportRowDtoClone> tagsToRows) {
-        List<TagDurationReportRowDtoClone> mappedRows = tagsToRows.get(currentRow.getTag()).getMappedRows();
+    private long calculateDuration(TagDurationReportRowDto currentRow,
+                                   TagDurationReportRowDto mainRow,
+                                   Map<String, TagDurationReportRowDto> tagsToRows,
+                                   Map<String, List<ProcessedTagsContainer>> processedTags) {
+        List<TagDurationReportRowDto> mappedRows = tagsToRows.get(currentRow.getTag()).getMappedRows();
+
+        if (isCurrentRowParentToMainRow(currentRow, mainRow, tagsToRows)) {
+            return tagsToRows.get(currentRow.getTag()).getDuration();
+        }
 
         long duration = 0L;
 
-        for (TagDurationReportRowDtoClone mappedRow : mappedRows) {
+        for (TagDurationReportRowDto mappedRow : mappedRows) {
             Set<String> tagNames = mapToTagNames(mappedRow);
-            List<TagDurationReportRowDtoClone> rows = getRowsByNames(tagsToRows, tagNames);
+            List<TagDurationReportRowDto> rows = getRowsByNames(tagsToRows, tagNames);
 
             boolean containMainRow = false;
-            for (TagDurationReportRowDtoClone subRow : rows) {
-                if (subRow.getTag().equals(mainRow.getTag())) {
+            for (TagDurationReportRowDto mapped : rows) {
+                if (mapped.getTag().equals(mainRow.getTag())) {
                     containMainRow = true;
                     break;
                 }
@@ -232,192 +219,63 @@ public class TagDurationReportsComposer {
             }
         }
 
-        return duration;
+        List<ProcessedTagsContainer> processedTagsWithSameName = processedTags.get(currentRow.getTag());
+
+        long finalDuration = duration;
+        if (!CollectionUtils.isEmpty(processedTagsWithSameName)) {
+            long processedTagsDuration = processedTagsWithSameName.stream()
+                    .map(ProcessedTagsContainer::getDuration)
+                    .reduce(0L, Long::sum);
+
+            finalDuration -= processedTagsDuration;
+        }
+
+        return finalDuration;
     }
 
-    private boolean isAlreadyProcessed(TagDurationReportRowDtoClone targetRow,
-                                       Map<String, ProcessedTagsContainer> processedTags,
-                                       Map<String, TagDurationReportRowDtoClone> tagsToReportRows) {
-        ProcessedTagsContainer processedTagsContainer = processedTags.get(targetRow.getTag());
-
-        long targetRowDuration = getTargetRowDuration(targetRow.getTag(), tagsToReportRows);
-
-        return processedTagsContainer != null
-                && processedTagsContainer.getDuration() == targetRowDuration;
+    private boolean isCurrentRowParentToMainRow(TagDurationReportRowDto currentRow,
+                                                TagDurationReportRowDto mainRow,
+                                                Map<String, TagDurationReportRowDto> tagsToRows) {
+        return tagsToRows.get(currentRow.getTag()).getDuration() > tagsToRows.get(mainRow.getTag()).getDuration();
     }
 
-    private long getTargetRowDuration(String targetTagName, Map<String, TagDurationReportRowDtoClone> tagsToReportRows) {
-        String[] tags = targetTagName.split(" #");
+    private boolean isAlreadyProcessed(TagDurationReportRowDto targetRow,
+                                       Map<String, List<ProcessedTagsContainer>> processedTags,
+                                       long targetRowDuration) {
+        if (targetRowDuration == 0L) {
+            return true;
+        }
 
-        return tagsToReportRows.get(tags[0])
-                .getDuration();
+        List<ProcessedTagsContainer> processedTagContainers = processedTags.get(targetRow.getTag());
+
+        return !CollectionUtils.isEmpty(processedTagContainers)
+                && anyOfAlreadyProcessedTagContainersHasSameDuration(processedTagContainers, targetRowDuration);
     }
 
-    private Set<String> mapToTagNames(TagDurationReportRowDtoClone mappedReportRow) {
+    private boolean anyOfAlreadyProcessedTagContainersHasSameDuration(List<ProcessedTagsContainer> processedTagsContainers,
+                                                                      long targetRowDuration) {
+        for (ProcessedTagsContainer processedContainer : processedTagsContainers) {
+            if (processedContainer.getDuration() == targetRowDuration) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Set<String> mapToTagNames(TagDurationReportRowDto mappedReportRow) {
         return Arrays.stream(mappedReportRow.getTag().split(" "))
                 .map(tag -> tag.replace("#", ""))
                 .collect(Collectors.toSet());
     }
 
-    private List<TagDurationReportRowDtoClone> collectAllReportRows(List<TagDurationReportRowDtoClone> reportsRows) {
-        List<TagDurationReportRowDtoClone> firstLevelRows = reportsRows.stream()
-                .flatMap(report -> report.getMappedRows().stream())
-                .collect(Collectors.toList());
-
-        List<TagDurationReportRowDtoClone> allRows = firstLevelRows.stream()
-                .map(this::collectAllRows)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
-        allRows.addAll(firstLevelRows);
-
-        return allRows;
-    }
-
-    private List<TagDurationReportRowDtoClone> collectAllRows(TagDurationReportRowDtoClone parentRow) {
-        List<TagDurationReportRowDtoClone> allRows = new ArrayList<>();
-
-        if (!CollectionUtils.isEmpty(parentRow.getMappedRows())) {
-            for (TagDurationReportRowDtoClone child : parentRow.getMappedRows()) {
-                allRows.add(child);
-                allRows.addAll(collectAllRows(child));
-            }
-        }
-
-        return allRows;
-    }
-
-    private List<TagDurationReportRowDtoClone> clearDuplicatesAndFixRowsDuration(List<TagDurationReportRowDtoClone> children,
-                                                                                 Map<TagDurationReportRowDtoClone, List<ParentWithChildrenContainer>> rowToParentRows) {
-        List<TagDurationReportRowDtoClone> fixedRows = new ArrayList<>();
-        for (TagDurationReportRowDtoClone row : children) {
-            TagDurationReportRowDtoClone fixedRow = row;
-
-            String rowTagName = row.getTag();
-
-            if (!CollectionUtils.isEmpty(row.getMappedRows())) {
-                List<TagDurationReportRowDtoClone> fixedChildRows = clearDuplicatesAndFixRowsDuration(row.getMappedRows(), rowToParentRows);
-                fixedRow = new TagDurationReportRowDtoClone(rowTagName, row.getDuration(), fixedChildRows, row.getParentRow());
-            }
-
-            List<ParentWithChildrenContainer> parentWithChildrenContainers = rowToParentRows.get(row);
-            if (!CollectionUtils.isEmpty(parentWithChildrenContainers) && parentWithChildrenContainers.size() > 1) {
-                if (CollectionUtils.isEmpty(row.getMappedRows())
-                        && isCurrentRowWithSameParentAsOthersAndCurrentWithoutChildren(row, parentWithChildrenContainers)) {
-                    continue;
-                }
-
-                if (isMoreSeniorParentAndLongerDuration(row, rowToParentRows)) {
-                    TagDurationReportRowDtoClone parentRow = row.getParentRow();
-                    List<ParentWithChildrenContainer> parentRowParentWithChildrenContainers = rowToParentRows.get(parentRow);
-
-                    List<TagDurationReportRowDtoClone> siblings = parentRowParentWithChildrenContainers.stream()
-                            .flatMap(container -> container.getChildren().stream())
-                            .collect(Collectors.toList());
-
-                    TagDurationReportRowDtoClone closestRowWithSameTagAmongSiblings =
-                            findClosestRowWithSameTagAmongSiblings(rowTagName, siblings);
-
-                    if (closestRowWithSameTagAmongSiblings != null) {
-                        long updatedDuration = row.getDuration() - closestRowWithSameTagAmongSiblings.getDuration();
-
-                        if (updatedDuration < 1L) {
-                            continue;
-                        }
-
-                        fixedRow.setDuration(updatedDuration);
-                    }
-                }
-            }
-
-            fixedRows.add(fixedRow);
-        }
-
-        return fixedRows;
-    }
-
-    private boolean isCurrentRowWithSameParentAsOthersAndCurrentWithoutChildren(TagDurationReportRowDtoClone row,
-                                                                                List<ParentWithChildrenContainer> containers) {
-        long containersWithSameParentAmount = containers.stream()
-                .filter(container -> container.getParent().equals(row.getParentRow()))
-                .count();
-        return containersWithSameParentAmount > 1L && CollectionUtils.isEmpty(row.getMappedRows());
-    }
-
-    private boolean isMoreSeniorParentAndLongerDuration(TagDurationReportRowDtoClone row,
-                                                        Map<TagDurationReportRowDtoClone, List<ParentWithChildrenContainer>> rowToParentRows) {
-        TagDurationReportRowDtoClone currentRowParent = row.getParentRow();
-
-        return rowToParentRows.get(row).stream()
-                .noneMatch(container -> isMoreSenior(container.getParent(), currentRowParent));
-    }
-
-    private boolean isMoreSenior(TagDurationReportRowDtoClone target, TagDurationReportRowDtoClone comparedTo) {
-        return calculateLevel(target) < calculateLevel(comparedTo);
-    }
-
-    private TagDurationReportRowDtoClone findClosestRowWithSameTagAmongSiblings(String tagName,
-                                                                                List<TagDurationReportRowDtoClone> siblings) {
-        siblings = siblings.stream()
-                .filter(s -> !s.getTag().equals(tagName))
-                .collect(Collectors.toList());
-        List<Pair<TagDurationReportRowDtoClone, Integer>> pairs = new ArrayList<>();
-        findRowsWithSameTagWithNestingLevels(tagName, siblings, 0, pairs);
-
-        if (!CollectionUtils.isEmpty(pairs)) {
-            pairs.sort(Comparator.comparing(Pair::getRight));
-            return pairs.get(0).getLeft();
-        }
-
-        return null;
-    }
-
-    private void findRowsWithSameTagWithNestingLevels(String tagName,
-                                                      List<TagDurationReportRowDtoClone> rows,
-                                                      int nestingLevel,
-                                                      List<Pair<TagDurationReportRowDtoClone, Integer>> pairs) {
-        if (!CollectionUtils.isEmpty(rows)) {
-            for (TagDurationReportRowDtoClone row : rows) {
-                if (row.getTag().equals(tagName)) {
-                    pairs.add(Pair.of(row, nestingLevel));
-                }
-                findRowsWithSameTagWithNestingLevels(tagName, row.getMappedRows(), nestingLevel + 1, pairs);
-            }
-        }
-    }
-
-    private int calculateLevel(TagDurationReportRowDtoClone row) {
-        int count = 0;
-        while (row.getParentRow() != null) {
-            ++count;
-            row = row.getParentRow();
-        }
-
-        return count;
-    }
-
-    private TagDurationReportRowDtoClone buildTotalReportRow(List<TagDurationReportRowDtoClone> reportRows) {
+    private TagDurationReportRowDto buildTotalReportRow(List<TagDurationReportRowDto> reportRows) {
         long duration = 0;
-        for (TagDurationReportRowDtoClone report : reportRows) {
+        for (TagDurationReportRowDto report : reportRows) {
             duration += report.getDuration();
         }
 
-        return new TagDurationReportRowDtoClone(TOTAL_REPORT_ROW_NAME, duration, Collections.emptyList(), null);
-    }
-
-    private List<TagDurationReportRowDto> mapToRows(List<TagDurationReportRowDtoClone> clones) {
-        if (CollectionUtils.isEmpty(clones)) {
-            return List.of();
-        }
-
-        List<TagDurationReportRowDto> rows = new ArrayList<>();
-        for (TagDurationReportRowDtoClone clone : clones) {
-            List<TagDurationReportRowDto> mappedRows = mapToRows(clone.getMappedRows());
-            TagDurationReportRowDto row = new TagDurationReportRowDto(clone.getTag(), clone.getDuration(), mappedRows);
-            rows.add(row);
-        }
-
-        return rows;
+        return new TagDurationReportRowDto(TOTAL_REPORT_ROW_NAME, duration, new ArrayList<>());
     }
 
     @Getter
@@ -428,32 +286,6 @@ public class TagDurationReportsComposer {
         private final String processedTag;
         private final long duration;
 
-    }
-
-    @Getter
-    @AllArgsConstructor
-    private static class ParentWithChildrenContainer {
-
-        private final TagDurationReportRowDtoClone parent;
-        private final List<TagDurationReportRowDtoClone> children;
-
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @EqualsAndHashCode(of = "tag")
-    @ToString(of = {"tag", "duration"})
-    private static class TagDurationReportRowDtoClone {
-
-        @Setter
-        private String tag;
-        @Setter
-        private long duration;
-
-        @Setter
-        private List<TagDurationReportRowDtoClone> mappedRows;
-
-        private TagDurationReportRowDtoClone parentRow;
     }
 
 }
