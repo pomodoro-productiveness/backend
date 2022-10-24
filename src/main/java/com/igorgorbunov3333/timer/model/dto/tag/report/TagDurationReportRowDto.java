@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@EqualsAndHashCode(of = "tag")
+@EqualsAndHashCode//(of = "tag")
 @ToString(of = {"tag", "duration"})
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class TagDurationReportRowDto {
