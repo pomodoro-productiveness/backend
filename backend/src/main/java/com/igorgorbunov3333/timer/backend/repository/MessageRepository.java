@@ -1,0 +1,12 @@
+package com.igorgorbunov3333.timer.backend.repository;
+
+import com.igorgorbunov3333.timer.backend.model.entity.message.Message;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDate;
+
+public interface MessageRepository extends JpaRepository<Message, Long> {
+
+    boolean existsByDate(LocalDate date);
+
+}
