@@ -5,6 +5,7 @@ import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportRowDto;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -36,39 +38,37 @@ public class TagDurationReportsComposer {
         Map<String, TagDurationReportRowDto> tagsToReportRows = reportRows.stream()
                 .collect(Collectors.toMap(TagDurationReportRowDto::getTag, Function.identity()));
 
-        List<TagDurationReportRowDto> rootReportRows = getRootReportRows(reportRows, tagsToReportRows);
+        List<TagDurationReportRowDto> rootReportRows = reportRows.stream()
+                .filter(r -> isRootReportRow(r, tagsToReportRows))
+                .toList();
+
         List<TagDurationReportRowDto> mergedReportRows = mergeReportRows(tagsToReportRows, rootReportRows);
+
+        Set<Pair<TagDurationReportRowDto, TagDurationReportRowDto>> duplications = new HashSet<>();
+        for (TagDurationReportRowDto row : mergedReportRows) {
+            for (TagDurationReportRowDto otherRow : mergedReportRows) {
+
+                if (!row.equals(otherRow)
+                        && row.getDuration() == otherRow.getDuration()
+                        && row.getMappedRows().equals(otherRow.getMappedRows())) {
+                    List<TagDurationReportRowDto> tags = new LinkedList<>(List.of(row, otherRow));
+                    tags.sort(Comparator.comparing(TagDurationReportRowDto::getTag));
+                    duplications.add(Pair.of(tags.get(0), tags.get(1)));
+                }
+            }
+        }
+
+        for (Pair<TagDurationReportRowDto, TagDurationReportRowDto> duplicationRowPairs : duplications) {
+            TagDurationReportRowDto row = duplicationRowPairs.getFirst();
+            row.setTag(row.getTag() + " #" + duplicationRowPairs.getSecond().getTag());
+
+            mergedReportRows.remove(duplicationRowPairs.getSecond());
+        }
 
         TagDurationReportRowDto totalReportRow = buildTotalReportRow(mergedReportRows);
         mergedReportRows.add(totalReportRow);
 
         return mergedReportRows;
-    }
-
-    private List<TagDurationReportRowDto> getRootReportRows(List<TagDurationReportRowDto> reportRows,
-                                                            Map<String, TagDurationReportRowDto> tagsToReportRows) {
-        List<TagDurationReportRowDto> rootRows = new LinkedList<>();
-        Map<Long, TagDurationReportRowDto> durationToReportRows = new HashMap<>();
-        for (TagDurationReportRowDto row : reportRows) {
-            if (isRootReportRow(row, tagsToReportRows)) {
-                long reportDuration = row.getDuration();
-
-                if (durationToReportRows.containsKey(reportDuration)) {
-                    TagDurationReportRowDto reportWithSameDuration = durationToReportRows.get(reportDuration);
-
-                    rootRows.remove(reportWithSameDuration);
-
-                    reportWithSameDuration.setTag(reportWithSameDuration.getTag() + " #" + row.getTag());
-
-                    rootRows.add(reportWithSameDuration);
-                } else {
-                    rootRows.add(row);
-                    durationToReportRows.put(reportDuration, row);
-                }
-            }
-        }
-
-        return rootRows;
     }
 
     private boolean isRootReportRow(TagDurationReportRowDto reportRow,

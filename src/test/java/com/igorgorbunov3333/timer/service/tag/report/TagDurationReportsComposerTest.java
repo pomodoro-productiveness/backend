@@ -210,4 +210,176 @@ class TagDurationReportsComposerTest {
         assertThat(actual).containsExactlyInAnyOrderElementsOf(List.of(workExpected, totalExpected));
     }
 
+    @Test
+    void compose_whenReportsPresentAndTwoOrMoreParentsHasChildrenWithDeepNesting_ThenCompose() {
+        TagDurationReportRowDto pomodoro_backendMappedTagDurationReportRow = new TagDurationReportRowDto(
+                "#backend",
+                5_400L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto pomodoro_javaBackendMappedTagDurationReportRows = new TagDurationReportRowDto(
+                "#Java #backend",
+                25_200L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto pomodoro_pythonBackendMappedTagDurationReportRows = new TagDurationReportRowDto(
+                "#python #backend",
+                3_600L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto pomodoro_designBackendMappedTagDurationReportRows = new TagDurationReportRowDto(
+                "#design #backend",
+                1_800L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto pomodoroTagDurationReportRow = new TagDurationReportRowDto(
+                "pomodoro",
+                36_000L,
+                new ArrayList<>(List.of(
+                        pomodoro_backendMappedTagDurationReportRow,
+                        pomodoro_javaBackendMappedTagDurationReportRows,
+                        pomodoro_pythonBackendMappedTagDurationReportRows,
+                        pomodoro_designBackendMappedTagDurationReportRows
+                ))
+        );
+
+        //----------------------------------------
+
+        TagDurationReportRowDto backend_pomodoroMappedTagDurationReportRow = new TagDurationReportRowDto(
+                "#pomodoro",
+                5_400L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto backend_javaPomodoroMappedTagDurationReportRows = new TagDurationReportRowDto(
+                "#Java #pomodoro",
+                25_200L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto backend_pythonPomodoroMappedTagDurationReportRows = new TagDurationReportRowDto(
+                "#python #pomodoro",
+                3_600L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto backend_designPomodoroMappedTagDurationReportRows = new TagDurationReportRowDto(
+                "#design #pomodoro",
+                1_800L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto backendTagDurationReportRow = new TagDurationReportRowDto(
+                "backend",
+                36_000L,
+                new ArrayList<>(List.of(
+                        backend_pomodoroMappedTagDurationReportRow,
+                        backend_javaPomodoroMappedTagDurationReportRows,
+                        backend_pythonPomodoroMappedTagDurationReportRows,
+                        backend_designPomodoroMappedTagDurationReportRows
+                ))
+        );
+
+        //--------------------------------
+
+        TagDurationReportRowDto java_pomodoroBackendMappedTagDurationReportRows = new TagDurationReportRowDto(
+                "#pomodoro #backend",
+                25_200L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto javaTagDurationReportRow = new TagDurationReportRowDto(
+                "Java",
+                25_200L,
+                new ArrayList<>(List.of(
+                        java_pomodoroBackendMappedTagDurationReportRows
+                ))
+        );
+
+        //-----------------------
+
+        TagDurationReportRowDto design_pomodoroBackendMappedTagDurationReportRows = new TagDurationReportRowDto(
+                "#pomodoro #backend",
+                1_800L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto designTagDurationReportRow = new TagDurationReportRowDto(
+                "design",
+                1_800L,
+                new ArrayList<>(List.of(
+                        design_pomodoroBackendMappedTagDurationReportRows
+                ))
+        );
+
+        //----------------------
+
+        TagDurationReportRowDto python_pomodoroBackendMappedTagDurationReportRows = new TagDurationReportRowDto(
+                "backend #pomodoro",
+                3_600L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto pythonTagDurationReportRow = new TagDurationReportRowDto(
+                "python",
+                3_600L,
+                new ArrayList<>(List.of(
+                        python_pomodoroBackendMappedTagDurationReportRows
+                ))
+        );
+
+        when(allTagsDurationReporter.reportForEachTag(List.of()))
+                .thenReturn(List.of(
+                        pomodoroTagDurationReportRow,
+                        backendTagDurationReportRow,
+                        javaTagDurationReportRow,
+                        designTagDurationReportRow,
+                        pythonTagDurationReportRow
+                ));
+
+        List<TagDurationReportRowDto> actual = testee.compose(List.of());
+
+        TagDurationReportRowDto javaRowExpected = new TagDurationReportRowDto(
+                "Java",
+                25_200L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto pythonRowExpected = new TagDurationReportRowDto(
+                "python",
+                3_600L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto designRowExpected = new TagDurationReportRowDto(
+                "design",
+                1_800L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto pomodoroBackendRowExpected = new TagDurationReportRowDto(
+                "backend #pomodoro",
+                36_000L,
+                new ArrayList<>(List.of(
+                        javaRowExpected,
+                        pythonRowExpected,
+                        designRowExpected
+                ))
+        );
+
+        TagDurationReportRowDto totalRowExpected = new TagDurationReportRowDto(
+                "Total",
+                36_000L,
+                new ArrayList<>()
+        );
+
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(
+                List.of(pomodoroBackendRowExpected, totalRowExpected)
+        );
+    }
+
 }
