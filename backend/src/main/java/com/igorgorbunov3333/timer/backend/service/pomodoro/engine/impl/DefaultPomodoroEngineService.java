@@ -2,7 +2,6 @@ package com.igorgorbunov3333.timer.backend.service.pomodoro.engine.impl;
 
 import com.igorgorbunov3333.timer.backend.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroPauseDto;
 import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.backend.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.engine.PomodoroEngine;
@@ -12,12 +11,7 @@ import com.igorgorbunov3333.timer.backend.service.pomodoro.saver.PomodoroSaver;
 import com.igorgorbunov3333.timer.backend.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -46,25 +40,26 @@ public class DefaultPomodoroEngineService implements PomodoroEngineService {
 
     @Override
     public PomodoroDto stopPomodoro() {
-        if (!pomodoroEngine.isPomodoroCurrentlyRunning() && !pomodoroEngine.isPomodoroPaused()) {
-            throw new PomodoroEngineException(MESSAGE_POMODORO_NOT_STARTED);
-        }
-        int duration = pomodoroEngine.stopPomodoro();
-        long pomodoroMinimumLifetime = pomodoroProperties.getMinimumLifetime();
-        if (pomodoroMinimumLifetime == 0) {
-            SimplePrinter.print("Pomodoro lifetime didn't set. Please configure");
-        }
-        if (duration <= pomodoroMinimumLifetime) {
-            String message = "Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds";
-            pomodoroPausesStorage.evict();
-            throw new PomodoroEngineException(message);
-        }
-        List<Pair<ZonedDateTime, ZonedDateTime>> pomodoroPausePairs = pomodoroPausesStorage.getPauses();
-        List<PomodoroPauseDto> pomodoroPauses = pomodoroPausePairs.stream()
-                .map(pair -> new PomodoroPauseDto(pair.getFirst(), pair.getSecond()))
-                .collect(Collectors.toList());
-        pomodoroPausesStorage.evict();
-        return pomodoroSaver.save(duration, pomodoroPauses);
+//        if (!pomodoroEngine.isPomodoroCurrentlyRunning() && !pomodoroEngine.isPomodoroPaused()) {
+//            throw new PomodoroEngineException(MESSAGE_POMODORO_NOT_STARTED);
+//        }
+//        int duration = pomodoroEngine.stopPomodoro();
+//        long pomodoroMinimumLifetime = pomodoroProperties.getMinimumLifetime();
+//        if (pomodoroMinimumLifetime == 0) {
+//            SimplePrinter.print("Pomodoro lifetime didn't set. Please configure");
+//        }
+//        if (duration <= pomodoroMinimumLifetime) {
+//            String message = "Pomodoro lifetime is less then [" + pomodoroMinimumLifetime + "] seconds";
+//            pomodoroPausesStorage.evict();
+//            throw new PomodoroEngineException(message);
+//        }
+//        List<Pair<ZonedDateTime, ZonedDateTime>> pomodoroPausePairs = pomodoroPausesStorage.getPauses();
+//        List<PomodoroPauseDto> pomodoroPauses = pomodoroPausePairs.stream()
+//                .map(pair -> new PomodoroPauseDto(pair.getFirst(), pair.getSecond()))
+//                .collect(Collectors.toList());
+//        pomodoroPausesStorage.evict();
+//        return pomodoroSaver.save(duration, pomodoroPauses);
+        return null;
     }
 
     @Override

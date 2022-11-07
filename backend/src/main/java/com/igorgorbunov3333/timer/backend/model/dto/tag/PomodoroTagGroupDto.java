@@ -1,22 +1,20 @@
 package com.igorgorbunov3333.timer.backend.model.dto.tag;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "name")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class PomodoroTagDto {
+public class PomodoroTagGroupDto {
 
     private Long id;
-    private String name;
-    private boolean removed;
+    private Set<PomodoroTagDto> pomodoroTags;
+    private Long orderNumber;
 
 }

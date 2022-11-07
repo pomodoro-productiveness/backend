@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Component
 @AllArgsConstructor
-public class LocalPomodoroUpdater {
+public class PomodoroUpdater {
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroTagGroupService pomodoroTagGroupService;

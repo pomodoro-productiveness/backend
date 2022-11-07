@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.backend.service.console.command.impl;
 
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.TagPomodoroSessionMapper;
+import com.igorgorbunov3333.timer.backend.service.console.command.line.session.TagPomodoroSessionUpdater;
 import com.igorgorbunov3333.timer.backend.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.backend.service.console.printer.util.PrintUtil;
 import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
@@ -13,7 +13,7 @@ public abstract class AbstractPomodoroSessionMapper {
 
     public abstract DailyPomodoroProvider getCurrentDayLocalPomodoroProvider();
     public abstract PrinterService getPrinterService();
-    public abstract TagPomodoroSessionMapper getTagPomodoroSessionMapper();
+    public abstract TagPomodoroSessionUpdater getTagPomodoroSessionUpdater();
 
     public void printSuccessfullySavedMessage(PomodoroDto savedPomodoro) {
         String successfullySavedMessage = PrintUtil.MESSAGE_POMODORO_SAVED + savedPomodoro;
@@ -24,7 +24,7 @@ public abstract class AbstractPomodoroSessionMapper {
     public List<PomodoroDto> startTagSessionAndPrintDailyPomodoro(List<Long> pomodoroId) {
         SimplePrinter.printParagraph();
 
-        getTagPomodoroSessionMapper().addTagToPomodoro(pomodoroId);
+        getTagPomodoroSessionUpdater().addTagToPomodoro(pomodoroId);
 
         return getAndPrintCurrentDayPomodoro();
     }

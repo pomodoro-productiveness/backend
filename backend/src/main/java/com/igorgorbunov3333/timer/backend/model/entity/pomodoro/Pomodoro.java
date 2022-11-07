@@ -3,6 +3,7 @@ package com.igorgorbunov3333.timer.backend.model.entity.pomodoro;
 import com.igorgorbunov3333.timer.backend.model.TemporalObject;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@Builder(setterPrefix = "set")
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class Pomodoro implements TemporalObject {
 

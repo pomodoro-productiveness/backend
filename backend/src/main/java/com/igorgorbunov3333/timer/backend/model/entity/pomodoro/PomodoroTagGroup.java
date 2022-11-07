@@ -1,6 +1,5 @@
 package com.igorgorbunov3333.timer.backend.model.entity.pomodoro;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,11 +19,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import java.util.Set;
 
+
 @Entity
 @Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class PomodoroTagGroup {
 
     @Id

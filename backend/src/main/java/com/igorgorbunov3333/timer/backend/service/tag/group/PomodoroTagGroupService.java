@@ -1,9 +1,12 @@
 package com.igorgorbunov3333.timer.backend.service.tag.group;
 
+import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroTagGroupMapper;
+import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagGroupDto;
 import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTagGroup;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroTagGroupRepository;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroTagRepository;
+import com.igorgorbunov3333.timer.backend.service.exception.TagOperationException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -21,12 +24,14 @@ public class PomodoroTagGroupService {
 
     private final PomodoroTagGroupRepository pomodoroTagGroupRepository;
     private final PomodoroTagRepository pomodoroTagRepository;
+    private final PomodoroTagGroupMapper pomodoroTagGroupMapper;
 
-    public List<PomodoroTagGroup> getLatestTagGroups() {
-        return pomodoroTagGroupRepository.findTop10ByOrderByOrderNumberDesc()
+    public List<PomodoroTagGroupDto> getLatestTagGroups() {
+        return pomodoroTagGroupRepository.findByOrderByOrderNumberDesc()
                 .stream()
                 .map(this::getSortedTags)
-                .collect(Collectors.toList());
+                .map(pomodoroTagGroupMapper::toDto)
+                .toList();
     }
 
     public void saveTagGroup(Set<String> tags) {
@@ -54,6 +59,23 @@ public class PomodoroTagGroupService {
             allGroups = pomodoroTagGroupRepository.findAll();
         }
 
+        update(group, allGroups);
+    }
+
+    public void updateOrderNumber(long pomodoroTagGroupId) {
+        PomodoroTagGroup pomodoroTagGroup = pomodoroTagGroupRepository.findById(pomodoroTagGroupId)
+                .orElse(null);
+
+        if (pomodoroTagGroup == null) {
+            throw new TagOperationException(String.format("No PomodoroTagGroup with id [%d]", pomodoroTagGroupId));
+        }
+
+        List<PomodoroTagGroup> allGroups = pomodoroTagGroupRepository.findAll();
+
+        update(pomodoroTagGroup, allGroups);
+    }
+
+    private void update(PomodoroTagGroup group, List<PomodoroTagGroup> allGroups) {
         long nextOrderNumber = calculateNextOrderNumber(allGroups);
 
         group.setOrderNumber(nextOrderNumber);
@@ -76,7 +98,10 @@ public class PomodoroTagGroupService {
 
     public Optional<PomodoroTagGroup> findTagGroupsByTagNames(Set<String> tagNames) {
         return pomodoroTagGroupRepository.findAll().stream()
-                .filter(group -> group.getPomodoroTags().stream().map(PomodoroTag::getName).collect(Collectors.toSet()).equals(tagNames))
+                .filter(group -> group.getPomodoroTags().stream()
+                        .map(PomodoroTag::getName)
+                        .collect(Collectors.toSet())
+                        .equals(tagNames))
                 .findFirst();
     }
 

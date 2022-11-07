@@ -1,7 +1,5 @@
+server.port: 8080
 spring:
-  main:
-    web-application-type: NONE
-    banner-mode: OFF
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/pomodoro_database

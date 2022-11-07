@@ -1,12 +1,12 @@
 package com.igorgorbunov3333.timer.backend.service.console.command.line.session;
 
-import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTag;
-import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTagGroup;
+import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagDto;
+import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagGroupDto;
 import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.BaseLineProvider;
 import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.backend.service.console.printer.util.ListOfItemsPrinter;
 import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.updater.LocalPomodoroUpdater;
+import com.igorgorbunov3333.timer.backend.service.pomodoro.updater.PomodoroUpdater;
 import com.igorgorbunov3333.timer.backend.service.tag.group.PomodoroTagGroupService;
 import com.igorgorbunov3333.timer.backend.service.tag.provider.TagsFromUserProvider;
 import com.igorgorbunov3333.timer.backend.service.util.NumberToItemBuilder;
@@ -24,35 +24,35 @@ import java.util.stream.Collectors;
 //TODO: refactor
 @Component
 @AllArgsConstructor
-public class TagPomodoroSessionMapper implements NumberProvidable, BaseLineProvider {
+public class TagPomodoroSessionUpdater implements NumberProvidable, BaseLineProvider {
 
     @Getter
     private final CommandProvider commandProvider;
-    private final LocalPomodoroUpdater localPomodoroUpdater;
+    private final PomodoroUpdater pomodoroUpdater;
     private final PomodoroTagGroupService pomodoroTagGroupService;
     private final TagsFromUserProvider tagsFromUserProvider;
 
     public void addTagToPomodoro(List<Long> pomodoroId) {
         Set<String> tags = provideTags();
 
-        localPomodoroUpdater.updatePomodoroWithTag(pomodoroId, tags);
+        pomodoroUpdater.updatePomodoroWithTag(pomodoroId, tags);
     }
 
     private Set<String> provideTags() {
-        List<PomodoroTagGroup> pomodoroTagGroups = pomodoroTagGroupService.getLatestTagGroups();
+        List<PomodoroTagGroupDto> pomodoroTagGroups = pomodoroTagGroupService.getLatestTagGroups();
 
         if (CollectionUtils.isEmpty(pomodoroTagGroups)) {
             return chosenTagsByUser();
         }
 
-        Map<Integer, PomodoroTagGroup> pomodoroTagGroupMap = NumberToItemBuilder.build(pomodoroTagGroups);
+        Map<Integer, PomodoroTagGroupDto> pomodoroTagGroupMap = NumberToItemBuilder.build(pomodoroTagGroups);
 
-        Function<PomodoroTagGroup, List<String>> extractorFunction = group -> group.getPomodoroTags().stream()
-                .map(PomodoroTag::getName)
+        Function<PomodoroTagGroupDto, List<String>> extractorFunction = group -> group.getPomodoroTags().stream()
+                .map(PomodoroTagDto::getName)
                 .collect(Collectors.toList());
         ListOfItemsPrinter.print(pomodoroTagGroupMap, extractorFunction);
 
-        PomodoroTagGroup chosenTagGroup;
+        PomodoroTagGroupDto chosenTagGroup;
         while (true) {
             SimplePrinter.printParagraph();
             SimplePrinter.print("Please choose tags group by it's number or press \"e\" to map by other tags");
@@ -74,10 +74,10 @@ public class TagPomodoroSessionMapper implements NumberProvidable, BaseLineProvi
             }
         }
 
-        pomodoroTagGroupService.updateOrderNumber(chosenTagGroup, null);
+        pomodoroTagGroupService.updateOrderNumber(chosenTagGroup.getId());
 
         return chosenTagGroup.getPomodoroTags().stream()
-                .map(PomodoroTag::getName)
+                .map(PomodoroTagDto::getName)
                 .collect(Collectors.toSet());
     }
 

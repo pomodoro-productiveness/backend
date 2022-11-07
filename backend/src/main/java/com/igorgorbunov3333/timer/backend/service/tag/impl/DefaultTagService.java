@@ -5,7 +5,7 @@ import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroTagRepository;
 import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.mapper.TagMapper;
+import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroTagMapper;
 import com.igorgorbunov3333.timer.backend.service.tag.TagService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class DefaultTagService implements TagService {
 
     private final PomodoroTagRepository pomodoroTagRepository;
     private final PomodoroRepository pomodoroRepository;
-    private final TagMapper tagMapper;
+    private final PomodoroTagMapper tagMapper;
 
     @Override
     public String save(String name) {
@@ -49,7 +49,7 @@ public class DefaultTagService implements TagService {
     public List<PomodoroTagDto> getSortedTags(boolean includeRemoved) {
         return pomodoroTagRepository.findAll().stream()
                 .filter(tag -> filterTag(tag, includeRemoved))
-                .map(tagMapper::mapToDto)
+                .map(tagMapper::toDto)
                 .sorted(Comparator.comparing(tag -> tag.getName().toLowerCase()))
                 .collect(Collectors.toList());
     }
@@ -74,7 +74,7 @@ public class DefaultTagService implements TagService {
 
     @Override
     public List<PomodoroTag> save(List<PomodoroTagDto> tags) {
-        List<PomodoroTag> tagsToSave = tagMapper.mapToEntities(tags);
+        List<PomodoroTag> tagsToSave = tagMapper.toEntities(tags);
 
         return pomodoroTagRepository.saveAll(tagsToSave);
     }

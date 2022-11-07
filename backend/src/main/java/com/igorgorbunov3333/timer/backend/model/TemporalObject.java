@@ -5,7 +5,6 @@ import java.time.ZonedDateTime;
 public interface TemporalObject {
 
     ZonedDateTime getStartTime();
-
     ZonedDateTime getEndTime();
 
 }

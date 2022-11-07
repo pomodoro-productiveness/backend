@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.backend.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.backend.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.backend.service.console.command.CurrentCommandStorage;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.TagPomodoroSessionMapper;
+import com.igorgorbunov3333.timer.backend.service.console.command.line.session.TagPomodoroSessionUpdater;
 import com.igorgorbunov3333.timer.backend.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.backend.service.console.printer.StandardReportPrinter;
 import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
@@ -33,7 +33,7 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
     @Getter
     private final PrinterService printerService;
     @Getter
-    private final TagPomodoroSessionMapper tagPomodoroSessionMapper;
+    private final TagPomodoroSessionUpdater tagPomodoroSessionUpdater;
     private final StandardReportPrinter standardReportPrinter;
     private final CurrentTimeService currentTimeService;
 

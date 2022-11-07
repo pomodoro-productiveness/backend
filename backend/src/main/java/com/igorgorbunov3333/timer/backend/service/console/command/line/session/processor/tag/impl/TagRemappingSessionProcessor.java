@@ -3,7 +3,7 @@ package com.igorgorbunov3333.timer.backend.service.console.command.line.session.
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagDto;
 import com.igorgorbunov3333.timer.backend.service.console.command.impl.AbstractPomodoroSessionMapper;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.TagPomodoroSessionMapper;
+import com.igorgorbunov3333.timer.backend.service.console.command.line.session.TagPomodoroSessionUpdater;
 import com.igorgorbunov3333.timer.backend.service.console.command.line.session.processor.tag.TagSessionProcessor;
 import com.igorgorbunov3333.timer.backend.service.console.printer.PrinterService;
 import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
@@ -25,7 +25,7 @@ public class TagRemappingSessionProcessor extends AbstractPomodoroSessionMapper 
     @Getter
     private final PrinterService printerService;
     @Getter
-    private final TagPomodoroSessionMapper tagPomodoroSessionMapper;
+    private final TagPomodoroSessionUpdater tagPomodoroSessionUpdater;
 
     private final DailySinglePomodoroFromUserProvider dailySinglePomodoroFromUserProvider;
 

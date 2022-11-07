@@ -291,7 +291,7 @@ public class PomodoroPrinter {
                 spaces += StringUtils.SPACE.repeat(lengthDifference);
             }
 
-            currentTag = new PomodoroTagDto(currentTagName + spaces, currentTag.isRemoved());
+            currentTag = new PomodoroTagDto(null, currentTagName + spaces, currentTag.isRemoved());
 
             updatedTags.add(currentTag);
         }

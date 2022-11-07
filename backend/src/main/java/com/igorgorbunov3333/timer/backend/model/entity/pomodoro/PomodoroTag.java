@@ -1,6 +1,5 @@
 package com.igorgorbunov3333.timer.backend.model.entity.pomodoro;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,10 +13,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
+@Setter
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class PomodoroTag implements Comparable<PomodoroTag> {
 
     @Id
@@ -32,7 +32,9 @@ public class PomodoroTag implements Comparable<PomodoroTag> {
 
     @Override
     public int compareTo(PomodoroTag tag) {
-        return this.getName().toLowerCase().compareTo(tag.getName().toLowerCase());
+        return this.getName()
+                .toLowerCase()
+                .compareTo(tag.getName().toLowerCase());
     }
 
 }

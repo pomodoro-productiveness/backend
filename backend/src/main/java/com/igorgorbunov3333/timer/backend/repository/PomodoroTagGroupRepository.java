@@ -9,6 +9,6 @@ import java.util.List;
 public interface PomodoroTagGroupRepository extends JpaRepository<PomodoroTagGroup, Long> {
 
     @EntityGraph(attributePaths = "pomodoroTags")
-    List<PomodoroTagGroup> findTop10ByOrderByOrderNumberDesc();
+    List<PomodoroTagGroup> findByOrderByOrderNumberDesc();
 
 }

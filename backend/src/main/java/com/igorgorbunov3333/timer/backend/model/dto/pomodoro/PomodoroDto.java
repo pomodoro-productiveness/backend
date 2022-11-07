@@ -23,10 +23,10 @@ public class PomodoroDto implements TemporalObject {
     @JsonIgnore
     private Long id;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ssZ")
     private ZonedDateTime startTime;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ssZ")
     private ZonedDateTime endTime;
 
     private boolean savedAutomatically;

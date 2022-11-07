@@ -1,53 +1,52 @@
 package com.igorgorbunov3333.timer.backend.service.pomodoro.saver;
 
+import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroMapper;
+import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroPauseMapper;
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroPauseDto;
+import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroSaveRequestDto;
 import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroPause;
+import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTagGroup;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroRepository;
-import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroMapper;
+import com.igorgorbunov3333.timer.backend.repository.PomodoroTagGroupRepository;
+import com.igorgorbunov3333.timer.backend.service.exception.NoDataException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Component
 @AllArgsConstructor
-public class PomodoroSaver implements SinglePomodoroSavable {
+public class PomodoroSaver {
 
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroMapper pomodoroMapper;
+    private final PomodoroTagGroupRepository pomodoroTagGroupRepository;
+    private final PomodoroPauseMapper pomodoroPauseMapper;
 
-    public PomodoroDto save(int pomodoroDuration, List<PomodoroPauseDto> pomodoroPauses) {
-        Pomodoro pomodoro = buildPomodoro(pomodoroDuration, pomodoroPauses);
-        return save(pomodoro);
-    }
+    public PomodoroDto save(@NonNull PomodoroSaveRequestDto saveRequest) {
+        List<PomodoroPause> pauses = pomodoroPauseMapper.toEntities(saveRequest.getPauses());
 
-    public PomodoroDto save(int pomodoroDuration) {
-        Pomodoro pomodoro = buildPomodoro(pomodoroDuration, List.of());
-        return save(pomodoro);
-    }
+        PomodoroTagGroup pomodoroTagGroup = pomodoroTagGroupRepository.findById(saveRequest.getTagGroupId())
+                .orElse(null);
 
-    private Pomodoro buildPomodoro(int pomodoroSecondsDuration, List<PomodoroPauseDto> pauses) {
-        ZoneId currentZoneId = ZoneId.systemDefault();
-        ZonedDateTime endTime = LocalDateTime.now()
-                .truncatedTo(ChronoUnit.SECONDS)
-                .atZone(currentZoneId);
-        ZonedDateTime startTime = endTime.minusSeconds(pomodoroSecondsDuration);
+        if (pomodoroTagGroup == null) {
+            throw new NoDataException(String.format("%s with id [%d] is not exists", PomodoroTagGroup.class.getSimpleName(), saveRequest.getTagGroupId()));
+        }
 
-        //TODO: add mapper to map dto to entity
-        List<PomodoroPause> pomodoroPauses = pauses.stream()
-                .map(pauseDto -> new PomodoroPause(null, pauseDto.getStartTime(), pauseDto.getEndTime(), null))
-                .collect(Collectors.toList());
+        Pomodoro pomodoro = Pomodoro.builder()
+                .setStartTime(saveRequest.getStart())
+                .setEndTime(saveRequest.getEnd())
+                .setPomodoroPauses(pauses)
+                .setPomodoroTagGroup(pomodoroTagGroup)
+                .build();
 
-        return new Pomodoro(null, startTime, endTime, false, pomodoroPauses, null);
+        Pomodoro savedPomodoro = pomodoroRepository.save(pomodoro);
+
+        return pomodoroMapper.toDto(savedPomodoro);
     }
 
 }
