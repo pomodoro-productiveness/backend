@@ -1,7 +1,6 @@
 package com.igorgorbunov3333.timer.backend.service.tag.provider;
 
 import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.backend.service.tag.TagService;
 import com.igorgorbunov3333.timer.backend.service.util.NumberToItemBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -9,7 +9,6 @@ import com.igorgorbunov3333.timer.backend.repository.DayOffRepository;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.backend.service.period.WeekPeriodHelper;
-import com.igorgorbunov3333.timer.backend.service.tag.TagService;
 import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

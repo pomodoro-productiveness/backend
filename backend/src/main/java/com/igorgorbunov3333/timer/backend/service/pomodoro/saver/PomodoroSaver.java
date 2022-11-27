@@ -9,7 +9,7 @@ import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroPause;
 import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTagGroup;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroTagGroupRepository;
-import com.igorgorbunov3333.timer.backend.service.exception.NoDataException;
+import com.igorgorbunov3333.timer.backend.service.exception.EntityDoesNotExist;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -34,7 +34,7 @@ public class PomodoroSaver {
                 .orElse(null);
 
         if (pomodoroTagGroup == null) {
-            throw new NoDataException(String.format("%s with id [%d] is not exists", PomodoroTagGroup.class.getSimpleName(), saveRequest.getTagGroupId()));
+            throw new EntityDoesNotExist(String.format("%s with id [%d] is not exists", PomodoroTagGroup.class.getSimpleName(), saveRequest.getTagGroupId()));
         }
 
         Pomodoro pomodoro = Pomodoro.builder()

@@ -1,12 +1,13 @@
 package com.igorgorbunov3333.timer.backend.service.tag.group;
 
+import com.igorgorbunov3333.timer.backend.service.exception.EntityAlreadyExists;
+import com.igorgorbunov3333.timer.backend.service.exception.EntityDoesNotExist;
 import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroTagGroupMapper;
 import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagGroupDto;
 import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTagGroup;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroTagGroupRepository;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroTagRepository;
-import com.igorgorbunov3333.timer.backend.service.exception.TagOperationException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -26,7 +27,7 @@ public class PomodoroTagGroupService {
     private final PomodoroTagRepository pomodoroTagRepository;
     private final PomodoroTagGroupMapper pomodoroTagGroupMapper;
 
-    public List<PomodoroTagGroupDto> getLatestTagGroups() {
+    public List<PomodoroTagGroupDto> getTagGroupsOrderedByFrequencyOfUse() {
         return pomodoroTagGroupRepository.findByOrderByOrderNumberDesc()
                 .stream()
                 .map(this::getSortedTags)
@@ -34,66 +35,75 @@ public class PomodoroTagGroupService {
                 .toList();
     }
 
-    public void saveTagGroup(Set<String> tags) {
+    public PomodoroTagGroupDto saveTagGroup(Set<String> tags) {
+        if (CollectionUtils.isEmpty(tags)) {
+            throw new IllegalArgumentException("Tags for save must not be mull or empty");
+        }
+
         List<PomodoroTag> pomodoroTags = pomodoroTagRepository.findByNameIn(tags);
+
+        if (CollectionUtils.isEmpty(pomodoroTags)) {
+            throw new EntityDoesNotExist("No such tags: " + tags + " present in database");
+        }
+
+        if (pomodoroTags.size() != tags.size()) {
+            throw new EntityDoesNotExist("Not all of tags: " + tags + " present in database");
+        }
+
         List<PomodoroTagGroup> allGroups = pomodoroTagGroupRepository.findAll();
 
         for (PomodoroTagGroup group : allGroups) {
             if (new HashSet<>(group.getPomodoroTags()).equals(new HashSet<>(pomodoroTags))) {
-                updateOrderNumber(group, allGroups);
-                return;
+                throw new EntityAlreadyExists(PomodoroTagGroup.class.getSimpleName() + " with tags " + tags + " already exists");
             }
         }
 
-        if (!CollectionUtils.isEmpty(pomodoroTags)) {
-            long nextOrderNumber = calculateNextOrderNumber(allGroups);
+        long nextOrderNumber = calculateNextOrderNumber(allGroups);
+        PomodoroTagGroup group = new PomodoroTagGroup(null, new HashSet<>(pomodoroTags), nextOrderNumber);
 
-            PomodoroTagGroup group = new PomodoroTagGroup(null, new HashSet<>(pomodoroTags), nextOrderNumber);
+        PomodoroTagGroup savedGroup = pomodoroTagGroupRepository.save(group);
 
-            pomodoroTagGroupRepository.save(group);
-        }
+        return pomodoroTagGroupMapper.toDto(savedGroup);
     }
 
-    public void updateOrderNumber(PomodoroTagGroup group, List<PomodoroTagGroup> allGroups) {
-        if (allGroups == null) {
-            allGroups = pomodoroTagGroupRepository.findAll();
+    public PomodoroTagGroupDto updateTagGroupWithTags(long tagGroupId, Set<String> tagNames) {
+        if (CollectionUtils.isEmpty(tagNames)) {
+            throw new IllegalArgumentException(String.format("Tag names collection for updating %s must not be empty", PomodoroTagGroup.class.getSimpleName()));
         }
 
-        update(group, allGroups);
-    }
-
-    public void updateOrderNumber(long pomodoroTagGroupId) {
-        PomodoroTagGroup pomodoroTagGroup = pomodoroTagGroupRepository.findById(pomodoroTagGroupId)
+        PomodoroTagGroup tagGroupToUpdate = pomodoroTagGroupRepository.findById(tagGroupId)
                 .orElse(null);
 
-        if (pomodoroTagGroup == null) {
-            throw new TagOperationException(String.format("No PomodoroTagGroup with id [%d]", pomodoroTagGroupId));
+        if (tagGroupToUpdate == null) {
+            throw new EntityDoesNotExist(String.format("%s with [%d] does not exists", PomodoroTagGroup.class.getSimpleName(), tagGroupId));
         }
 
-        List<PomodoroTagGroup> allGroups = pomodoroTagGroupRepository.findAll();
+        List<PomodoroTag> tags = pomodoroTagRepository.findByNameIn(tagNames);
 
-        update(pomodoroTagGroup, allGroups);
-    }
+        for (PomodoroTag tag : tags) {
+            if (!tagNames.contains(tag.getName())) {
+                throw new EntityDoesNotExist(String.format("Tag with name %s does not exist", tag.getName()));
+            }
+        }
 
-    private void update(PomodoroTagGroup group, List<PomodoroTagGroup> allGroups) {
-        long nextOrderNumber = calculateNextOrderNumber(allGroups);
+        tagGroupToUpdate.setPomodoroTags(new HashSet<>(tags));
 
-        group.setOrderNumber(nextOrderNumber);
+        PomodoroTagGroup updatedPomodoroTagGroup = pomodoroTagGroupRepository.save(tagGroupToUpdate);
 
-        pomodoroTagGroupRepository.save(group);
-        pomodoroTagGroupRepository.flush();
+        return pomodoroTagGroupMapper.toDto(updatedPomodoroTagGroup);
     }
 
     private long calculateNextOrderNumber(List<PomodoroTagGroup> allGroups) {
-        if (!CollectionUtils.isEmpty(allGroups)) {
-            long maxOrderNumber = allGroups.stream()
-                    .mapToLong(PomodoroTagGroup::getOrderNumber)
-                    .max()
-                    .orElse(1L);
-
-            return maxOrderNumber + 1L;
+        if (CollectionUtils.isEmpty(allGroups)) {
+            return 1L;
         }
-        return 1;
+
+        long maxOrderNumber = allGroups.stream()
+                .mapToLong(PomodoroTagGroup::getOrderNumber)
+                .max()
+                .orElse(0L);
+
+        return maxOrderNumber + 1L;
     }
 
     public Optional<PomodoroTagGroup> findTagGroupsByTagNames(Set<String> tagNames) {

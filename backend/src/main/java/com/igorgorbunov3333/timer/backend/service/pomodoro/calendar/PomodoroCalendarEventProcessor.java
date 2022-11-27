@@ -3,7 +3,7 @@ package com.igorgorbunov3333.timer.backend.service.pomodoro.calendar;
 import com.google.api.services.calendar.model.Event;
 import com.igorgorbunov3333.timer.backend.config.properties.GoogleServicesProperties;
 import com.igorgorbunov3333.timer.backend.service.google.calendar.CalendarEventProvider;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.provider.impl.DefaultPomodoroProvider;
+import com.igorgorbunov3333.timer.backend.service.pomodoro.provider.impl.PomodoroProvider;
 import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -26,7 +26,7 @@ public class PomodoroCalendarEventProcessor {
     private final PomodoroCalendarEventPublisher publisher;
     private final CalendarEventProvider calendarEventProvider;
     private final CurrentTimeService currentTimeService;
-    private final DefaultPomodoroProvider pomodoroProvider;
+    private final PomodoroProvider pomodoroProvider;
 
     //TODO: Add unit test where latestPomodoroStartTime from the same day and next event should be started later in the same day
     //TODO: Add test - do not process todays pomodoro

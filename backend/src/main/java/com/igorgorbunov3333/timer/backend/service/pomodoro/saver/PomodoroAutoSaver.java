@@ -7,7 +7,7 @@ import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTag;
 import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTagGroup;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroTagGroupRepository;
-import com.igorgorbunov3333.timer.backend.service.exception.NoDataException;
+import com.igorgorbunov3333.timer.backend.service.exception.EntityDoesNotExist;
 import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.provider.impl.DailyPomodoroProvider;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.slot.FreeSlotProviderService;
@@ -41,7 +41,7 @@ public class PomodoroAutoSaver {
         Optional<PomodoroTagGroup> pomodoroTagGroupOptional = pomodoroTagGroupRepository.findById(groupId);
 
         if (pomodoroTagGroupOptional.isEmpty()) {
-            throw new NoDataException(String.format("No PomodoroTagGroupId [%d]", groupId));
+            throw new EntityDoesNotExist(String.format("No PomodoroTagGroupId [%d]", groupId));
         }
 
         List<PomodoroDto> dailyPomodoro = currentDayLocalPomodoroProvider.provideForCurrentDay(null);
@@ -52,10 +52,6 @@ public class PomodoroAutoSaver {
         List<PomodoroDto> savedPomodoro = new ArrayList<>();
         for (int i = 0; i < numberToSave; i++) {
             PeriodDto latestFreeSlot = freeSlotProviderService.findFreeSlotInCurrentDay(reservedSlots);
-
-            if (latestFreeSlot == null) {
-                throw new RuntimeException("No free slot available now");
-            }
 
             Pomodoro pomodoroToSave = buildPomodoro(latestFreeSlot);
             reservedSlots.add(latestFreeSlot);

@@ -7,7 +7,6 @@ import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.period.YearlyPomodo
 import com.igorgorbunov3333.timer.backend.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroMapper;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.period.PomodoroByMonthsDivider;
-import com.igorgorbunov3333.timer.backend.service.tag.TagService;
 import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

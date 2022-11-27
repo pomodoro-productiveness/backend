@@ -14,7 +14,6 @@ import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroTagMapper;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.period.PomodoroByMonthsDivider;
 import com.igorgorbunov3333.timer.backend.service.period.WeekPeriodHelper;
 import com.igorgorbunov3333.timer.backend.service.tag.TagService;
-import com.igorgorbunov3333.timer.backend.service.tag.impl.DefaultTagService;
 import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {YearlyPomodoroProvider.class,
         PomodoroMapper.class,
-        DefaultTagService.class,
+        TagService.class,
         PomodoroByMonthsDivider.class,
         MonthlyPomodoroProvider.class,
         PomodoroTagMapper.class,

@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -36,7 +35,7 @@ public class PomodoroStandardReporter {
 
         List<LocalDate> dayOffs = dayOffRepository.findByDayGreaterThanEqualOrderByDay(startDate).stream()
                 .map(DayOff::getDay)
-                .collect(Collectors.toList());
+                .toList();
 
         List<PomodoroDto> workPomodoro = workPomodoroFilter.filter(pomodoro);
         WorkTimeStandardReportDto workStandardReportDto = workTimeStandardReportCalculator.calculate(period, workPomodoro.size(), dayOffs);

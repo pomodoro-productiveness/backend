@@ -6,7 +6,6 @@ import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.period.MonthlyPomod
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.period.WeeklyPomodoroDto;
 import com.igorgorbunov3333.timer.backend.repository.PomodoroRepository;
 import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.backend.service.tag.TagService;
 import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -49,33 +47,6 @@ public class MonthlyPomodoroProvider implements BasePomodoroProvider {
         LocalDateTime end = weeklyPomodoro.get(weeklyPomodoro.size() - 1).getPeriod().getEnd();
 
         PeriodDto period = new PeriodDto(start, end);
-
-        return new MonthlyPomodoroDto(weeklyPomodoro, period);
-    }
-
-    public MonthlyPomodoroDto provideCurrentMonthPomodoro(List<PomodoroDto> pomodoro) {
-        LocalDateTime today = currentTimeService.getCurrentDateTime();
-
-        YearMonth currentMonth = YearMonth.from(today);
-
-        PeriodDto monthPeriod = getMonthPeriod(currentMonth, today.toLocalDate());
-
-        List<PomodoroDto> monthlyPomodoro = pomodoro.stream()
-                .filter(p -> !p.getStartTime().toLocalDateTime().isBefore(currentMonth.atDay(1).atStartOfDay())
-                        && !p.getEndTime().toLocalDateTime().isAfter(today.toLocalDate().atTime(LocalTime.MAX)))
-                .toList();
-
-        List<WeeklyPomodoroDto> weeklyPomodoro =
-                weeklyPomodoroProvider.provideWeeklyPomodoroForPeriod(monthlyPomodoro, monthPeriod);
-
-        if (CollectionUtils.isEmpty(weeklyPomodoro)) {
-            return MonthlyPomodoroDto.buildEmpty(monthPeriod);
-        }
-
-        PeriodDto period = new PeriodDto(
-                weeklyPomodoro.get(0).getPeriod().getStart(),
-                weeklyPomodoro.get(weeklyPomodoro.size() - 1).getPeriod().getEnd()
-        );
 
         return new MonthlyPomodoroDto(weeklyPomodoro, period);
     }
