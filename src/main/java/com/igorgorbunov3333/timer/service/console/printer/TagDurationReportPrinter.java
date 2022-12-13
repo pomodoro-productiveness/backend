@@ -34,14 +34,14 @@ public class TagDurationReportPrinter {
 
             reportRows.add(new ReportRow(mainTag, mainTagDuration, true, List.of()));
 
-            List<TagDurationReportRowDto> neighbouringTagDurations = tagDurationReportRowItem.getMappedRows();
+            List<TagDurationReportRowDto> neighbouringTagDurations = tagDurationReportRowItem.getChildren();
 
             if (!CollectionUtils.isEmpty(neighbouringTagDurations)) {
                 for (TagDurationReportRowDto neighboringTag : neighbouringTagDurations) {
                     String tag = neighboringTag.getTag();
                     String neighboringTagDuration = SecondsFormatter.formatInHours(neighboringTag.getDuration());
 
-                    reportRows.add(new ReportRow("-".repeat(4) + tag, neighboringTagDuration, false, buildSubRows(neighboringTag.getMappedRows(), 2)));
+                    reportRows.add(new ReportRow("-".repeat(4) + tag, neighboringTagDuration, false, buildSubRows(neighboringTag.getChildren(), 2)));
                 }
             }
         }
@@ -83,7 +83,7 @@ public class TagDurationReportPrinter {
         if (!CollectionUtils.isEmpty(rows)) {
             for (TagDurationReportRowDto row : rows) {
                 ReportRow newRow = new ReportRow("-".repeat(4 * nestingLevel) + row.getTag(), SecondsFormatter.formatInHours(row.getDuration()),
-                        false, buildSubRows(row.getMappedRows(), nestingLevel + 1));
+                        false, buildSubRows(row.getChildren(), nestingLevel + 1));
                 reportRows.add(newRow);
             }
         }

@@ -1,6 +1,5 @@
 package com.igorgorbunov3333.timer.service.console.command.impl;
 
-import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.period.YearlyPomodoroDto;
 import com.igorgorbunov3333.timer.service.console.command.CommandProcessor;
 import com.igorgorbunov3333.timer.service.console.command.line.provider.CommandProvider;
@@ -12,8 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
