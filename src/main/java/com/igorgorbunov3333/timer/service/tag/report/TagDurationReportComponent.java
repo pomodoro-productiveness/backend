@@ -6,13 +6,13 @@ import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportRowDto;
 import com.igorgorbunov3333.timer.service.util.PomodoroChronoUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,11 +22,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class TagDurationReportsComposer {
+public class TagDurationReportComponent {
 
-    private static final String TOTAL_REPORT_ROW_NAME = "Total"; //TODO: add total row
+    private static final String TOTAL_REPORT_ROW_NAME = "Total";
 
-    public List<TagDurationReportRowDto> compose(List<PomodoroDto> pomodoroList) {
+    public List<TagDurationReportRowDto> buildReport(List<PomodoroDto> pomodoroList) {
         Map<List<String>, Long> pomodoroTagsToDurations = new HashMap<>();
 
         for (PomodoroDto pomodoro : pomodoroList) {
@@ -70,6 +70,9 @@ public class TagDurationReportsComposer {
 
         buildTree(rootRows, tagDurationList, pomodoroTagsToDurations);
 
+        TagDurationReportRowDto totalRow = buildTotalRow(rootRows);
+        rootRows.add(totalRow);
+
         return rootRows;
     }
 
@@ -101,38 +104,36 @@ public class TagDurationReportsComposer {
                                Set<String> alreadyPassedTags) {
         Set<String> rowTags = mapToTagNames(row);
 
-        rowTags.addAll(alreadyPassedTags);
-
-        long duration = 0L;
-
-        Set<List<String>> tagsToRemove = new HashSet<>();
-        for (Map.Entry<List<String>, Long> entry : pomodoroTagsToDurations.entrySet()) {
-            if (!entry.getKey().contains(currentTag)) {
-                continue;
-            }
-
-            Set<String> neighbours = new HashSet<>(entry.getKey());
-            neighbours.removeAll(rowTags);
-            neighbours.remove(currentTag);
-
-            if (CollectionUtils.isEmpty(neighbours)) {
-                duration += entry.getValue();
-                tagsToRemove.add(entry.getKey());
-            } else {
-                if (isNeighboursDurationNotMoreThanCurrentTag(pomodoroTagsToDurations, rowTags, neighbours, currentTag)) {
-                    duration += entry.getValue();
-                    tagsToRemove.add(entry.getKey());
+        boolean notHaveCommonMappings = true;
+        for (String rowTag : rowTags) {
+            for (Map.Entry<List<String>, Long> entry : pomodoroTagsToDurations.entrySet()) {
+                if (new HashSet<>(entry.getKey()).containsAll(Set.of(currentTag, rowTag))) {
+                    notHaveCommonMappings = false;
+                    break;
                 }
             }
         }
+
+        if (notHaveCommonMappings) {
+            //TODO: надо к этому тегу который станет новым рутом добавить все остатки других тегов (которые станут детьми),
+            // для этого надо перебрать все замапленные теги к текцщему из pomodoroTagsToDurations и веруть из метода новый рут (к примеру находящийся в другом обьекте)
+            return false;
+        }
+
+        rowTags.addAll(alreadyPassedTags);
+
+        Set<List<String>> tagsToRemove = new HashSet<>();
+
+        long duration = calculateDuration(pomodoroTagsToDurations, currentTag, rowTags, tagsToRemove);
 
         Map<List<String>, Long> pomodoroTagsToDurationsCopy = new HashMap<>(pomodoroTagsToDurations);
 
         pomodoroTagsToDurationsCopy.keySet()
                 .removeAll(tagsToRemove);
-
+        //TODO: if duration == 0 then do recursion
         if (duration == row.getDuration()) {
             row.setTag(String.join(" #", row.getTag(), currentTag));
+            return true;
         }
 
         List<TagDurationReportRowDto> children = new ArrayList<>(row.getChildren());
@@ -147,8 +148,10 @@ public class TagDurationReportsComposer {
             }
         }
 
+        boolean childAdded = false;
         if (duration > 0L && childNotUpdated) {
             addChildToRow(row, currentTag, duration);
+            childAdded = true;
         }
 
         if (CollectionUtils.isEmpty(children)) {
@@ -162,7 +165,62 @@ public class TagDurationReportsComposer {
             }
         }
 
-        return updated;
+        return updated || childAdded;
+    }
+
+    private Set<String> mapToTagNames(TagDurationReportRowDto mappedReportRow) {
+        return Arrays.stream(mappedReportRow.getTag().split(" "))
+                .map(tag -> tag.replace("#", ""))
+                .collect(Collectors.toSet());
+    }
+
+    private long calculateDuration(Map<List<String>, Long> pomodoroTagsToDurations, String currentTag, Set<String> passedTags, Set<List<String>> tagsToRemove) {
+        long duration = 0L;
+        for (Map.Entry<List<String>, Long> entry : pomodoroTagsToDurations.entrySet()) {
+            if (!entry.getKey().contains(currentTag)) {
+                continue;
+            }
+
+            Set<String> neighbours = new HashSet<>(entry.getKey());
+            neighbours.removeAll(passedTags);
+            neighbours.remove(currentTag);
+
+            if (CollectionUtils.isEmpty(neighbours)) {
+                duration += entry.getValue();
+                tagsToRemove.add(entry.getKey());
+            } else {
+                if (isEveryNeighbourMeetAnyOfPassedTags(pomodoroTagsToDurations, neighbours, passedTags)
+                        && isNeighboursDurationNotMoreThanCurrentTag(pomodoroTagsToDurations, passedTags, neighbours, currentTag)) {
+                    duration += entry.getValue();
+                    tagsToRemove.add(entry.getKey());
+                }
+            }
+        }
+        return duration;
+    }
+
+    private boolean isEveryNeighbourMeetAnyOfPassedTags(Map<List<String>, Long> pomodoroTagsToDurations,
+                                                        Set<String> neighbours,
+                                                        Set<String> passedTags) {
+        for (String neighbour : neighbours) {
+            for (Map.Entry<List<String>, Long> entry : pomodoroTagsToDurations.entrySet()) {
+                if (entry.getKey().contains(neighbour) && containsAnyOfPassedTags(passedTags, entry)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean containsAnyOfPassedTags(Set<String> passedTags, Map.Entry<List<String>, Long> entry) {
+        for (String tag : passedTags) {
+            if (entry.getKey().contains(tag)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean isNeighboursDurationNotMoreThanCurrentTag(Map<List<String>, Long> pomodoroTagsToDurations,
@@ -217,10 +275,16 @@ public class TagDurationReportsComposer {
         row.addChild(newChild);
     }
 
-    private Set<String> mapToTagNames(TagDurationReportRowDto mappedReportRow) {
-        return Arrays.stream(mappedReportRow.getTag().split(" "))
-                .map(tag -> tag.replace("#", ""))
-                .collect(Collectors.toSet());
+    private TagDurationReportRowDto buildTotalRow(List<TagDurationReportRowDto> rootRows) {
+        long duration = rootRows.stream()
+                .mapToLong(TagDurationReportRowDto::getDuration)
+                .sum();
+
+        return new TagDurationReportRowDto(
+                TOTAL_REPORT_ROW_NAME,
+                duration,
+                Collections.emptyList()
+        );
     }
 
     @Getter

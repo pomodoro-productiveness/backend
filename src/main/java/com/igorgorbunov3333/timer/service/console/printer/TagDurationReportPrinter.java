@@ -3,7 +3,7 @@ package com.igorgorbunov3333.timer.service.console.printer;
 import com.igorgorbunov3333.timer.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.model.dto.tag.report.TagDurationReportRowDto;
 import com.igorgorbunov3333.timer.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.service.tag.report.TagDurationReportsComposer;
+import com.igorgorbunov3333.timer.service.tag.report.TagDurationReportComponent;
 import com.igorgorbunov3333.timer.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,15 +14,14 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: refactor
 @Component
 @AllArgsConstructor
 public class TagDurationReportPrinter {
 
-    private final TagDurationReportsComposer tagDurationReportsComposer;
+    private final TagDurationReportComponent tagDurationReportComponent;
 
     public void print(List<PomodoroDto> pomodoro) {
-        List<TagDurationReportRowDto> tagDurationReportRows = tagDurationReportsComposer.compose(pomodoro);
+        List<TagDurationReportRowDto> tagDurationReportRows = tagDurationReportComponent.buildReport(pomodoro);
 
         SimplePrinter.printParagraph();
         SimplePrinter.print("Duration by tags report:");
