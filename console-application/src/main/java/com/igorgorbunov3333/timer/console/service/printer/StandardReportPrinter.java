@@ -1,12 +1,8 @@
 package com.igorgorbunov3333.timer.console.service.printer;
 
-import com.igorgorbunov3333.timer.backend.model.dto.PeriodDto;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.report.AbstractStandardReportDto;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.report.PomodoroStandardReportDto;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.PrintUtil;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.report.PomodoroStandardReporter;
+import com.igorgorbunov3333.timer.console.rest.dto.PeriodDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

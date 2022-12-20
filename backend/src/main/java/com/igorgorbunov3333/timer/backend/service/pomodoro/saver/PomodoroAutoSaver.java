@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor //TODO: refactor
+@AllArgsConstructor
 public class PomodoroAutoSaver {
 
     private final PomodoroRepository pomodoroRepository;
@@ -51,7 +51,7 @@ public class PomodoroAutoSaver {
 
         List<PomodoroDto> savedPomodoro = new ArrayList<>();
         for (int i = 0; i < numberToSave; i++) {
-            PeriodDto latestFreeSlot = freeSlotProviderService.findFreeSlotInCurrentDay(reservedSlots);
+            PeriodDto latestFreeSlot = freeSlotProviderService.findFreeSlotInCurrentDay(reservedSlots, null);
 
             Pomodoro pomodoroToSave = buildPomodoro(latestFreeSlot);
             reservedSlots.add(latestFreeSlot);
@@ -68,34 +68,6 @@ public class PomodoroAutoSaver {
                 .collect(Collectors.toSet());
 
         pomodoroUpdater.updatePomodoroWithTag(savedPomodoro.stream().map(PomodoroDto::getId).toList(), tagsToMapToPomodoro);
-
-        return savedPomodoro;
-    }
-
-    @Transactional
-    public List<PomodoroDto> save(int numberToSave) { //TODO: remove this method
-        List<PomodoroDto> dailyPomodoro = currentDayLocalPomodoroProvider.provideForCurrentDay(null);
-        List<PeriodDto> reservedSlots = dailyPomodoro.stream()
-                .map(p -> new PeriodDto(p.getStartTime().toLocalDateTime(), p.getEndTime().toLocalDateTime()))
-                .collect(Collectors.toList());
-
-        List<PomodoroDto> savedPomodoro = new ArrayList<>();
-        for (int i = 0; i < numberToSave; i++) {
-            PeriodDto latestFreeSlot = freeSlotProviderService.findFreeSlotInCurrentDay(reservedSlots);
-
-            if (latestFreeSlot == null) {
-                return List.of();
-            }
-
-            Pomodoro pomodoroToSave = buildPomodoro(latestFreeSlot);
-            reservedSlots.add(latestFreeSlot);
-
-            Pomodoro pomodoro = pomodoroRepository.save(pomodoroToSave);
-
-            PomodoroDto savedSinglePomodoro = pomodoroMapper.toDto(pomodoro);
-
-            savedPomodoro.add(savedSinglePomodoro);
-        }
 
         return savedPomodoro;
     }

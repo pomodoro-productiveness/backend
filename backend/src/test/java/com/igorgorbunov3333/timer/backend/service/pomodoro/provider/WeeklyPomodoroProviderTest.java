@@ -74,8 +74,8 @@ class WeeklyPomodoroProviderTest {
         when(firstPomodoroDto.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
         PomodoroDto secondPomodoroDto = mock(PomodoroDto.class);
         when(secondPomodoroDto.getStartTime()).thenReturn(start.plusHours(4).atZone(CURRENT_ZONE_ID));
-        when(pomodoroMapper.mapToDto(firstPomodoro)).thenReturn(firstPomodoroDto);
-        when(pomodoroMapper.mapToDto(secondPomodoro)).thenReturn(secondPomodoroDto);
+        when(pomodoroMapper.toDto(firstPomodoro)).thenReturn(firstPomodoroDto);
+        when(pomodoroMapper.toDto(secondPomodoro)).thenReturn(secondPomodoroDto);
 
         WeeklyPomodoroDto actual = testee.provideCurrentWeekPomodoro();
 
@@ -103,9 +103,9 @@ class WeeklyPomodoroProviderTest {
         when(secondPomodoroDto.getStartTime()).thenReturn(start.plusDays(1).plusHours(4).atZone(CURRENT_ZONE_ID));
         PomodoroDto thirdPomodoroDto = mock(PomodoroDto.class);
         when(thirdPomodoroDto.getStartTime()).thenReturn(start.plusDays(2).plusHours(4).atZone(CURRENT_ZONE_ID));
-        when(pomodoroMapper.mapToDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
-        when(pomodoroMapper.mapToDto(secondDayPomodoro)).thenReturn(secondPomodoroDto);
-        when(pomodoroMapper.mapToDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
+        when(pomodoroMapper.toDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
+        when(pomodoroMapper.toDto(secondDayPomodoro)).thenReturn(secondPomodoroDto);
+        when(pomodoroMapper.toDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
 
         WeeklyPomodoroDto actual = testee.provideCurrentWeekPomodoro();
 
@@ -135,8 +135,8 @@ class WeeklyPomodoroProviderTest {
         when(firstPomodoroDto.getStartTime()).thenReturn(start.plusHours(3).atZone(CURRENT_ZONE_ID));
         PomodoroDto thirdPomodoroDto = mock(PomodoroDto.class);
         when(thirdPomodoroDto.getStartTime()).thenReturn(start.plusDays(2).plusHours(4).atZone(CURRENT_ZONE_ID));
-        when(pomodoroMapper.mapToDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
-        when(pomodoroMapper.mapToDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
+        when(pomodoroMapper.toDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
+        when(pomodoroMapper.toDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
 
         WeeklyPomodoroDto actual = testee.provideCurrentWeekPomodoro();
 
@@ -188,13 +188,13 @@ class WeeklyPomodoroProviderTest {
         when(fifthPomodoroDto.getStartTime()).thenReturn(start.plusDays(4).plusHours(4).atZone(CURRENT_ZONE_ID));
         when(sixthPomodoroDto.getStartTime()).thenReturn(start.plusDays(5).plusHours(4).atZone(CURRENT_ZONE_ID));
         when(seventhPomodoroDto.getStartTime()).thenReturn(start.plusDays(6).plusHours(4).atZone(CURRENT_ZONE_ID));
-        when(pomodoroMapper.mapToDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
-        when(pomodoroMapper.mapToDto(secondDayPomodoro)).thenReturn(secondPomodoroDto);
-        when(pomodoroMapper.mapToDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
-        when(pomodoroMapper.mapToDto(fourthDayPomodoro)).thenReturn(fourthPomodoroDto);
-        when(pomodoroMapper.mapToDto(fifthDayPomodoro)).thenReturn(fifthPomodoroDto);
-        when(pomodoroMapper.mapToDto(sixthDayPomodoro)).thenReturn(sixthPomodoroDto);
-        when(pomodoroMapper.mapToDto(seventhDayPomodoro)).thenReturn(seventhPomodoroDto);
+        when(pomodoroMapper.toDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
+        when(pomodoroMapper.toDto(secondDayPomodoro)).thenReturn(secondPomodoroDto);
+        when(pomodoroMapper.toDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
+        when(pomodoroMapper.toDto(fourthDayPomodoro)).thenReturn(fourthPomodoroDto);
+        when(pomodoroMapper.toDto(fifthDayPomodoro)).thenReturn(fifthPomodoroDto);
+        when(pomodoroMapper.toDto(sixthDayPomodoro)).thenReturn(sixthPomodoroDto);
+        when(pomodoroMapper.toDto(seventhDayPomodoro)).thenReturn(seventhPomodoroDto);
 
         WeeklyPomodoroDto actual = testee.provideCurrentWeekPomodoro();
 
@@ -250,13 +250,13 @@ class WeeklyPomodoroProviderTest {
         when(fifthPomodoroDto.getStartTime()).thenReturn(start.plusDays(4).plusHours(4).atZone(CURRENT_ZONE_ID));
         when(sixthPomodoroDto.getStartTime()).thenReturn(start.plusDays(5).plusHours(4).atZone(CURRENT_ZONE_ID));
         when(seventhPomodoroDto.getStartTime()).thenReturn(start.plusDays(6).plusHours(4).atZone(CURRENT_ZONE_ID));
-        when(pomodoroMapper.mapToDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
-        when(pomodoroMapper.mapToDto(secondDayPomodoro)).thenReturn(secondPomodoroDto);
-        when(pomodoroMapper.mapToDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
-        when(pomodoroMapper.mapToDto(fourthDayPomodoro)).thenReturn(fourthPomodoroDto);
-        when(pomodoroMapper.mapToDto(fifthDayPomodoro)).thenReturn(fifthPomodoroDto);
-        when(pomodoroMapper.mapToDto(sixthDayPomodoro)).thenReturn(sixthPomodoroDto);
-        when(pomodoroMapper.mapToDto(seventhDayPomodoro)).thenReturn(seventhPomodoroDto);
+        when(pomodoroMapper.toDto(firstDayPomodoro)).thenReturn(firstPomodoroDto);
+        when(pomodoroMapper.toDto(secondDayPomodoro)).thenReturn(secondPomodoroDto);
+        when(pomodoroMapper.toDto(thirdDayPomodoro)).thenReturn(thirdPomodoroDto);
+        when(pomodoroMapper.toDto(fourthDayPomodoro)).thenReturn(fourthPomodoroDto);
+        when(pomodoroMapper.toDto(fifthDayPomodoro)).thenReturn(fifthPomodoroDto);
+        when(pomodoroMapper.toDto(sixthDayPomodoro)).thenReturn(sixthPomodoroDto);
+        when(pomodoroMapper.toDto(seventhDayPomodoro)).thenReturn(seventhPomodoroDto);
 
         DayOff dayOffMock = mock(DayOff.class);
         when(dayOffMock.getDay()).thenReturn(start.toLocalDate().plusDays(2L));

@@ -1,18 +1,13 @@
 package com.igorgorbunov3333.timer.console.service.command.line.session.processor.tag.impl;
 
-import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.BaseLineProvider;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.CommandProvider;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.processor.tag.TagSessionProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.PrintUtil;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.exception.TagOperationException;
-import com.igorgorbunov3333.timer.backend.service.tag.TagService;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroTagDto;
+import com.igorgorbunov3333.timer.console.service.command.line.provider.BaseLineProvider;
+import com.igorgorbunov3333.timer.console.service.command.line.provider.CommandProvider;
+import com.igorgorbunov3333.timer.console.service.command.line.session.processor.tag.TagSessionProcessor;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -26,7 +21,6 @@ public class TagCreationSessionProcessor implements TagSessionProcessor, BaseLin
     private final CommandProvider commandProvider;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW) //TODO: remove?
     public void process(Map<Integer, PomodoroTagDto> tagsWithNumbers) {
         SimplePrinter.printParagraph();
         SimplePrinter.print("Please provide a tag name:");

@@ -1,0 +1,22 @@
+googleServices:
+  credentialsPath: ${DRIVE_CREDENTIALS_PATH:}
+  calendar:
+    id:
+      dayOff: ${GOOGLE_CALENDAR_DAY_OFF_ID:}
+      pomodoro: ${GOOGLE_CALENDAR_POMODORO_ID:}
+    summary:
+      dayOff: ${GOOGLE_CALENDAR_DAY_OFF_SUMMARY:DayOff}
+      pomodoro: ${GOOGLE_CALENDAR_POMODORO_SUMMARY:Pomodoro}
+backend.rest:
+  scheme: ${URL_BACKEND_SCHEME:http}
+  host: ${URL_BACKEND_HOST}
+  basePath: ${URL_BACKEND_BASE_PATH}
+pomodoro.tag:
+  work:
+    name: work
+    calendar-id-color: 11
+  education:
+    name: education
+    calendar-id-color: 5
+audioFile:
+  path: ${AUDIO_FILE_PATH:}

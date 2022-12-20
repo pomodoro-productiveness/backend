@@ -27,8 +27,6 @@ public class MonthlyPomodoroProvider implements BasePomodoroProvider {
     private final PomodoroRepository pomodoroRepository;
     @Getter
     private final PomodoroMapper pomodoroMapper;
-    @Getter
-    private final TagService tagService;
     private final WeeklyPomodoroProvider weeklyPomodoroProvider;
 
     public MonthlyPomodoroDto providePomodoroForMonth(YearMonth month, List<PomodoroDto> pomodoro) {

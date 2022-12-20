@@ -2,7 +2,6 @@ package com.igorgorbunov3333.timer.backend.service.pomodoro.slot.impl;
 
 import com.igorgorbunov3333.timer.backend.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.backend.service.exception.FreeSlotException;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,15 +27,13 @@ class DefaultFreeSlotProviderServiceTest {
 
     @Mock
     private CurrentTimeService currentTimeService;
-    @Mock
-    private PomodoroEngine pomodoroEngine;
 
     @Test
     void find_WhenNoPomodorosInDay_ThenReturnNearestTimeWithEndingOneMinuteAgo() {
         LocalDateTime currentTime = LocalDateTime.of(2022, 5, 10, 22, 0, 0);
         when(currentTimeService.getCurrentDateTime()).thenReturn(currentTime);
 
-        PeriodDto actual = testee.findFreeSlotInCurrentDay(Collections.emptyList());
+        PeriodDto actual = testee.findFreeSlotInCurrentDay(Collections.emptyList(), null);
 
         assertThat(actual.getStart()).isEqualTo(currentTime.minusMinutes(1L).minusMinutes(20L));
         assertThat(actual.getEnd()).isEqualTo(currentTime.minusMinutes(1L));
@@ -51,7 +48,7 @@ class DefaultFreeSlotProviderServiceTest {
         LocalDateTime pomodoroEndTime = currentTime.minusMinutes(10L);
         PeriodDto pomodoro = mockReservedSlot(pomodoroStartTime, pomodoroEndTime);
 
-        PeriodDto actual = testee.findFreeSlotInCurrentDay(Collections.singletonList(pomodoro));
+        PeriodDto actual = testee.findFreeSlotInCurrentDay(Collections.singletonList(pomodoro), null);
 
         assertThat(actual.getStart()).isEqualTo(pomodoroStartTime.minusMinutes(1L).minusMinutes(20L));
         assertThat(actual.getEnd()).isEqualTo(pomodoroStartTime.minusMinutes(1L));
@@ -74,7 +71,7 @@ class DefaultFreeSlotProviderServiceTest {
         LocalDateTime thirdPomodoroEndTime = thirdPomodoroStartTime.plusMinutes(20L);
         PeriodDto thirdPomodoro = mockReservedSlot(thirdPomodoroStartTime, thirdPomodoroEndTime);
 
-        PeriodDto actual = testee.findFreeSlotInCurrentDay(Arrays.asList(firstPomodoro, secondPomodoro, thirdPomodoro));
+        PeriodDto actual = testee.findFreeSlotInCurrentDay(Arrays.asList(firstPomodoro, secondPomodoro, thirdPomodoro), null);
 
         assertThat(actual.getStart()).isEqualTo(firstPomodoroStartTime.minusMinutes(1L).minusMinutes(20L));
         assertThat(actual.getEnd()).isEqualTo(firstPomodoroStartTime.minusMinutes(1L));
@@ -97,7 +94,7 @@ class DefaultFreeSlotProviderServiceTest {
         LocalDateTime thirdPomodoroEndTime = thirdPomodoroStartTime.plusMinutes(20L);
         PeriodDto thirdPomodoro = mockReservedSlot(thirdPomodoroStartTime, thirdPomodoroEndTime);
 
-        PeriodDto actual = testee.findFreeSlotInCurrentDay(Arrays.asList(firstPomodoro, secondPomodoro, thirdPomodoro));
+        PeriodDto actual = testee.findFreeSlotInCurrentDay(Arrays.asList(firstPomodoro, secondPomodoro, thirdPomodoro), null);
 
         assertThat(actual.getStart()).isEqualTo(thirdPomodoroStartTime.minusMinutes(1L).minusMinutes(20L));
         assertThat(actual.getEnd()).isEqualTo(thirdPomodoroStartTime.minusMinutes(1L));
@@ -109,7 +106,7 @@ class DefaultFreeSlotProviderServiceTest {
         when(currentTimeService.getCurrentDateTime()).thenReturn(currentTime);
 
         assertThatExceptionOfType(FreeSlotException.class)
-                .isThrownBy(() -> testee.findFreeSlotInCurrentDay(List.of()));
+                .isThrownBy(() -> testee.findFreeSlotInCurrentDay(List.of(), null));
     }
 
     @Test
@@ -126,7 +123,7 @@ class DefaultFreeSlotProviderServiceTest {
         PeriodDto secondPomodoro = mockReservedSlot(secondPomodoroStartTime, secondPomodoroEndTime);
 
         assertThatExceptionOfType(FreeSlotException.class)
-                 .isThrownBy(() -> testee.findFreeSlotInCurrentDay(Arrays.asList(firstPomodoro, secondPomodoro)));
+                 .isThrownBy(() -> testee.findFreeSlotInCurrentDay(Arrays.asList(firstPomodoro, secondPomodoro), null));
     }
 
     private PeriodDto mockReservedSlot(LocalDateTime start, LocalDateTime end) {

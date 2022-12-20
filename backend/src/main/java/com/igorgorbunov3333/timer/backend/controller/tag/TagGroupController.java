@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.backend.controller.tag;
 
 import com.igorgorbunov3333.timer.backend.controller.util.RestPathUtil;
 import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagGroupDto;
-import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagGroupSaveRequestDto;
+import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagSaveRequestDto;
 import com.igorgorbunov3333.timer.backend.model.dto.tag.TagGroupUpdateRequestDto;
 import com.igorgorbunov3333.timer.backend.service.tag.group.PomodoroTagGroupService;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class TagGroupController {
     }
 
     @PostMapping
-    public PomodoroTagGroupDto save(@RequestBody PomodoroTagGroupSaveRequestDto tagGroupSaveRequest) {
+    public PomodoroTagGroupDto save(@RequestBody PomodoroTagSaveRequestDto tagGroupSaveRequest) {
         return pomodoroTagGroupService.saveTagGroup(tagGroupSaveRequest.getTags());
     }
 

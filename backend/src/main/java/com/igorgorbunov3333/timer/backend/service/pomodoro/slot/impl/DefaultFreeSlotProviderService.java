@@ -2,7 +2,6 @@ package com.igorgorbunov3333.timer.backend.service.pomodoro.slot.impl;
 
 import com.igorgorbunov3333.timer.backend.model.dto.PeriodDto;
 import com.igorgorbunov3333.timer.backend.service.exception.FreeSlotException;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.slot.FreeSlotProviderService;
 import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
 import com.igorgorbunov3333.timer.backend.service.util.PomodoroChronoUtil;
@@ -25,13 +24,12 @@ public class DefaultFreeSlotProviderService implements FreeSlotProviderService {
     private static final long BREAK_BETWEEN_SLOTS = 1L;
 
     private final CurrentTimeService currentTimeService;
-    private final PomodoroEngine pomodoroEngine;
 
     @Override
-    public PeriodDto findFreeSlotInCurrentDay(List<PeriodDto> reservedSlots) {  //TODO: validate that all slots from the same day
+    public PeriodDto findFreeSlotInCurrentDay(List<PeriodDto> reservedSlots, LocalDateTime currentPomodoroStartTime) {
         LocalDateTime currentTime = currentTimeService.getCurrentDateTime();
 
-        PeriodDto potentialFreeSlot = buildNearestFreeSlot(currentTime);
+        PeriodDto potentialFreeSlot = buildNearestFreeSlot(currentTime, currentPomodoroStartTime);
         validatePeriod(potentialFreeSlot.getStart(), currentTime);
 
         List<PeriodDto> reversedDailyReservedSlots = reversedDailyReservedSlots(reservedSlots);
@@ -42,8 +40,7 @@ public class DefaultFreeSlotProviderService implements FreeSlotProviderService {
         return findNearestFreeSlot(currentTime, potentialFreeSlot, reversedDailyReservedSlots);
     }
 
-    private PeriodDto buildNearestFreeSlot(LocalDateTime currentTime) {
-        LocalDateTime currentPomodoroStartTime = pomodoroEngine.getCurrentPomodoroStartTime();
+    private PeriodDto buildNearestFreeSlot(LocalDateTime currentTime, LocalDateTime currentPomodoroStartTime) {
         if (currentPomodoroStartTime != null) {
             LocalDateTime periodEnd = currentPomodoroStartTime.minusMinutes(1L);
             LocalDateTime periodStart = periodEnd.minusMinutes(PomodoroChronoUtil.POMODORO_DURATION);

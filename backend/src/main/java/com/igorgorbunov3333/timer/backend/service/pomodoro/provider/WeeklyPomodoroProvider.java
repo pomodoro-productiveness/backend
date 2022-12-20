@@ -34,7 +34,6 @@ public class WeeklyPomodoroProvider implements BasePomodoroProvider {
     private final PomodoroRepository pomodoroRepository;
     private final PomodoroMapper pomodoroMapper;
     private final CurrentTimeService currentTimeService;
-    private final TagService tagService;
     private final DayOffRepository dayOffRepository;
     private final WeekPeriodHelper weekPeriodHelper;
 

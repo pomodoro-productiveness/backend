@@ -32,8 +32,6 @@ public class YearlyPomodoroProvider implements BasePomodoroProvider {
     private final PomodoroRepository pomodoroRepository;
     @Getter
     private final PomodoroMapper pomodoroMapper;
-    @Getter
-    private final TagService tagService;
     private final PomodoroByMonthsDivider pomodoroByMonthsDivider;
     private final MonthlyPomodoroProvider monthlyPomodoroProvider;
 

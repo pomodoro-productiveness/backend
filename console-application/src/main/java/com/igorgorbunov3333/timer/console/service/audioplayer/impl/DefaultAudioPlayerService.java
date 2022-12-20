@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.console.service.audioplayer.impl;
 
-import com.igorgorbunov3333.timer.backend.config.properties.AudioFileProperties;
-import com.igorgorbunov3333.timer.backend.service.audioplayer.AudioPlayerService;
+import com.igorgorbunov3333.timer.console.config.properties.AudioFileProperties;
+import com.igorgorbunov3333.timer.console.service.audioplayer.AudioPlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

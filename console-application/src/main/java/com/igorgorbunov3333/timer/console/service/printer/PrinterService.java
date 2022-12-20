@@ -1,11 +1,10 @@
 package com.igorgorbunov3333.timer.console.service.printer;
 
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
 
 import java.util.List;
 import java.util.Map;
 
-//TODO: use separate class with static method to print lines
 public interface PrinterService {
 
     void printFeaturesList();
