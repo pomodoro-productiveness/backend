@@ -1,8 +1,8 @@
 package com.igorgorbunov3333.timer.console.service.command.impl;
 
-import com.igorgorbunov3333.timer.backend.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.engine.PomodoroEngine;
+import com.igorgorbunov3333.timer.console.service.command.CommandProcessor;
+import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroEngine;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;

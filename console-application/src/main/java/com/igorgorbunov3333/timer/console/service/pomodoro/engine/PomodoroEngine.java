@@ -1,13 +1,11 @@
 package com.igorgorbunov3333.timer.console.service.pomodoro.engine;
 
-import com.igorgorbunov3333.timer.backend.config.properties.PomodoroProperties;
-import com.igorgorbunov3333.timer.backend.service.audioplayer.AudioPlayerService;
-import com.igorgorbunov3333.timer.backend.service.event.publisher.PomodoroStoppedSpringEventPublisher;
-import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
+import com.igorgorbunov3333.timer.console.config.properties.PomodoroProperties;
+import com.igorgorbunov3333.timer.console.service.audioplayer.AudioPlayerService;
+import com.igorgorbunov3333.timer.console.service.util.CurrentTimeComponent;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +21,7 @@ public class PomodoroEngine {
     private final PomodoroStoppedSpringEventPublisher pomodoroStoppedSpringEventPublisher;
     private final PomodoroPausesStorage pomodoroPausesStorage;
     private final PomodoroProperties pomodoroProperties;
-    private final CurrentTimeService currentTimeService;
+    private final CurrentTimeComponent currentTimeComponent;
 
     @Async
     public void startPomodoro() {
@@ -76,7 +74,7 @@ public class PomodoroEngine {
         log.debug("Pauses duration in seconds [{}], current pomodoro duration in seconds [{}]", pausesDurationInSeconds, currentPomodoroDurationInSeconds);
 
         LocalDateTime currentPomodoroStartTime =
-                currentTimeService.getCurrentDateTime().minusSeconds(pausesDurationInSeconds + currentPomodoroDurationInSeconds);
+                currentTimeComponent.getCurrentDateTime().minusSeconds(pausesDurationInSeconds + currentPomodoroDurationInSeconds);
 
         log.debug("Current pomodoro start time [{}]", currentPomodoroStartTime);
 

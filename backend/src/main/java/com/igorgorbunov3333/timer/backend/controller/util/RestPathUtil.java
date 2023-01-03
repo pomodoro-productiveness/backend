@@ -8,5 +8,6 @@ public class RestPathUtil {
     public static final String BASE = "/timer";
     public static final String VERSION_1 = "/v1";
     public static final String COMMON = BASE + VERSION_1;
+    public static final String COMMON_REPORTS = COMMON + "/reports";
 
 }

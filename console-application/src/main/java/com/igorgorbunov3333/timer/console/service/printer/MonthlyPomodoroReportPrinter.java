@@ -32,14 +32,14 @@ public class MonthlyPomodoroReportPrinter {
                     + weekPeriod.getStart().toLocalDate() + StringUtils.SPACE + "-" + StringUtils.SPACE
                     + weekPeriod.getEnd().toLocalDate() + ")");
 
-            standardReportPrinter.print(weekPeriod, weeklyPomodoroDto.getPomodoro());
+            standardReportPrinter.print(weekPeriod);
             tagDurationReportPrinter.print(weeklyPomodoroDto.getPomodoro());
         }
 
         SimplePrinter.printParagraph();
         SimplePrinter.print("MONTH REPORT");
 
-        standardReportPrinter.print(monthlyPomodoroDto.getPeriod(), monthlyPomodoroDto.getPomodoro());
+        standardReportPrinter.print(monthlyPomodoroDto.getPeriod());
         tagDurationReportPrinter.print(monthlyPomodoroDto.getPomodoro());
     }
 

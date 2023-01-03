@@ -1,6 +1,6 @@
 package com.igorgorbunov3333.timer.console.service.pomodoro.engine;
 
-import org.springframework.data.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

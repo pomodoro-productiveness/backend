@@ -1,22 +1,20 @@
 package com.igorgorbunov3333.timer.console.service.command.impl;
 
-import com.igorgorbunov3333.timer.backend.model.dto.PeriodDto;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.BaseLineProvider;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.TagPomodoroSessionUpdater;
-import com.igorgorbunov3333.timer.backend.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.backend.service.console.printer.StandardReportPrinter;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.exception.PomodoroEngineException;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.engine.PomodoroEngine;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.engine.PomodoroEngineService;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.provider.impl.DailyPomodoroProvider;
-import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
+import com.igorgorbunov3333.timer.console.rest.dto.PeriodDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.service.command.CommandProcessor;
+import com.igorgorbunov3333.timer.console.service.command.line.provider.BaseLineProvider;
+import com.igorgorbunov3333.timer.console.service.command.line.session.TagPomodoroSessionUpdater;
+import com.igorgorbunov3333.timer.console.service.pomodoro.PomodoroComponent;
+import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroEngine;
+import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroEngineService;
+import com.igorgorbunov3333.timer.console.service.printer.PrinterService;
+import com.igorgorbunov3333.timer.console.service.printer.StandardReportPrinter;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
+import com.igorgorbunov3333.timer.console.service.util.CurrentTimeComponent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -30,15 +28,14 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
     @Getter
     private final PrinterService printerService;
     @Getter
-    private final DailyPomodoroProvider currentDayLocalPomodoroProvider;
+    private final CurrentTimeComponent currentTimeComponent;
     @Getter
+    private final PomodoroComponent pomodoroComponent;
     private final TagPomodoroSessionUpdater tagPomodoroSessionUpdater;
     private final StandardReportPrinter standardReportPrinter;
-    private final CurrentTimeService currentTimeService;
     private final PomodoroEngine pomodoroEngine;
 
     @Override
-    @Transactional
     public void process() {
         if (pomodoroEngine.isPomodoroPaused()) {
             SimplePrinter.print("Pomodoro paused. Are you sure you want to stop pomodoro?");
@@ -69,7 +66,7 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
         printSuccessfullySavedMessage(savedPomodoro);
 
         List<PomodoroDto> dailyPomodoro = startTagSessionAndPrintDailyPomodoro(List.of(savedPomodoro.getId()));
-        LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();
+        LocalDate currentDay = currentTimeComponent.getCurrentDateTime().toLocalDate();
         PeriodDto period = new PeriodDto(currentDay.atStartOfDay(), currentDay.atTime(LocalTime.MAX));
 
         standardReportPrinter.print(period, dailyPomodoro);

@@ -4,7 +4,7 @@ import com.google.api.services.calendar.model.Event;
 import com.igorgorbunov3333.timer.console.config.properties.GoogleServicesProperties;
 import com.igorgorbunov3333.timer.console.service.google.calendar.CalendarEventProvider;
 import com.igorgorbunov3333.timer.console.service.pomodoro.PomodoroComponent;
-import com.igorgorbunov3333.timer.console.service.util.CurrentTimeService;
+import com.igorgorbunov3333.timer.console.service.util.CurrentTimeComponent;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 @Slf4j
 @Component
@@ -25,7 +23,7 @@ public class PomodoroCalendarEventProcessor {
     private final GoogleServicesProperties googleServicesProperties;
     private final PomodoroCalendarEventPublisher publisher;
     private final CalendarEventProvider calendarEventProvider;
-    private final CurrentTimeService currentTimeService;
+    private final CurrentTimeComponent currentTimeComponent;
     private final PomodoroComponent pomodoroComponent;
 
     @Async
@@ -44,7 +42,7 @@ public class PomodoroCalendarEventProcessor {
 
         log.debug("Last processed pomodoro start time is [{}]", latestPomodoroEventStartDate);
 
-        LocalDate today = currentTimeService.getCurrentDateTime()
+        LocalDate today = currentTimeComponent.getCurrentDateTime()
                 .toLocalDate();
 
         pomodoroComponent.getPomodoro(latestPomodoroEventStartDate, today, null)

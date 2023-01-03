@@ -1,19 +1,17 @@
-package com.igorgorbunov3333.timer.console.rest.dto;
+package com.igorgorbunov3333.timer.backend.model.dto.tag.report;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class DayOffDto {
+public class TagDurationReportDto {
 
-    @NotNull
-    private LocalDate day;
+    private List<TagDurationReportRowDto> rows;
 
 }

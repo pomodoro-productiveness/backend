@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -33,6 +34,10 @@ public class PomodoroComponent {
                 },
                 queryParams
         );
+    }
+
+    public void updatePomodoroWithTag(@NonNull List<Long> pomodoroIds, @NonNull Set<String> tags) {
+
     }
 
 }

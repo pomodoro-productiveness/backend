@@ -1,8 +1,8 @@
 package com.igorgorbunov3333.timer.console.service.pomodoro.engine;
 
-import com.igorgorbunov3333.timer.backend.service.audioplayer.AudioPlayerService;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.util.SecondsFormatter;
+import com.igorgorbunov3333.timer.console.service.audioplayer.AudioPlayerService;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
+import com.igorgorbunov3333.timer.console.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;

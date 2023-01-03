@@ -1,11 +1,11 @@
 package com.igorgorbunov3333.timer.console.service.printer;
 
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.ListOfItemsPrinter;
-import com.igorgorbunov3333.timer.backend.service.util.PomodoroChronoUtil;
-import com.igorgorbunov3333.timer.backend.service.util.SecondsFormatter;
-import com.igorgorbunov3333.timer.backend.service.util.TagUtil;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroTagDto;
+import com.igorgorbunov3333.timer.console.service.printer.util.ListOfItemsPrinter;
+import com.igorgorbunov3333.timer.console.service.util.PomodoroChronoUtil;
+import com.igorgorbunov3333.timer.console.service.util.SecondsFormatter;
+import com.igorgorbunov3333.timer.console.service.util.TagUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

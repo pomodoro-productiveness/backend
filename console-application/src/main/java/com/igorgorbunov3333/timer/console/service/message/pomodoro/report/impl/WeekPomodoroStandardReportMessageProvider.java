@@ -1,14 +1,10 @@
 package com.igorgorbunov3333.timer.console.service.message.pomodoro.report.impl;
 
-import com.igorgorbunov3333.timer.backend.model.dto.PeriodDto;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.period.WeeklyPomodoroDto;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.report.PomodoroStandardReportDto;
-import com.igorgorbunov3333.timer.backend.service.exception.MessageProcessingException;
+import com.igorgorbunov3333.timer.console.rest.dto.PeriodDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.period.WeeklyPomodoroDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.report.PomodoroStandardReportDto;
 import com.igorgorbunov3333.timer.console.service.message.pomodoro.report.MessageProvider;
-import com.igorgorbunov3333.timer.backend.service.period.WeekPeriodHelper;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.provider.WeeklyPomodoroProvider;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.report.PomodoroStandardReporter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;

@@ -1,14 +1,16 @@
 package com.igorgorbunov3333.timer.console.service.printer;
 
 import com.igorgorbunov3333.timer.console.rest.dto.PeriodDto;
-import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.report.AbstractStandardReportDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.report.PomodoroStandardReportDto;
+import com.igorgorbunov3333.timer.console.service.pomodoro.report.PomodoroStandardReportComponent;
+import com.igorgorbunov3333.timer.console.service.printer.util.PrintUtil;
 import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -16,10 +18,12 @@ import java.util.stream.IntStream;
 @AllArgsConstructor
 public class StandardReportPrinter {
 
-    private final PomodoroStandardReporter pomodoroStandardReporter;
+    private final PomodoroStandardReportComponent pomodoroStandardReportComponent;
 
-    public void print(PeriodDto period, List<PomodoroDto> pomodoro) {
-        PomodoroStandardReportDto report = pomodoroStandardReporter.report(period, pomodoro);
+    public void print(PeriodDto period) {
+        PomodoroStandardReportDto report = pomodoroStandardReportComponent.getReport(
+                period.getStart().toLocalDate(),
+                period.getEnd().toLocalDate());
 
         Map<String, AbstractStandardReportDto> reports = new LinkedHashMap<>();
         reports.put("Work", report.getWork());

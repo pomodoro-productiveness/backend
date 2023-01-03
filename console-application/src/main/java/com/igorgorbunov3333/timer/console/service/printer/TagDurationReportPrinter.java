@@ -1,28 +1,28 @@
 package com.igorgorbunov3333.timer.console.service.printer;
 
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.model.dto.tag.report.TagDurationReportRowDto;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.tag.report.TagDurationReportsComposer;
-import com.igorgorbunov3333.timer.backend.service.util.SecondsFormatter;
+import com.igorgorbunov3333.timer.console.rest.dto.tag.report.TagDurationReportRowDto;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
+import com.igorgorbunov3333.timer.console.service.tag.report.TagReportComponent;
+import com.igorgorbunov3333.timer.console.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: refactor
 @Component
 @AllArgsConstructor
 public class TagDurationReportPrinter {
 
-    private final TagDurationReportsComposer tagDurationReportsComposer;
+    private final TagReportComponent tagDurationReportsComposer;
 
-    public void print(List<PomodoroDto> pomodoro) {
-        List<TagDurationReportRowDto> tagDurationReportRows = tagDurationReportsComposer.compose(pomodoro);
+    public void print(LocalDate from, LocalDate to) {
+        List<TagDurationReportRowDto> tagDurationReportRows = tagDurationReportsComposer.getTagDurationReport(from, to)
+                .getRows();
 
         SimplePrinter.printParagraph();
         SimplePrinter.print("Duration by tags report:");

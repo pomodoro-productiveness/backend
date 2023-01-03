@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.console.service.message.pomodoro.report;
 
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.report.AbstractStandardReportDto;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.report.PomodoroStandardReportDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.report.AbstractStandardReportDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.report.PomodoroStandardReportDto;
 import org.apache.commons.lang3.StringUtils;
 
 public interface MessageProvider {

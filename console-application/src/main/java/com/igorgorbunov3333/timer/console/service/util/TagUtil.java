@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.backend.service.util;
+package com.igorgorbunov3333.timer.console.service.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -13,4 +13,8 @@ public interface DayOffMapper {
 
     DayOff toEntity(DayOffDto dto);
 
+    List<DayOffDto> toDtos(List<DayOff> entities);
+
+    DayOffDto toDto(DayOff entity);
+
 }

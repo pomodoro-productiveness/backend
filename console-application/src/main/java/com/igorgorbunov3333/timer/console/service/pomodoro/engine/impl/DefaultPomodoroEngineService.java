@@ -1,14 +1,10 @@
 package com.igorgorbunov3333.timer.console.service.pomodoro.engine.impl;
 
-import com.igorgorbunov3333.timer.backend.config.properties.PomodoroProperties;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.exception.PomodoroEngineException;
+import com.igorgorbunov3333.timer.console.config.properties.PomodoroProperties;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroEngine;
 import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroEngineService;
 import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroPausesStorage;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.saver.PomodoroSaver;
-import com.igorgorbunov3333.timer.backend.service.util.SecondsFormatter;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;

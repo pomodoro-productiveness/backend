@@ -4,7 +4,7 @@ import com.igorgorbunov3333.timer.console.rest.dto.message.MessageDto;
 import com.igorgorbunov3333.timer.console.service.message.pomodoro.report.impl.DailyPomodoroStandardReportMessageProvider;
 import com.igorgorbunov3333.timer.console.service.message.pomodoro.report.impl.WeekPomodoroStandardReportMessageProvider;
 import com.igorgorbunov3333.timer.console.service.message.telegram.TelegramHttpApiCaller;
-import com.igorgorbunov3333.timer.console.service.util.CurrentTimeService;
+import com.igorgorbunov3333.timer.console.service.util.CurrentTimeComponent;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,10 +20,10 @@ public class PomodoroStandardReportMessageSender {
     private final WeekPomodoroStandardReportMessageProvider weekPomodoroStandardReportMessageProvider;
     private final MessageComponent messageComponent;
     private final TelegramHttpApiCaller telegramHttpApiCaller;
-    private final CurrentTimeService currentTimeService;
+    private final CurrentTimeComponent currentTimeComponent;
 
     public void send() {
-        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();
+        LocalDate today = currentTimeComponent.getCurrentDateTime().toLocalDate();
         LocalDate reportDate = today.minusDays(1L);
         boolean messagePresentForDate = messageComponent.existsByDate(reportDate);
         if (messagePresentForDate) {

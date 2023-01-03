@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.console.service.command.line.session;
 
-import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.CommandProvider;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
+import com.igorgorbunov3333.timer.console.service.command.line.provider.CommandProvider;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
 
 public interface NumberProvidable {
 

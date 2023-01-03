@@ -1,16 +1,14 @@
 package com.igorgorbunov3333.timer.console.service.command.impl;
 
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.period.YearlyPomodoroDto;
-import com.igorgorbunov3333.timer.backend.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.CommandProvider;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.NumberProvidable;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.coordinator.MonthSessionCommandCoordinator;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.provider.YearlyPomodoroProvider;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.period.YearlyPomodoroDto;
+import com.igorgorbunov3333.timer.console.service.command.CommandProcessor;
+import com.igorgorbunov3333.timer.console.service.command.line.provider.CommandProvider;
+import com.igorgorbunov3333.timer.console.service.command.line.session.NumberProvidable;
+import com.igorgorbunov3333.timer.console.service.command.line.session.coordinator.MonthSessionCommandCoordinator;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -22,7 +20,6 @@ public class MonthCommandProcessor implements CommandProcessor, NumberProvidable
     private final MonthSessionCommandCoordinator monthSessionCommandCoordinator;
 
     @Override
-    @Transactional(readOnly = true)
     public void process() {
         YearlyPomodoroDto yearlyPomodoro = yearlyPomodoroProvider.provideCurrentYearPomodoro(null);
 

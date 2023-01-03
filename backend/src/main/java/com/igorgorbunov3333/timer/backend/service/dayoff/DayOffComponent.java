@@ -22,4 +22,10 @@ public class DayOffComponent {
         dayOffRepository.saveAll(dayOffsEntities);
     }
 
+    public List<DayOffDto> getDayOffs() {
+        List<DayOff> dayOffs = dayOffRepository.findAll();
+
+        return dayOffMapper.toDtos(dayOffs);
+    }
+
 }

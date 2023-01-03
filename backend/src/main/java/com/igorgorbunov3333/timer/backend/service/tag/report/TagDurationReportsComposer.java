@@ -1,7 +1,9 @@
 package com.igorgorbunov3333.timer.backend.service.tag.report;
 
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.backend.model.dto.tag.report.TagDurationReportDto;
 import com.igorgorbunov3333.timer.backend.model.dto.tag.report.TagDurationReportRowDto;
+import com.igorgorbunov3333.timer.backend.service.pomodoro.provider.impl.PomodoroProvider;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,6 +11,9 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -25,12 +30,24 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-//TODO: refactor
 public class TagDurationReportsComposer {
 
     private static final String TOTAL_REPORT_ROW_NAME = "Total";
 
     private final AllTagsDurationReporter allTagsDurationReporter;
+    private final PomodoroProvider pomodoroProvider;
+
+    public TagDurationReportDto getReport(LocalDate from, LocalDate to) {
+        List<PomodoroDto> pomodoro = pomodoroProvider.provide(
+                from.atStartOfDay().atZone(ZoneId.of("UTC")),
+                to.atTime(LocalTime.MAX).atZone(ZoneId.of("UTC")),
+                null
+        );
+
+        List<TagDurationReportRowDto> reportRows = compose(pomodoro);
+
+        return new TagDurationReportDto(reportRows);
+    }
 
     public List<TagDurationReportRowDto> compose(List<PomodoroDto> pomodoro) {
         List<TagDurationReportRowDto> reportRows = allTagsDurationReporter.reportForEachTag(pomodoro);

@@ -44,7 +44,9 @@ public class BackendRestClient {
         return responseEntity.getBody();
     }
 
-    public <T> T get(String relativePath, ParameterizedTypeReference<T> parameterizedTypeReference, Map<String, String> queryParams) {
+    public <T> T get(String relativePath,
+                     ParameterizedTypeReference<T> parameterizedTypeReference,
+                     Map<String, String> queryParams) {
         URI uri = buildURI(relativePath, queryParams);
 
         ResponseEntity<T> responseEntity = restTemplate.exchange(

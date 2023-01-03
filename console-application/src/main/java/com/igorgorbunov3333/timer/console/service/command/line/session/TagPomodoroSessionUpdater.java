@@ -1,15 +1,15 @@
 package com.igorgorbunov3333.timer.console.service.command.line.session;
 
-import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagGroupDto;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.BaseLineProvider;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.CommandProvider;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.ListOfItemsPrinter;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.updater.PomodoroUpdater;
-import com.igorgorbunov3333.timer.backend.service.tag.group.PomodoroTagGroupService;
-import com.igorgorbunov3333.timer.backend.service.tag.provider.TagsFromUserProvider;
-import com.igorgorbunov3333.timer.backend.service.util.NumberToItemBuilder;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroTagDto;
+import com.igorgorbunov3333.timer.console.rest.dto.tag.PomodoroTagGroupDto;
+import com.igorgorbunov3333.timer.console.service.command.line.provider.BaseLineProvider;
+import com.igorgorbunov3333.timer.console.service.command.line.provider.CommandProvider;
+import com.igorgorbunov3333.timer.console.service.pomodoro.PomodoroComponent;
+import com.igorgorbunov3333.timer.console.service.printer.util.ListOfItemsPrinter;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
+import com.igorgorbunov3333.timer.console.service.provider.TagsFromUserProvider;
+import com.igorgorbunov3333.timer.console.service.tag.group.PomodoroTagGroupComponent;
+import com.igorgorbunov3333.timer.console.service.util.NumberToItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
@@ -21,25 +21,24 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-//TODO: refactor
 @Component
 @AllArgsConstructor
 public class TagPomodoroSessionUpdater implements NumberProvidable, BaseLineProvider {
 
     @Getter
     private final CommandProvider commandProvider;
-    private final PomodoroUpdater pomodoroUpdater;
-    private final PomodoroTagGroupService pomodoroTagGroupService;
+    private final PomodoroComponent pomodoroComponent;
+    private final PomodoroTagGroupComponent pomodoroTagGroupComponent;
     private final TagsFromUserProvider tagsFromUserProvider;
 
-    public void addTagToPomodoro(List<Long> pomodoroId) {
+    public void addTagToPomodoro(List<Long> pomodoroIds) {
         Set<String> tags = provideTags();
 
-        pomodoroUpdater.updatePomodoroWithTag(pomodoroId, tags);
+        pomodoroComponent.updatePomodoroWithTag(pomodoroIds, tags);
     }
 
     private Set<String> provideTags() {
-        List<PomodoroTagGroupDto> pomodoroTagGroups = pomodoroTagGroupService.getLatestTagGroups();
+        List<PomodoroTagGroupDto> pomodoroTagGroups = pomodoroTagGroupComponent.getTagGroups();
 
         if (CollectionUtils.isEmpty(pomodoroTagGroups)) {
             return chosenTagsByUser();
@@ -74,7 +73,7 @@ public class TagPomodoroSessionUpdater implements NumberProvidable, BaseLineProv
             }
         }
 
-        pomodoroTagGroupService.updateOrderNumber(chosenTagGroup.getId());
+        pomodoroTagGroupComponent.updateOrderNumber(chosenTagGroup.getId());
 
         return chosenTagGroup.getPomodoroTags().stream()
                 .map(PomodoroTagDto::getName)
@@ -101,7 +100,7 @@ public class TagPomodoroSessionUpdater implements NumberProvidable, BaseLineProv
             }
         }
 
-        pomodoroTagGroupService.saveTagGroup(tags);
+        pomodoroTagGroupComponent.saveTagGroup(tags);
 
         return tags;
     }

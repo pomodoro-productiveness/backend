@@ -8,6 +8,7 @@ import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.report.PomodoroStan
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.report.WorkTimeStandardReportDto;
 import com.igorgorbunov3333.timer.backend.model.entity.dayoff.DayOff;
 import com.igorgorbunov3333.timer.backend.repository.DayOffRepository;
+import com.igorgorbunov3333.timer.backend.service.pomodoro.provider.impl.PomodoroProvider;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.report.calculator.EducationPomodoroFilter;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.report.calculator.EducationTimeStandardReportCalculator;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.report.calculator.GeneralAmountStandardReportCalculator;
@@ -17,6 +18,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Component
@@ -29,6 +32,19 @@ public class PomodoroStandardReportrComponent {
     private final WorkPomodoroFilter workPomodoroFilter;
     private final EducationPomodoroFilter educationPomodoroFilter;
     private final DayOffRepository dayOffRepository;
+    private final PomodoroProvider pomodoroProvider;
+
+    public PomodoroStandardReportDto report(LocalDate from, LocalDate to) {
+        PeriodDto period = new PeriodDto(from.atStartOfDay(), to.atTime(LocalTime.MAX));
+
+        List<PomodoroDto> pomodoro = pomodoroProvider.provide(
+                period.getStart().atZone(ZoneId.of("UTC")),
+                period.getEnd().atZone(ZoneId.of("UTC")),
+                null
+        );
+
+        return report(period, pomodoro);
+    }
 
     public PomodoroStandardReportDto report(PeriodDto period, List<PomodoroDto> pomodoro) {
         LocalDate startDate = period.getStart().toLocalDate();

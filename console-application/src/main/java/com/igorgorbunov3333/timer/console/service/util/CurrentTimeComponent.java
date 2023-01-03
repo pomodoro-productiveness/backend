@@ -9,7 +9,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @Component
-public class CurrentTimeService {
+public class CurrentTimeComponent {
 
     public LocalDateTime getCurrentDateTime() {
         return LocalDateTime.now();

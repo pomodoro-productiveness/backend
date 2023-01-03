@@ -2,6 +2,7 @@ package com.igorgorbunov3333.timer.console.rest.dto.pomodoro;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.igorgorbunov3333.timer.console.model.TemporalObject;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -16,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @EqualsAndHashCode(of = {"startTime", "endTime"})
-public class PomodoroDto {
+public class PomodoroDto implements TemporalObject {
 
     @JsonIgnore
     private Long id;

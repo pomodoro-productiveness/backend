@@ -4,15 +4,18 @@ import com.igorgorbunov3333.timer.backend.controller.util.RestPathUtil;
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroAutoSaveRequestDto;
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroSaveRequestDto;
+import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroUpdateRequestDto;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.provider.impl.PomodoroProvider;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.remover.PomodoroRemover;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.saver.PomodoroAutoSaver;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.saver.PomodoroSaver;
+import com.igorgorbunov3333.timer.backend.service.pomodoro.updater.PomodoroUpdater;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +36,7 @@ public class PomodoroController {
     private PomodoroSaver pomodoroSaver;
     private PomodoroProvider pomodoroProvider;
     private PomodoroRemover pomodoroRemover;
+    private PomodoroUpdater pomodoroUpdater;
 
     @PostMapping
     public PomodoroDto save(@RequestBody PomodoroSaveRequestDto saveRequestDto) {
@@ -69,6 +73,11 @@ public class PomodoroController {
     @DeleteMapping
     public void deletePomodoro(@RequestParam long pomodoroId) {
         pomodoroRemover.remove(pomodoroId);
+    }
+
+    @PutMapping
+    public void updatePomodoroWithTag(@RequestBody PomodoroUpdateRequestDto request) {
+        pomodoroUpdater.updatePomodoroWithTag(request.getIds(), request.getTags());
     }
 
 }
