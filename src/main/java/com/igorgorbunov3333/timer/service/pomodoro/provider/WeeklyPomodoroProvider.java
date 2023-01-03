@@ -22,6 +22,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,11 +43,12 @@ public class WeeklyPomodoroProvider implements BasePomodoroProvider {
     public WeeklyPomodoroDto provideCurrentWeekPomodoro() {
         List<PomodoroDto> weeklyPomodoro = provide();
 
+        PeriodDto period = getCurrentPeriod();
+
         if (weeklyPomodoro.isEmpty()) {
-            return WeeklyPomodoroDto.buildEmpty();
+            return new WeeklyPomodoroDto(Collections.emptyList(), period);
         }
 
-        PeriodDto period = getCurrentPeriod();
         List<DailyPomodoroDto> weeklyPomodoroDto = provideWeeklyPomodoro(weeklyPomodoro, period);
 
         return new WeeklyPomodoroDto(weeklyPomodoroDto, period);
