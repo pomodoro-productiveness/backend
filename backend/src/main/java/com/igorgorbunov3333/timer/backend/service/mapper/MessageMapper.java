@@ -10,7 +10,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface MessageMapper {
 
-    @Mapping(source = "pomodoroTagGroup", target = "messagePeriod", qualifiedByName = "messagePeriod")
+    @Mapping(source = "messagePeriod", target = "messagePeriod", qualifiedByName = "messagePeriod")
     Message toEntity(MessageDto dto);
 
     @Named("messagePeriod")

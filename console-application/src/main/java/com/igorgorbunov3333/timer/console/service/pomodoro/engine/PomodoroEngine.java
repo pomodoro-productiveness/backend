@@ -2,10 +2,12 @@ package com.igorgorbunov3333.timer.console.service.pomodoro.engine;
 
 import com.igorgorbunov3333.timer.console.config.properties.PomodoroProperties;
 import com.igorgorbunov3333.timer.console.service.audioplayer.AudioPlayerService;
+import com.igorgorbunov3333.timer.console.service.event.publisher.PomodoroStoppedSpringEventPublisher;
 import com.igorgorbunov3333.timer.console.service.util.CurrentTimeComponent;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 

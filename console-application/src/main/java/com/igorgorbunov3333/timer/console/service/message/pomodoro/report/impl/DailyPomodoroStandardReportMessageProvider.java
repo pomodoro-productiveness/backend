@@ -9,6 +9,7 @@ import com.igorgorbunov3333.timer.console.service.dayoff.DayOffComponent;
 import com.igorgorbunov3333.timer.console.service.message.pomodoro.report.MessageProvider;
 import com.igorgorbunov3333.timer.console.service.pomodoro.PomodoroComponent;
 import com.igorgorbunov3333.timer.console.service.pomodoro.report.PomodoroStandardReportComponent;
+import com.igorgorbunov3333.timer.console.service.util.CurrentTimeComponent;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +23,15 @@ public class DailyPomodoroStandardReportMessageProvider implements MessageProvid
     private final PomodoroStandardReportComponent pomodoroStandardReportComponent;
     private final PomodoroComponent pomodoroComponent;
     private final DayOffComponent dayOffComponent;
+    private final CurrentTimeComponent currentTimeComponent;
 
     public String provide(LocalDate reportDate) {
         List<PomodoroDto> dailyPomodoro = pomodoroComponent.getPomodoro(reportDate, reportDate, null);
-        List<DayOffDto> dayOffs = dayOffComponent.getDayOffs();
+
+        LocalDate from = LocalDate.of(2021, 1, 1);
+        LocalDate to = currentTimeComponent.getCurrentDateTime().toLocalDate();
+
+        List<DayOffDto> dayOffs = dayOffComponent.getDayOffs(from, to);
 
         boolean dayOff = dayOffs.stream()
                 .map(DayOffDto::getDay)

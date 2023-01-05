@@ -35,6 +35,18 @@ public class PomodoroTagGroupService {
                 .toList();
     }
 
+    public void updateOrderNumber(long tagGroupId) {
+        PomodoroTagGroup tagGroup = pomodoroTagGroupRepository.getPomodoroTagGroup(tagGroupId);
+
+        List<PomodoroTagGroup> allGroups = pomodoroTagGroupRepository.findAll();
+
+        long nextOrderNumber = calculateNextOrderNumber(allGroups);
+
+        PomodoroTagGroup group = new PomodoroTagGroup(null, tagGroup.getPomodoroTags(), nextOrderNumber);
+
+        pomodoroTagGroupRepository.save(group);
+    }
+
     public PomodoroTagGroupDto saveTagGroup(Set<String> tags) {
         if (CollectionUtils.isEmpty(tags)) {
             throw new IllegalArgumentException("Tags for save must not be mull or empty");

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @Getter
 @Component
-@ConfigurationProperties(prefix = "googleServices")
+@ConfigurationProperties(prefix = "google-services")
 public class GoogleServicesProperties {
 
     @NotBlank private String credentialsPath;

@@ -18,8 +18,6 @@ public class PomodoroPauseDto {
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ssZ")
     private ZonedDateTime endTime;
 
-    private Long pomodoroId;
-
     @Override
     public String toString() {
         return "Pomodoro {" +

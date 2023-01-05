@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Getter
 @Component
-@ConfigurationProperties(prefix = "audioFile")
+@ConfigurationProperties(prefix = "audio-file")
 public class AudioFileProperties {
 
     @NotBlank

@@ -1,21 +1,19 @@
 package com.igorgorbunov3333.timer.console.service.command.line.session.processor.tag.impl;
 
-import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTag;
-import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTagGroup;
-import com.igorgorbunov3333.timer.backend.repository.PomodoroTagGroupRepository;
-import com.igorgorbunov3333.timer.backend.repository.PomodoroTagRepository;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.CommandProvider;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.NumberProvidable;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.processor.tag.TagSessionProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.ListOfItemsPrinter;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.tag.provider.TagsFromUserProvider;
-import com.igorgorbunov3333.timer.backend.service.util.NumberToItemBuilder;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroTagDto;
+import com.igorgorbunov3333.timer.console.rest.dto.tag.PomodoroTagGroupDto;
+import com.igorgorbunov3333.timer.console.service.command.line.provider.CommandProvider;
+import com.igorgorbunov3333.timer.console.service.command.line.session.NumberProvidable;
+import com.igorgorbunov3333.timer.console.service.command.line.session.processor.tag.TagSessionProcessor;
+import com.igorgorbunov3333.timer.console.service.printer.util.ListOfItemsPrinter;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
+import com.igorgorbunov3333.timer.console.service.provider.TagsFromUserProvider;
+import com.igorgorbunov3333.timer.console.service.tag.PomodoroTagComponent;
+import com.igorgorbunov3333.timer.console.service.tag.group.PomodoroTagGroupComponent;
+import com.igorgorbunov3333.timer.console.service.util.NumberToItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,29 +27,28 @@ public class TagGroupUpdaterSessionProcessor implements TagSessionProcessor, Num
 
     @Getter
     private final CommandProvider commandProvider;
-    private final PomodoroTagGroupRepository pomodoroTagGroupRepository;
+    private final PomodoroTagGroupComponent pomodoroTagGroupComponent;
     private final TagsFromUserProvider tagsFromUserProvider;
-    private final PomodoroTagRepository pomodoroTagRepository;
+    private final PomodoroTagComponent pomodoroTagComponent;
 
     @Override
-    @Transactional
     public void process(Map<Integer, PomodoroTagDto> tagPositionToTags) {
         SimplePrinter.printParagraph();
         SimplePrinter.print("Chose tag group to update:");
 
-        List<PomodoroTagGroup> tagGroups = pomodoroTagGroupRepository.findAll();
+        List<PomodoroTagGroupDto> tagGroups = pomodoroTagGroupComponent.getTagGroups();
 
-        Map<Integer, PomodoroTagGroup> numberedPomodoroTagGroups = NumberToItemBuilder.build(tagGroups);
+        Map<Integer, PomodoroTagGroupDto> numberedPomodoroTagGroups = NumberToItemBuilder.build(tagGroups);
 
         ListOfItemsPrinter.print(
                 numberedPomodoroTagGroups,
                 group -> group.getPomodoroTags().stream()
-                        .map(PomodoroTag::getName)
+                        .map(PomodoroTagDto::getName)
                         .collect(Collectors.toList()));
 
         SimplePrinter.printParagraph();
 
-        PomodoroTagGroup chosenTagGroup;
+        PomodoroTagGroupDto chosenTagGroup;
         while (true) {
             int number = provideNumber();
 
@@ -70,11 +67,7 @@ public class TagGroupUpdaterSessionProcessor implements TagSessionProcessor, Num
 
         Set<String> newTags = tagsFromUserProvider.provideTagsFromUser();
 
-        List<PomodoroTag> newPomodoroTags = pomodoroTagRepository.findByNameIn(newTags);
-
-        chosenTagGroup.setPomodoroTags(new HashSet<>(newPomodoroTags));
-
-        pomodoroTagGroupRepository.save(chosenTagGroup);
+        pomodoroTagGroupComponent.save(new HashSet<>(newTags));
 
         SimplePrinter.printParagraph();
         SimplePrinter.print("Pomodoro group successfully updated with the following tags: " + newTags);

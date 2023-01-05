@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.console.service.command.line.session.coordinator;
 
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.processor.month.MonthSessionProcessor;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.service.command.line.session.processor.month.MonthSessionProcessor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

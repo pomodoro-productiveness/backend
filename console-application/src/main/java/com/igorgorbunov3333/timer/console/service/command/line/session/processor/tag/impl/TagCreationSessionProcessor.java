@@ -4,9 +4,10 @@ import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroTagDto;
 import com.igorgorbunov3333.timer.console.service.command.line.provider.BaseLineProvider;
 import com.igorgorbunov3333.timer.console.service.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.console.service.command.line.session.processor.tag.TagSessionProcessor;
+import com.igorgorbunov3333.timer.console.service.exception.BackendRuntimeException;
 import com.igorgorbunov3333.timer.console.service.printer.util.PrintUtil;
 import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.console.service.tag.TagComponent;
+import com.igorgorbunov3333.timer.console.service.tag.PomodoroTagComponent;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class TagCreationSessionProcessor implements TagSessionProcessor, BaseLin
 
     private static final int TAG_MAX_LENGTH = 30;
 
-    private final TagComponent tagComponent;
+    private final PomodoroTagComponent pomodoroTagComponent;
     private final CommandProvider commandProvider;
 
     @Override
@@ -35,17 +36,14 @@ public class TagCreationSessionProcessor implements TagSessionProcessor, BaseLin
 
         String savedTagName = null;
         try {
-            savedTagName = tagComponent.save(tagNameAnswer);
-        } catch (TagOperationException e) {
+            pomodoroTagComponent.save(tagNameAnswer);
+        } catch (BackendRuntimeException e) {
             SimplePrinter.print(e.getMessage());
         }
 
-        if (savedTagName != null) {
-            SimplePrinter.print(String.format("Tag with name [%s] successfully saved", savedTagName));
-        }
+        SimplePrinter.print(String.format("Tag with name [%s] successfully saved", savedTagName));
     }
 
-    //TODO: refactor
     private String provideAndValidateTagName() {
         do {
             String tagNameAnswer = commandProvider.provideLine();
@@ -66,7 +64,7 @@ public class TagCreationSessionProcessor implements TagSessionProcessor, BaseLin
                 SimplePrinter.print("Tag must not be empty!");
                 SimplePrinter.printTryAgainMessage();
                 SimplePrinter.printParagraph();
-            } else if (tagComponent.exists(tagNameAnswer)) {
+            } else if (pomodoroTagComponent.exists(tagNameAnswer)) {
                 SimplePrinter.printParagraph();
                 SimplePrinter.print(String.format("Tag with name [%s] already exists!", tagNameAnswer));
                 SimplePrinter.printTryAgainMessage();

@@ -1,20 +1,17 @@
-package com.igorgorbunov3333.timer.backend.service.pomodoro.provider;
+package com.igorgorbunov3333.timer.console.service.pomodoro.provider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.period.YearlyPomodoroDto;
-import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.Pomodoro;
-import com.igorgorbunov3333.timer.backend.repository.DayOffRepository;
-import com.igorgorbunov3333.timer.backend.repository.PomodoroRepository;
-import com.igorgorbunov3333.timer.backend.repository.PomodoroTagRepository;
-import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroMapper;
-import com.igorgorbunov3333.timer.backend.service.mapper.PomodoroTagMapper;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.period.PomodoroByMonthsDivider;
-import com.igorgorbunov3333.timer.backend.service.period.WeekPeriodHelper;
-import com.igorgorbunov3333.timer.backend.service.tag.TagService;
-import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.period.YearlyPomodoroDto;
+import com.igorgorbunov3333.timer.console.service.dayoff.DayOffComponent;
+import com.igorgorbunov3333.timer.console.service.period.WeekPeriodHelper;
+import com.igorgorbunov3333.timer.console.service.pomodoro.PomodoroComponent;
+import com.igorgorbunov3333.timer.console.service.pomodoro.period.PomodoroByMonthsDivider;
+import com.igorgorbunov3333.timer.console.service.tag.PomodoroTagComponent;
+import com.igorgorbunov3333.timer.console.service.util.CurrentTimeComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +27,13 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {YearlyPomodoroProvider.class,
-        PomodoroMapper.class,
-        TagService.class,
+        PomodoroTagComponent.class,
         PomodoroByMonthsDivider.class,
         MonthlyPomodoroProvider.class,
-        PomodoroTagMapper.class,
         WeeklyPomodoroProvider.class,
         WeekPeriodHelper.class
 })
@@ -47,18 +43,14 @@ class YearlyPomodoroProviderIT {
     private YearlyPomodoroProvider testee;
 
     @MockBean
-    private CurrentTimeService currentTimeService;
+    private CurrentTimeComponent currentTimeComponent;
     @MockBean
-    private PomodoroRepository pomodoroRepository;
+    private PomodoroComponent pomodoroComponent;
     @MockBean
-    private PomodoroTagRepository pomodoroTagRepository;
-    @MockBean
-    private DayOffRepository dayOffRepository;
+    private DayOffComponent dayOffComponent;
 
     @Autowired
-    private PomodoroMapper pomodoroMapper;
-    @Autowired
-    private TagService tagService;
+    private PomodoroTagComponent pomodoroTagService;
     @Autowired
     private PomodoroByMonthsDivider pomodoroByMonthsDivider;
     @Autowired
@@ -70,11 +62,11 @@ class YearlyPomodoroProviderIT {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        List<Pomodoro> pomodoro = objectMapper.readValue(stringYearlyPomodoro, new TypeReference<>() {});
+        List<PomodoroDto> pomodoro = objectMapper.readValue(stringYearlyPomodoro, new TypeReference<>() {});
 
-        when(pomodoroRepository.findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(any(), any()))
+        when(pomodoroComponent.getPomodoro(any(), any(), eq(null)))
                 .thenReturn(pomodoro);
-        when(currentTimeService.getCurrentDateTime()).thenReturn(LocalDate.of(2022, 9, 27).atStartOfDay());
+        when(currentTimeComponent.getCurrentDateTime()).thenReturn(LocalDate.of(2022, 9, 27).atStartOfDay());
 
         String yearlyPomodoroExpected = getStringFromFile("data/service/pomodoro/provider/YearlyPomodoroProvider_yearly_pomodoro_expected.json");
         YearlyPomodoroDto expected = objectMapper.readValue(yearlyPomodoroExpected, YearlyPomodoroDto.class);

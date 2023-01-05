@@ -1,7 +1,7 @@
-package com.igorgorbunov3333.timer.backend.service.pomodoro.period;
+package com.igorgorbunov3333.timer.console.service.pomodoro.period;
 
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.service.util.CurrentTimeComponent;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PomodoroByMonthsDivider {
 
-    private final CurrentTimeService currentTimeService;
+    private final CurrentTimeComponent currentTimeComponent;
 
     public Map<YearMonth, List<PomodoroDto>> divide(List<PomodoroDto> pomodoro) {
-        LocalDateTime localTime = currentTimeService.getCurrentDateTime();
+        LocalDateTime localTime = currentTimeComponent.getCurrentDateTime();
         YearMonth currentYearMonth = YearMonth.from(localTime);
 
         LocalDate yearStart = LocalDate.of(currentYearMonth.getYear(), 1, 1);

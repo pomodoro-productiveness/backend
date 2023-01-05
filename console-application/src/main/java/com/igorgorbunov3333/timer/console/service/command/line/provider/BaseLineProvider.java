@@ -2,7 +2,7 @@ package com.igorgorbunov3333.timer.console.service.command.line.provider;
 
 import java.util.Scanner;
 
-public interface BaseLineProvider { //TODO: think about to extract it to separate bean
+public interface BaseLineProvider {
 
     Scanner sc = new Scanner(System.in);
 

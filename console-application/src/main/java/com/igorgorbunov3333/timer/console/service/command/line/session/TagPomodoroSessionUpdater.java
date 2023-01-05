@@ -100,7 +100,7 @@ public class TagPomodoroSessionUpdater implements NumberProvidable, BaseLineProv
             }
         }
 
-        pomodoroTagGroupComponent.saveTagGroup(tags);
+        pomodoroTagGroupComponent.save(tags);
 
         return tags;
     }

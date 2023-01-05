@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -34,8 +36,8 @@ public class DayOffController {
     }
 
     @GetMapping
-    public List<DayOffDto> getDayOffs() {
-        List<DayOffDto> dayOffs = dayOffComponent.getDayOffs();
+    public List<DayOffDto> getDayOffs(@RequestParam LocalDate from, @RequestParam LocalDate to) {
+        List<DayOffDto> dayOffs = dayOffComponent.getDayOffs(from, to);
 
         log.info(String.format("Day offs in amount of [%d] items fetched", dayOffs.size()));
 

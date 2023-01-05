@@ -21,7 +21,7 @@ public class MessageComponent {
     }
 
     public void save(MessageDto messageDto) {
-        backendRestClient.post(BackendRestUtils.REST_PATH_MESSAGE, messageDto);
+        backendRestClient.post(BackendRestUtils.REST_PATH_MESSAGE, Void.class, messageDto);
     }
 
 }

@@ -5,6 +5,7 @@ import com.igorgorbunov3333.timer.console.service.command.CommandProcessor;
 import com.igorgorbunov3333.timer.console.service.command.line.provider.CommandProvider;
 import com.igorgorbunov3333.timer.console.service.command.line.session.NumberProvidable;
 import com.igorgorbunov3333.timer.console.service.command.line.session.coordinator.MonthSessionCommandCoordinator;
+import com.igorgorbunov3333.timer.console.service.pomodoro.provider.YearlyPomodoroProvider;
 import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

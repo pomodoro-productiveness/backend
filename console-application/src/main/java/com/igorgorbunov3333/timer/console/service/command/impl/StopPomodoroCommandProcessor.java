@@ -5,9 +5,10 @@ import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.console.service.command.CommandProcessor;
 import com.igorgorbunov3333.timer.console.service.command.line.provider.BaseLineProvider;
 import com.igorgorbunov3333.timer.console.service.command.line.session.TagPomodoroSessionUpdater;
+import com.igorgorbunov3333.timer.console.service.exception.PomodoroEngineException;
 import com.igorgorbunov3333.timer.console.service.pomodoro.PomodoroComponent;
 import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroEngine;
-import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroEngineService;
+import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroEngineComponent;
 import com.igorgorbunov3333.timer.console.service.printer.PrinterService;
 import com.igorgorbunov3333.timer.console.service.printer.StandardReportPrinter;
 import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
@@ -24,13 +25,14 @@ import java.util.List;
 @AllArgsConstructor
 public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper implements CommandProcessor, BaseLineProvider {
 
-    private final PomodoroEngineService pomodoroEngineService;
+    private final PomodoroEngineComponent pomodoroEngineComponent;
     @Getter
     private final PrinterService printerService;
     @Getter
     private final CurrentTimeComponent currentTimeComponent;
     @Getter
     private final PomodoroComponent pomodoroComponent;
+    @Getter
     private final TagPomodoroSessionUpdater tagPomodoroSessionUpdater;
     private final StandardReportPrinter standardReportPrinter;
     private final PomodoroEngine pomodoroEngine;
@@ -56,7 +58,7 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
         PomodoroDto savedPomodoro;
 
         try {
-            savedPomodoro = pomodoroEngineService.stopPomodoro();
+            savedPomodoro = pomodoroEngineComponent.stopPomodoro();
         } catch (PomodoroEngineException e) {
             String errorMessage = e.getMessage();
             SimplePrinter.print(errorMessage);
@@ -65,11 +67,11 @@ public class StopPomodoroCommandProcessor extends AbstractPomodoroSessionMapper 
 
         printSuccessfullySavedMessage(savedPomodoro);
 
-        List<PomodoroDto> dailyPomodoro = startTagSessionAndPrintDailyPomodoro(List.of(savedPomodoro.getId()));
+        startTagSessionAndPrintDailyPomodoro(List.of(savedPomodoro.getId()));
         LocalDate currentDay = currentTimeComponent.getCurrentDateTime().toLocalDate();
         PeriodDto period = new PeriodDto(currentDay.atStartOfDay(), currentDay.atTime(LocalTime.MAX));
 
-        standardReportPrinter.print(period, dailyPomodoro);
+        standardReportPrinter.print(period);
     }
 
     @Override

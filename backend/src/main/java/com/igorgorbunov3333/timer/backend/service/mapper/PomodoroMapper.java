@@ -54,7 +54,7 @@ public interface PomodoroMapper {
         }
 
         for (PomodoroPause pause : entities) {
-            PomodoroPauseDto pauseDto = new PomodoroPauseDto(pause.getStartTime(), pause.getEndTime(), pause.getPomodoroId());
+            PomodoroPauseDto pauseDto = new PomodoroPauseDto(pause.getStartTime(), pause.getEndTime());
             pauses.add(pauseDto);
         }
 

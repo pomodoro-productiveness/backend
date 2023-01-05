@@ -1,12 +1,12 @@
 package com.igorgorbunov3333.timer.console.service.command.line.session.processor.tag.impl;
 
-import com.igorgorbunov3333.timer.backend.model.dto.tag.PomodoroTagDto;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.BaseLineProvider;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.CommandProvider;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.NumberProvidable;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.processor.tag.TagSessionProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.tag.TagService;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroTagDto;
+import com.igorgorbunov3333.timer.console.service.command.line.provider.BaseLineProvider;
+import com.igorgorbunov3333.timer.console.service.command.line.provider.CommandProvider;
+import com.igorgorbunov3333.timer.console.service.command.line.session.NumberProvidable;
+import com.igorgorbunov3333.timer.console.service.command.line.session.processor.tag.TagSessionProcessor;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
+import com.igorgorbunov3333.timer.console.service.tag.PomodoroTagComponent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class TagRemovingSessionProcessor implements TagSessionProcessor, NumberProvidable, BaseLineProvider {
 
-    private final TagService tagService;
+    private final PomodoroTagComponent pomodoroTagComponent;
     @Getter
     private final CommandProvider commandProvider;
 
@@ -56,7 +56,7 @@ public class TagRemovingSessionProcessor implements TagSessionProcessor, NumberP
         SimplePrinter.printParagraph();
 
         if (answer.startsWith("y")) {
-            tagService.removeTag(tagNameToRemove);
+            pomodoroTagComponent.deleteTag(tagNameToRemove);
             SimplePrinter.print(String.format("Pomodoro tag [%s] successfully removed", tagNameToRemove));
         }
     }

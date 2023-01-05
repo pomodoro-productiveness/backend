@@ -1,12 +1,12 @@
 package com.igorgorbunov3333.timer.console.service.command.impl;
 
-import com.igorgorbunov3333.timer.backend.config.properties.PomodoroProperties;
-import com.igorgorbunov3333.timer.backend.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.command.CurrentCommandStorage;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.exception.PomodoroEngineException;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.engine.PomodoroEngineService;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.engine.PomodoroPauseTimer;
+import com.igorgorbunov3333.timer.console.config.properties.PomodoroProperties;
+import com.igorgorbunov3333.timer.console.service.command.CommandProcessor;
+import com.igorgorbunov3333.timer.console.service.command.CurrentCommandStorage;
+import com.igorgorbunov3333.timer.console.service.exception.PomodoroEngineException;
+import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroEngineComponent;
+import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroPauseTimer;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -17,14 +17,14 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class StartPomodoroCommandProcessor implements CommandProcessor {
 
-    private final PomodoroEngineService pomodoroEngineService;
+    private final PomodoroEngineComponent pomodoroEngineComponent;
     private final PomodoroPauseTimer pomodoroPauseTimer;
     private final PomodoroProperties pomodoroProperties;
 
     @Override
     public void process() {
         try {
-            pomodoroEngineService.startPomodoro();
+            pomodoroEngineComponent.startPomodoro();
 
             Integer minutesToPauseDuration = getMinutesToPauseDuration();
             if (minutesToPauseDuration != null && isValidDuration(minutesToPauseDuration)) {
@@ -35,7 +35,7 @@ public class StartPomodoroCommandProcessor implements CommandProcessor {
             return;
         }
         SimplePrinter.print("Pomodoro started:");
-        pomodoroEngineService.printThreeSecondsOfPomodoroExecution();
+        pomodoroEngineComponent.printThreeSecondsOfPomodoroExecution();
     }
 
     private Integer getMinutesToPauseDuration() {

@@ -2,7 +2,10 @@ package com.igorgorbunov3333.timer.console.service.pomodoro;
 
 import com.igorgorbunov3333.timer.console.rest.BackendRestUtils;
 import com.igorgorbunov3333.timer.console.rest.client.BackendRestClient;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroAutoSaveRequestDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroAutoSaveResponseDto;
 import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroSaveRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +41,28 @@ public class PomodoroComponent {
 
     public void updatePomodoroWithTag(@NonNull List<Long> pomodoroIds, @NonNull Set<String> tags) {
 
+    }
+
+    public PomodoroDto save(PomodoroSaveRequestDto pomodoroSaveRequestDto) {
+        return restClient.post(
+                BackendRestUtils.REST_PATH_POMODORO,
+                PomodoroDto.class,
+                pomodoroSaveRequestDto
+        );
+    }
+
+    public List<PomodoroDto> saveAutomatically(PomodoroAutoSaveRequestDto autoSaveRequest) {
+        PomodoroAutoSaveResponseDto response = restClient.post(
+                BackendRestUtils.REST_PATH_POMODORO_AUTO_SAVE,
+                PomodoroAutoSaveResponseDto.class,
+                autoSaveRequest
+        );
+
+        return response.getPomodoro();
+    }
+
+    public void deletePomodoro(long pomodoroId) {
+        restClient.delete(BackendRestUtils.REST_PATH_POMODORO, Map.of("pomodoroId", String.valueOf(pomodoroId)));
     }
 
 }

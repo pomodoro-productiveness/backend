@@ -1,17 +1,17 @@
 package com.igorgorbunov3333.timer.console.service.command.impl;
 
-import com.igorgorbunov3333.timer.backend.model.dto.PeriodDto;
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.command.CurrentCommandStorage;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.TagPomodoroSessionUpdater;
-import com.igorgorbunov3333.timer.backend.service.console.printer.PrinterService;
-import com.igorgorbunov3333.timer.backend.service.console.printer.StandardReportPrinter;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.exception.FreeSlotException;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.provider.impl.DailyPomodoroProvider;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.saver.PomodoroAutoSaver;
-import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
+import com.igorgorbunov3333.timer.console.rest.dto.PeriodDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroAutoSaveRequestDto;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.service.command.CommandProcessor;
+import com.igorgorbunov3333.timer.console.service.command.CurrentCommandStorage;
+import com.igorgorbunov3333.timer.console.service.command.line.session.TagPomodoroSessionUpdater;
+import com.igorgorbunov3333.timer.console.service.exception.FreeSlotException;
+import com.igorgorbunov3333.timer.console.service.pomodoro.PomodoroComponent;
+import com.igorgorbunov3333.timer.console.service.printer.PrinterService;
+import com.igorgorbunov3333.timer.console.service.printer.StandardReportPrinter;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
+import com.igorgorbunov3333.timer.console.service.util.CurrentTimeComponent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -27,15 +27,15 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper implements CommandProcessor {
 
-    private final PomodoroAutoSaver pomodoroAutoSaver;
     @Getter
-    private final DailyPomodoroProvider currentDayLocalPomodoroProvider;
+    private final PomodoroComponent pomodoroComponent;
     @Getter
     private final PrinterService printerService;
     @Getter
     private final TagPomodoroSessionUpdater tagPomodoroSessionUpdater;
     private final StandardReportPrinter standardReportPrinter;
-    private final CurrentTimeService currentTimeService;
+    @Getter
+    private final CurrentTimeComponent currentTimeComponent;
 
     @Override
     public void process() {
@@ -54,12 +54,12 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
         List<Long> pomodoroIdList = savedPomodoroList.stream()
                 .map(PomodoroDto::getId)
                 .collect(Collectors.toList());
-        List<PomodoroDto> dailyPomodoro = startTagSessionAndPrintDailyPomodoro(pomodoroIdList);
+        startTagSessionAndPrintDailyPomodoro(pomodoroIdList);
 
-        LocalDate currentDay = currentTimeService.getCurrentDateTime().toLocalDate();
+        LocalDate currentDay = currentTimeComponent.getCurrentDateTime().toLocalDate();
         PeriodDto period = new PeriodDto(currentDay.atStartOfDay(), currentDay.atTime(LocalTime.MAX));
 
-        standardReportPrinter.print(period, dailyPomodoro);
+        standardReportPrinter.print(period);
     }
 
     @Override
@@ -91,7 +91,9 @@ public class AutoSaveCommandProcessor extends AbstractPomodoroSessionMapper impl
     private List<PomodoroDto> save(int numberToSave) {
         List<PomodoroDto> savedPomodoro;
         try {
-            savedPomodoro = pomodoroAutoSaver.save(numberToSave);
+            PomodoroAutoSaveRequestDto saveRequest = new PomodoroAutoSaveRequestDto(numberToSave, null);
+
+            savedPomodoro = pomodoroComponent.saveAutomatically(saveRequest);
 
             savedPomodoro.forEach(this::printSuccessfullySavedMessage);
 

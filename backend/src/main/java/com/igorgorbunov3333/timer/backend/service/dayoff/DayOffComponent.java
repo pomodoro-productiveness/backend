@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -22,8 +23,14 @@ public class DayOffComponent {
         dayOffRepository.saveAll(dayOffsEntities);
     }
 
-    public List<DayOffDto> getDayOffs() {
-        List<DayOff> dayOffs = dayOffRepository.findAll();
+    public List<DayOffDto> getDayOffs(LocalDate from, LocalDate to) {
+        List<DayOff> dayOffs;
+
+        if (from == null || to == null) {
+            dayOffs = dayOffRepository.findAll();
+        } else {
+            dayOffs = dayOffRepository.findByDayGreaterThanEqualAndDayLessThanEqualOrderByDay(from, to);
+        }
 
         return dayOffMapper.toDtos(dayOffs);
     }

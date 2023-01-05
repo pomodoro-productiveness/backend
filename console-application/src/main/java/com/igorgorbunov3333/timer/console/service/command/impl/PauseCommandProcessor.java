@@ -1,10 +1,10 @@
 package com.igorgorbunov3333.timer.console.service.command.impl;
 
-import com.igorgorbunov3333.timer.backend.config.properties.PomodoroProperties;
-import com.igorgorbunov3333.timer.backend.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.engine.PomodoroEngine;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.engine.PomodoroEngineService;
+import com.igorgorbunov3333.timer.console.config.properties.PomodoroProperties;
+import com.igorgorbunov3333.timer.console.service.command.CommandProcessor;
+import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroEngine;
+import com.igorgorbunov3333.timer.console.service.pomodoro.engine.PomodoroEngineComponent;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class PauseCommandProcessor implements CommandProcessor {
 
-    private final PomodoroEngineService pomodoroEngineService;
+    private final PomodoroEngineComponent pomodoroEngineComponent;
     private final PomodoroEngine pomodoroEngine;
     private final PomodoroProperties pomodoroProperties;
 
@@ -27,8 +27,8 @@ public class PauseCommandProcessor implements CommandProcessor {
             return;
         }
 
-        pomodoroEngineService.pausePomodoro();
-        SimplePrinter.print(String.format("Pomodoro paused at %s", pomodoroEngineService.getPomodoroCurrentDuration()));
+        pomodoroEngineComponent.pausePomodoro();
+        SimplePrinter.print(String.format("Pomodoro paused at %s", pomodoroEngineComponent.getPomodoroCurrentDuration()));
     }
 
     @Override

@@ -11,7 +11,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class MessageDto {
 
-    @NotNull private LocalDate date;
-    @NotBlank private String messagePeriod;
+    @NotNull
+    private LocalDate date;
+    @NotBlank
+    private String messagePeriod;
 
 }

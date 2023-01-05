@@ -1,6 +1,7 @@
 package com.igorgorbunov3333.timer.backend.service.pomodoro.saver;
 
 import com.igorgorbunov3333.timer.backend.model.dto.PeriodDto;
+import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroAutoSaveResponseDto;
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.Pomodoro;
 import com.igorgorbunov3333.timer.backend.model.entity.pomodoro.PomodoroTag;
@@ -37,7 +38,7 @@ public class PomodoroAutoSaver {
     private final PomodoroUpdater pomodoroUpdater;
 
     @Transactional
-    public List<PomodoroDto> save(int numberToSave, long groupId) {
+    public PomodoroAutoSaveResponseDto save(int numberToSave, long groupId) {
         Optional<PomodoroTagGroup> pomodoroTagGroupOptional = pomodoroTagGroupRepository.findById(groupId);
 
         if (pomodoroTagGroupOptional.isEmpty()) {
@@ -69,7 +70,7 @@ public class PomodoroAutoSaver {
 
         pomodoroUpdater.updatePomodoroWithTag(savedPomodoro.stream().map(PomodoroDto::getId).toList(), tagsToMapToPomodoro);
 
-        return savedPomodoro;
+        return new PomodoroAutoSaveResponseDto(savedPomodoro);
     }
 
     private Pomodoro buildPomodoro(PeriodDto latestFreeSlot) {

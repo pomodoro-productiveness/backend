@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.backend.service.exception;
+package com.igorgorbunov3333.timer.console.service.exception;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

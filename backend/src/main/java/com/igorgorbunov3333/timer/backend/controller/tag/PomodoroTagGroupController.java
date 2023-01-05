@@ -7,6 +7,7 @@ import com.igorgorbunov3333.timer.backend.model.dto.tag.TagGroupUpdateRequestDto
 import com.igorgorbunov3333.timer.backend.service.tag.group.PomodoroTagGroupService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +19,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping(RestPathUtil.COMMON + "/tag-groups")
-public class TagGroupController {
+public class PomodoroTagGroupController {
 
     private final PomodoroTagGroupService pomodoroTagGroupService;
 
@@ -35,6 +36,11 @@ public class TagGroupController {
     @PutMapping
     public PomodoroTagGroupDto updateTagGroupWithTags(@RequestBody TagGroupUpdateRequestDto tagGroupUpdateRequest) {
         return pomodoroTagGroupService.updateTagGroupWithTags(tagGroupUpdateRequest.getTagGroupId(), tagGroupUpdateRequest.getTags());
+    }
+
+    @PutMapping("/{tagGroupId}")
+    public void updateTagGroupOrderNumber(@PathVariable long tagGroupId) {
+        pomodoroTagGroupService.updateOrderNumber(tagGroupId);
     }
 
 }

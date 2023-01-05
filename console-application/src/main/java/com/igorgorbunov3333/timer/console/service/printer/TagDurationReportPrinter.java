@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.console.service.printer;
 
+import com.igorgorbunov3333.timer.console.rest.dto.PeriodDto;
 import com.igorgorbunov3333.timer.console.rest.dto.tag.report.TagDurationReportRowDto;
 import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
 import com.igorgorbunov3333.timer.console.service.tag.report.TagReportComponent;
@@ -19,6 +20,12 @@ import java.util.List;
 public class TagDurationReportPrinter {
 
     private final TagReportComponent tagDurationReportsComposer;
+
+    public void print(PeriodDto period) {
+        LocalDate start = period.getStart().toLocalDate();
+        LocalDate end = period.getEnd().toLocalDate();
+        print(start, end);
+    }
 
     public void print(LocalDate from, LocalDate to) {
         List<TagDurationReportRowDto> tagDurationReportRows = tagDurationReportsComposer.getTagDurationReport(from, to)

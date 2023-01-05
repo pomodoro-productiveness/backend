@@ -1,5 +1,5 @@
-googleServices:
-  credentialsPath: ${DRIVE_CREDENTIALS_PATH:}
+google-services:
+  credentials-path: ${DRIVE_CREDENTIALS_PATH:}
   calendar:
     id:
       dayOff: ${GOOGLE_CALENDAR_DAY_OFF_ID:}
@@ -11,12 +11,19 @@ backend.rest:
   scheme: ${URL_BACKEND_SCHEME:http}
   host: ${URL_BACKEND_HOST}
   basePath: ${URL_BACKEND_BASE_PATH}
-pomodoro.tag:
-  work:
-    name: work
-    calendar-id-color: 11
-  education:
-    name: education
-    calendar-id-color: 5
-audioFile:
+pomodoro:
+  minimum-lifetime: ${POMODORO_MIN_LIFETIME:}
+  duration: ${POMODORO_DURATION:20}
+  automatic-shutdown-duration: ${POMODORO_AUTOMATIC_SHUTDOWN_DURATION:25}
+  tag:
+    work:
+      name: work
+      calendar-id-color: 11
+    education:
+      name: education
+      calendar-id-color: 5
+audio-file:
   path: ${AUDIO_FILE_PATH:}
+telegram:
+  token: ${TELEGRAM_TOKEN}
+  chat-id: ${TELEGRAM_CHAT_ID}

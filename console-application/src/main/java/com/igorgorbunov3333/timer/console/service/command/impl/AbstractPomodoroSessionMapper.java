@@ -23,16 +23,15 @@ public abstract class AbstractPomodoroSessionMapper {
         SimplePrinter.print(successfullySavedMessage);
     }
 
-    //TODO: must be another session service to only map tag to pomodoro
-    public List<PomodoroDto> startTagSessionAndPrintDailyPomodoro(List<Long> pomodoroId) {
+    public void startTagSessionAndPrintDailyPomodoro(List<Long> pomodoroId) {
         SimplePrinter.printParagraph();
 
         getTagPomodoroSessionUpdater().addTagToPomodoro(pomodoroId);
 
-        return getAndPrintCurrentDayPomodoro();
+        printCurrentDayPomodoro();
     }
 
-    private List<PomodoroDto> getAndPrintCurrentDayPomodoro() {
+    private List<PomodoroDto> printCurrentDayPomodoro() {
         LocalDate today = getCurrentTimeComponent().getCurrentDateTime().toLocalDate();
         List<PomodoroDto> pomodoro = getPomodoroComponent().getPomodoro(today, today, null);
         getPrinterService().printPomodoroWithIdsAndTags(pomodoro);

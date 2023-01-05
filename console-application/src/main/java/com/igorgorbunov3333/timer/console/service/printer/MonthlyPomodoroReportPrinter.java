@@ -33,14 +33,22 @@ public class MonthlyPomodoroReportPrinter {
                     + weekPeriod.getEnd().toLocalDate() + ")");
 
             standardReportPrinter.print(weekPeriod);
-            tagDurationReportPrinter.print(weeklyPomodoroDto.getPomodoro());
+            tagDurationReportPrinter.print(
+                    weekPeriod.getStart().toLocalDate(),
+                    weekPeriod.getEnd().toLocalDate()
+            );
         }
 
         SimplePrinter.printParagraph();
         SimplePrinter.print("MONTH REPORT");
 
-        standardReportPrinter.print(monthlyPomodoroDto.getPeriod());
-        tagDurationReportPrinter.print(monthlyPomodoroDto.getPomodoro());
+        PeriodDto period = monthlyPomodoroDto.getPeriod();
+
+        standardReportPrinter.print(period);
+        tagDurationReportPrinter.print(
+                period.getStart().toLocalDate(),
+                period.getEnd().toLocalDate()
+        );
     }
 
 }

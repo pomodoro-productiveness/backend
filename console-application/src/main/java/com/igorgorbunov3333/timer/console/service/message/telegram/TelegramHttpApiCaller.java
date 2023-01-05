@@ -1,5 +1,6 @@
 package com.igorgorbunov3333.timer.console.service.message.telegram;
 
+import com.igorgorbunov3333.timer.console.config.properties.TelegramProperties;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

@@ -1,12 +1,12 @@
 package com.igorgorbunov3333.timer.console.service.command.impl;
 
-import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
-import com.igorgorbunov3333.timer.backend.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.provider.CommandProvider;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.NumberProvidable;
-import com.igorgorbunov3333.timer.backend.service.console.printer.util.SimplePrinter;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.provider.DailySinglePomodoroFromUserProvider;
-import com.igorgorbunov3333.timer.backend.service.pomodoro.remover.PomodoroRemover;
+import com.igorgorbunov3333.timer.console.rest.dto.pomodoro.PomodoroDto;
+import com.igorgorbunov3333.timer.console.service.command.CommandProcessor;
+import com.igorgorbunov3333.timer.console.service.command.line.provider.CommandProvider;
+import com.igorgorbunov3333.timer.console.service.command.line.session.NumberProvidable;
+import com.igorgorbunov3333.timer.console.service.pomodoro.PomodoroComponent;
+import com.igorgorbunov3333.timer.console.service.pomodoro.provider.DailySinglePomodoroFromUserProvider;
+import com.igorgorbunov3333.timer.console.service.printer.util.SimplePrinter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class RemoveCommandProcessor implements CommandProcessor, NumberProvidable {
 
-    private final PomodoroRemover pomodoroRemover;
+    private final PomodoroComponent pomodoroComponent;
     private final DailySinglePomodoroFromUserProvider dailySinglePomodoroFromUserProvider;
 
     @Getter
@@ -44,7 +44,7 @@ public class RemoveCommandProcessor implements CommandProcessor, NumberProvidabl
             return;
         }
 
-        pomodoroRemover.remove(chosenPomodoro.getId());
+        pomodoroComponent.deletePomodoro(chosenPomodoro.getId());
 
         SimplePrinter.printParagraph();
         SimplePrinter.print("Pomodoro [" + chosenPomodoro + "] removed successfully");

@@ -1,9 +1,8 @@
-package com.igorgorbunov3333.timer.backend.service.period;
+package com.igorgorbunov3333.timer.console.service.pomodoro.period;
 
-import com.igorgorbunov3333.timer.backend.model.dto.PeriodDto;
-import com.igorgorbunov3333.timer.backend.service.util.CurrentTimeService;
+import com.igorgorbunov3333.timer.console.rest.dto.PeriodDto;
+import com.igorgorbunov3333.timer.console.service.util.CurrentTimeComponent;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
@@ -15,22 +14,12 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class WeekPeriodHelper {
+public class PomodoroByWeekDivider {
 
-    @Getter
-    private final CurrentTimeService currentTimeService;
-
-    public PeriodDto providePreviousWeekPeriod() {
-        LocalDate currentDate = currentTimeService.getCurrentDateTime().toLocalDate();
-
-        DayOfWeek currentDateDayOfWeek = DayOfWeek.from(currentDate);
-        LocalDate previousWeekSunday = currentDate.minusDays(currentDateDayOfWeek.getValue());
-
-        return getWeekByDate(previousWeekSunday);
-    }
+    private final CurrentTimeComponent currentTimeComponent;
 
     public List<PeriodDto> dividePeriodByWeeks(PeriodDto period) {
-        LocalDate today = currentTimeService.getCurrentDateTime().toLocalDate();
+        LocalDate today = currentTimeComponent.getCurrentDateTime().toLocalDate();
 
         return divideForWeeklyPeriods(period, today);
     }

@@ -13,7 +13,7 @@ public class PomodoroPauseTimer {
 
     private final PomodoroEngine pomodoroEngine;
     private final AudioPlayerService player;
-    private final PomodoroEngineService pomodoroEngineService;
+    private final PomodoroEngineComponent pomodoroEngineComponent;
 
     @Async
     public void conduct(int seconds) {
@@ -37,7 +37,7 @@ public class PomodoroPauseTimer {
 
                 player.stop();
 
-                SimplePrinter.print(String.format("Pomodoro paused at %s", pomodoroEngineService.getPomodoroCurrentDuration()));
+                SimplePrinter.print(String.format("Pomodoro paused at %s", pomodoroEngineComponent.getPomodoroCurrentDuration()));
                 SimplePrinter.printParagraph();
 
                 break;

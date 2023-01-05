@@ -1,10 +1,8 @@
 package com.igorgorbunov3333.timer.console.service.command.impl;
 
-import com.igorgorbunov3333.timer.backend.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.command.line.session.TagCommandSessionStarter;
-import com.igorgorbunov3333.timer.backend.service.tag.TagService;
+import com.igorgorbunov3333.timer.console.service.command.CommandProcessor;
+import com.igorgorbunov3333.timer.console.service.command.line.session.TagCommandSessionStarter;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,8 +10,6 @@ import org.springframework.stereotype.Service;
 public class TagCommandProcessor implements CommandProcessor {
 
     private final TagCommandSessionStarter tagCommandSessionStarter;
-    @Getter
-    private final TagService tagService;
 
     @Override
     public void process() {

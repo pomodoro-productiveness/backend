@@ -2,6 +2,7 @@ package com.igorgorbunov3333.timer.backend.controller.pomodoro;
 
 import com.igorgorbunov3333.timer.backend.controller.util.RestPathUtil;
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroAutoSaveRequestDto;
+import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroAutoSaveResponseDto;
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroDto;
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroSaveRequestDto;
 import com.igorgorbunov3333.timer.backend.model.dto.pomodoro.PomodoroUpdateRequestDto;
@@ -48,15 +49,16 @@ public class PomodoroController {
     }
 
     @PostMapping(path = "/auto")
-    public List<PomodoroDto> save(@RequestBody PomodoroAutoSaveRequestDto autoSaveRequestDto) {
-        List<PomodoroDto> savedPomodoro = pomodoroAutoSaver.save(
+    public PomodoroAutoSaveResponseDto save(@RequestBody PomodoroAutoSaveRequestDto autoSaveRequestDto) {
+        PomodoroAutoSaveResponseDto saveResponseDto = pomodoroAutoSaver.save(
                 autoSaveRequestDto.getNumbersToSaveAutomatically(),
                 autoSaveRequestDto.getTagGroupId()
         );
 
-        savedPomodoro.forEach(pomodoro -> log.info("Pomodoro with id [{}] saved automatically", pomodoro.getId()));
+        saveResponseDto.getPomodoro()
+                .forEach(pomodoro -> log.info("Pomodoro with id [{}] saved automatically", pomodoro.getId()));
 
-        return savedPomodoro;
+        return saveResponseDto;
     }
 
     @GetMapping

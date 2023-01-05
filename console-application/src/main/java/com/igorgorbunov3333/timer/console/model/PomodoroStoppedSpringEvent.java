@@ -1,4 +1,4 @@
-package com.igorgorbunov3333.timer.backend.model.event;
+package com.igorgorbunov3333.timer.console.model;
 
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;

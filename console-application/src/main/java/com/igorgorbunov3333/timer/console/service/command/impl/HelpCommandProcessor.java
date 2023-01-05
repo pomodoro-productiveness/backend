@@ -1,7 +1,7 @@
 package com.igorgorbunov3333.timer.console.service.command.impl;
 
-import com.igorgorbunov3333.timer.backend.service.console.command.CommandProcessor;
-import com.igorgorbunov3333.timer.backend.service.console.printer.PrinterService;
+import com.igorgorbunov3333.timer.console.service.command.CommandProcessor;
+import com.igorgorbunov3333.timer.console.service.printer.PrinterService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

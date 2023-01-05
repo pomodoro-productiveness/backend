@@ -26,10 +26,17 @@ public class BackendRestClient {
     private final RestTemplate restTemplate;
     private final BackendRestProperties backendRestProperties;
 
-    public <T> void post(String relativePath, T entity) {
+    public <T, R> R post(String relativePath, Class<R> clazz, T entity) {
         URI uri = buildURI(relativePath, null);
 
-        restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(entity), String.class);
+        ResponseEntity<R> responseEntity = restTemplate.exchange(
+                uri,
+                HttpMethod.POST,
+                new HttpEntity<>(entity),
+                clazz
+        );
+
+        return responseEntity.getBody();
     }
 
     public <T> T get(String relativePath, Class<T> clazz, Map<String, String> queryParams) {
@@ -56,6 +63,18 @@ public class BackendRestClient {
                 parameterizedTypeReference);
 
         return responseEntity.getBody();
+    }
+
+    public <T> void put(String relativePath, T entity) {
+        URI uri = buildURI(relativePath, null);
+        
+        restTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(entity), String.class);
+    }
+
+    public void delete(String relativePath, Map<String, String> queryParams) {
+        URI uri = buildURI(relativePath, queryParams);
+
+        restTemplate.delete(uri);
     }
 
     @SneakyThrows
