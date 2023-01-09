@@ -15,7 +15,7 @@ public interface BasePomodoroProvider {
     PomodoroRepository getPomodoroRepository();
     PomodoroMapper getPomodoroMapper();
 
-    default List<PomodoroDto> provide(ZonedDateTime startRange, ZonedDateTime endRange, String tagName) { //TODO: move this method to another class to not expose it as it used only by providers
+    default List<PomodoroDto> provide(ZonedDateTime startRange, ZonedDateTime endRange, String tagName) {
         if (tagName == null) {
             return getPomodoroRepository().findByStartTimeAfterAndEndTimeBeforeOrderByStartTime(startRange, endRange).stream()
                     .map(getPomodoroMapper()::toDto)

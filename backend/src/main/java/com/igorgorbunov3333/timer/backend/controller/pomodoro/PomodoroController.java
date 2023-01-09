@@ -13,6 +13,7 @@ import com.igorgorbunov3333.timer.backend.service.pomodoro.saver.PomodoroSaver;
 import com.igorgorbunov3333.timer.backend.service.pomodoro.updater.PomodoroUpdater;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,8 +63,8 @@ public class PomodoroController {
     }
 
     @GetMapping
-    public List<PomodoroDto> getPomodoro(@RequestParam LocalDate start,
-                                         @RequestParam LocalDate end,
+    public List<PomodoroDto> getPomodoro(@RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") LocalDate start,
+                                         @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") LocalDate end,
                                          @RequestParam(required = false) String tag) {
         return pomodoroProvider.provide(
                 start.atStartOfDay().atOffset(ZoneOffset.UTC).toZonedDateTime(),
