@@ -14,8 +14,8 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @EqualsAndHashCode
+@AllArgsConstructor
 @ToString(of = {"tag", "duration"})
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class TagDurationReportRowDto {
@@ -26,6 +26,29 @@ public class TagDurationReportRowDto {
 
     public void addChild(@NonNull TagDurationReportRowDto child) {
         this.children.add(child);
+    }
+
+    public List<TagDurationReportRowDto> getAllRows() {
+        List<TagDurationReportRowDto> allRows = new ArrayList<>();
+
+        getRows(this, allRows);
+
+        return allRows;
+    }
+
+    public void getRows(TagDurationReportRowDto currentRow, List<TagDurationReportRowDto> allRows) {
+        if (currentRow != null) {
+            allRows.add(currentRow);
+        }
+
+        for (TagDurationReportRowDto child : currentRow.getChildren()) {
+            getRows(child, allRows);
+        }
+    }
+
+    public boolean hasChild(@NonNull String tag) {
+        return getAllRows().stream()
+                .anyMatch(t -> t.getTag().equals(tag));
     }
 
 }

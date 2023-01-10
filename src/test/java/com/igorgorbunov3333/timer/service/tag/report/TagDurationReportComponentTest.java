@@ -122,45 +122,68 @@ class TagDurationReportComponentTest {
         );
     }
 
-//    @Test
-//    void buildReport_WhenRootRowsHasSameDuration_ThenRowsShouldBeAtRootPositionAndNotBePartOfOtherRows() {
-//        List<PomodoroDto> pomodoro = new ArrayList<>();
-//        pomodoro.addAll(buildPomodoro(21, List.of("work", "Company1", "Company2")));
-//        pomodoro.addAll(buildPomodoro(9, List.of("work", "Company1", "Company2", "meeting")));
-//        pomodoro.addAll(buildPomodoro(2, List.of("pomodoro", "meeting")));
-//
-//        List<TagDurationReportRowDto> actual = testee.buildReport(pomodoro);
-//
-//        TagDurationReportRowDto workCompaniesMeetingRowExpected = new TagDurationReportRowDto(
-//                "#meeting",
-//                10_800L,
-//                new ArrayList<>()
-//        );
-//        TagDurationReportRowDto workCompaniesRowExpected = new TagDurationReportRowDto(
-//                "work #Company1 #Company2",
-//                36_000L,
-//                new ArrayList<>(List.of(workCompaniesMeetingRowExpected))
-//        );
-//        TagDurationReportRowDto pomodoroMeetingRowExpected = new TagDurationReportRowDto(
-//                "#meeting",
-//                2_400L,
-//                new ArrayList<>()
-//        );
-//        TagDurationReportRowDto pomodoroRowExpected = new TagDurationReportRowDto(
-//                "#pomodoro",
-//                2_400L,
-//                new ArrayList<>(List.of(pomodoroMeetingRowExpected))
-//        );
-//        TagDurationReportRowDto totalRowExpected = new TagDurationReportRowDto(
-//                "Total",
-//                38_400L,
-//                new ArrayList<>()
-//        );
-//
-//        assertThat(actual).containsExactlyInAnyOrderElementsOf(
-//                List.of(workCompaniesRowExpected, pomodoroRowExpected, totalRowExpected)
-//        );
-//    }
+    @Test
+    void buildReport_WhenRootRowsHasSameDuration_ThenRowsShouldBeAtRootPositionAndNotBePartOfOtherRows() {
+        List<PomodoroDto> pomodoro = new ArrayList<>();
+        pomodoro.addAll(buildPomodoro(21, List.of("work", "Company1", "Company2")));
+        pomodoro.addAll(buildPomodoro(9, List.of("work", "Company1", "Company2", "meeting")));
+        pomodoro.addAll(buildPomodoro(8, List.of("pomodoro", "Java", "backend")));
+        pomodoro.addAll(buildPomodoro(3, List.of("pomodoro", "meeting", "cicd")));
+        pomodoro.addAll(buildPomodoro(2, List.of("pomodoro", "meeting", "architecture")));
+        pomodoro.addAll(buildPomodoro(1, List.of("pomodoro", "meeting"))); //TODO: complete
+
+        List<TagDurationReportRowDto> actual = testee.buildReport(pomodoro);
+
+        TagDurationReportRowDto workCompaniesMeetingRowExpected = new TagDurationReportRowDto(
+                "meeting",
+                10_800L,
+                new ArrayList<>()
+        );
+        TagDurationReportRowDto workCompaniesRowExpected = new TagDurationReportRowDto(
+                "work #Company1 #Company2",
+                36_000L,
+                new ArrayList<>(List.of(workCompaniesMeetingRowExpected))
+        );
+        TagDurationReportRowDto pomodoroJavaBackendRowExpected = new TagDurationReportRowDto(
+                "Java #backend",
+                9_600L,
+                new ArrayList<>()
+        );
+        TagDurationReportRowDto meetingCicdRowExpected = new TagDurationReportRowDto(
+                "cicd",
+                3_600L,
+                new ArrayList<>()
+        );
+        TagDurationReportRowDto meetingArchitectureRowExpected = new TagDurationReportRowDto(
+                "architecture",
+                2_400L,
+                new ArrayList<>()
+        );
+        TagDurationReportRowDto pomodoroMeetingRowExpected = new TagDurationReportRowDto(
+                "meeting",
+                6_000L,
+                new ArrayList<>(List.of(meetingCicdRowExpected, meetingArchitectureRowExpected))
+        );
+        TagDurationReportRowDto pomodoroMeetingWithoutChildrenRowExpected = new TagDurationReportRowDto(
+                "meeting",
+                1_200L,
+                new ArrayList<>()
+        );
+        TagDurationReportRowDto pomodoroRowExpected = new TagDurationReportRowDto(
+                "pomodoro",
+                12_000L,
+                new ArrayList<>(List.of(pomodoroJavaBackendRowExpected, pomodoroMeetingRowExpected, pomodoroMeetingWithoutChildrenRowExpected))
+        );
+        TagDurationReportRowDto totalRowExpected = new TagDurationReportRowDto(
+                "Total",
+                38_400L,
+                new ArrayList<>()
+        );
+
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(
+                List.of(workCompaniesRowExpected, pomodoroRowExpected, totalRowExpected)
+        );
+    }
 
     private List<PomodoroDto> buildPomodoro(int amount, List<String> tags) {
         List<PomodoroDto> mockedPomodoro = new ArrayList<>();
