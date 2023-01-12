@@ -221,6 +221,8 @@ public class TagDurationReportComponent {
             }
         }
 
+        //TODO: if leftover present and processed (updated = true) then go over all children and squash if needed
+
         boolean result = updated || childAdded;
 
         return new UpdatingResult(null, null, result);
