@@ -68,7 +68,7 @@ public class TagDurationReportComponent {
 
         List<TagDuration> tagDurationList = tagDurations.values().stream()
                 .sorted(Comparator.comparing(TagDuration::getDuration).reversed())
-                .toList();
+                .collect(Collectors.toList());
 
         List<TagDurationReportRowDto> rootRows = new ArrayList<>();
 
@@ -88,10 +88,6 @@ public class TagDurationReportComponent {
                            List<TagDuration> tagDurationList,
                            Map<List<String>, Long> pomodoroTagsToDurations,
                            Map<String, Long> leftoverTags) {
-        if (tagDurations.isEmpty()) {
-            return;
-        }
-
         if (rootRows.isEmpty()) {
             addNewRoot(rootRows, tagDuration);
         } else {
@@ -113,6 +109,10 @@ public class TagDurationReportComponent {
             if (!updated) {
                 addNewRoot(rootRows, tagDuration);
             }
+        }
+
+        if (tagDurations.isEmpty()) {
+            return;
         }
 
         buildTree(rootRows, tagDurations.poll(), tagDurations, tagDurationList, pomodoroTagsToDurations, leftoverTags);
@@ -183,8 +183,8 @@ public class TagDurationReportComponent {
         boolean childAdded = false;
         String leftoverTag = null;
         Long leftoverDuration = null;
-        if (duration > 0L && childNotUpdated) {
 
+        if (duration > 0L && childNotUpdated) {
             TagDuration currentTagDuration = tagDurationList.stream()
                     .filter(td -> td.getTag().equals(currentTag))
                     .findFirst()
@@ -214,6 +214,9 @@ public class TagDurationReportComponent {
                 } else {
                     updatedLeftoverDuration -= tagLeftoverDuration;
                 }
+
+                tagDurationList.remove(tagDurationWithCurrentTag);
+                tagDurationList.add(new TagDuration(tagDurationWithCurrentTag.getTag(), updatedLeftoverDuration));
 
                 if (updatedLeftoverDuration == 0L) {
                     return new UpdatingResult(null, null, true);
@@ -248,7 +251,11 @@ public class TagDurationReportComponent {
 
         boolean result = updated || childAdded;
 
-        return new UpdatingResult(leftoverTag, leftoverDuration, result);
+        if (leftoverDuration != null && leftoverDuration > 0L) {
+            return new UpdatingResult(leftoverTag, leftoverDuration, result);
+        }
+
+        return new UpdatingResult(null, null, result);
     }
 
     private long calculateDuration(Map<List<String>, Long> pomodoroTagsToDurations,
