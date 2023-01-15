@@ -184,11 +184,12 @@ public class TagDurationReportComponent {
         String leftoverTag = null;
         Long leftoverDuration = null;
 
+        TagDuration currentTagDuration = tagDurationList.stream()
+                .filter(td -> td.getTag().equals(currentTag))
+                .findFirst()
+                .orElse(null);
+
         if (duration > 0L && childNotUpdated) {
-            TagDuration currentTagDuration = tagDurationList.stream()
-                    .filter(td -> td.getTag().equals(currentTag))
-                    .findFirst()
-                    .orElse(null);
 
             if (currentTagDuration != null) {
                 leftoverTag = currentTag;
@@ -200,23 +201,18 @@ public class TagDurationReportComponent {
         }
 
         if (CollectionUtils.isEmpty(children)) {
-            TagDuration tagDurationWithCurrentTag = tagDurationList.stream()
-                    .filter(t -> t.getTag().equals(currentTag))
-                    .findFirst()
-                    .orElse(null);
-
-            if (tagDurationWithCurrentTag != null && tagDurationWithCurrentTag.getDuration() > duration) {
+            if (currentTagDuration != null && currentTagDuration.getDuration() > duration) {
                 Long tagLeftoverDuration = leftOverTagsWithDuration.get(currentTag);
                 long updatedLeftoverDuration = 0L;
 
                 if (tagLeftoverDuration == null) {
-                    updatedLeftoverDuration = tagDurationWithCurrentTag.getDuration() - duration;
+                    updatedLeftoverDuration = currentTagDuration.getDuration() - duration;
                 } else {
                     updatedLeftoverDuration -= tagLeftoverDuration;
                 }
 
-                tagDurationList.remove(tagDurationWithCurrentTag);
-                tagDurationList.add(new TagDuration(tagDurationWithCurrentTag.getTag(), updatedLeftoverDuration));
+                tagDurationList.remove(currentTagDuration);
+                tagDurationList.add(new TagDuration(currentTagDuration.getTag(), updatedLeftoverDuration));
 
                 if (updatedLeftoverDuration == 0L) {
                     return new UpdatingResult(null, null, true);
@@ -237,8 +233,9 @@ public class TagDurationReportComponent {
             if (childLeftoverTag != null) {
                 leftoverTag = childLeftoverTag;
 
+                long currentTagDurationDuration = currentTagDuration == null ? 0L : currentTagDuration.getDuration();
                 if (leftoverDuration != null) {
-                    leftoverDuration -= updatingResult.getLeftoverDuration();
+                    leftoverDuration = currentTagDurationDuration - leftoverDuration - updatingResult.getLeftoverDuration();
                 } else {
                     leftoverDuration = updatingResult.getLeftoverDuration();
                 }
