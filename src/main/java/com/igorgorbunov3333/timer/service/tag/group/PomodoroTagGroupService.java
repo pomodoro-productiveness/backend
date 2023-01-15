@@ -23,7 +23,7 @@ public class PomodoroTagGroupService {
     private final PomodoroTagRepository pomodoroTagRepository;
 
     public List<PomodoroTagGroup> getLatestTagGroups() {
-        return pomodoroTagGroupRepository.findTop10ByOrderByOrderNumberDesc()
+        return pomodoroTagGroupRepository.findTop30ByOrderByOrderNumberDesc()
                 .stream()
                 .map(this::getSortedTags)
                 .collect(Collectors.toList());
