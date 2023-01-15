@@ -127,10 +127,16 @@ class TagDurationReportComponentTest {
         List<PomodoroDto> pomodoro = new ArrayList<>();
         pomodoro.addAll(buildPomodoro(21, List.of("work", "Company1", "Company2")));
         pomodoro.addAll(buildPomodoro(9, List.of("work", "Company1", "Company2", "meeting")));
+        pomodoro.addAll(buildPomodoro(1, List.of("work", "education")));
+
         pomodoro.addAll(buildPomodoro(8, List.of("pomodoro", "Java", "backend")));
         pomodoro.addAll(buildPomodoro(3, List.of("pomodoro", "meeting", "cicd")));
         pomodoro.addAll(buildPomodoro(2, List.of("pomodoro", "meeting", "architecture")));
-        pomodoro.addAll(buildPomodoro(1, List.of("pomodoro", "meeting"))); //TODO: complete
+        pomodoro.addAll(buildPomodoro(1, List.of("pomodoro", "meeting")));
+
+        pomodoro.addAll(buildPomodoro(4, List.of("education", "book")));
+        pomodoro.addAll(buildPomodoro(2, List.of("education", "spring", "book")));
+        pomodoro.addAll(buildPomodoro(1, List.of("education", "database", "book")));
 
         List<TagDurationReportRowDto> actual = testee.buildReport(pomodoro);
 
@@ -171,12 +177,12 @@ class TagDurationReportComponentTest {
         );
         TagDurationReportRowDto pomodoroRowExpected = new TagDurationReportRowDto(
                 "pomodoro",
-                12_000L,
-                new ArrayList<>(List.of(pomodoroJavaBackendRowExpected, pomodoroMeetingRowExpected, pomodoroMeetingWithoutChildrenRowExpected))
+                16_800L,
+                new ArrayList<>(List.of(pomodoroJavaBackendRowExpected, pomodoroMeetingWithoutChildrenRowExpected, pomodoroMeetingRowExpected))
         );
         TagDurationReportRowDto totalRowExpected = new TagDurationReportRowDto(
                 "Total",
-                38_400L,
+                52_800L,
                 new ArrayList<>()
         );
 
