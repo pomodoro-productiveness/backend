@@ -214,6 +214,17 @@ class TagDurationReportComponentTest {
         );
     }
 
+    @Test
+    void buildReport_WhenReportBuilt_ThenNoLeftoversInReport() {
+        List<PomodoroDto> pomodoro = new ArrayList<>();
+        pomodoro.addAll(buildPomodoro(9, List.of("work", "Company1", "Company2")));
+        pomodoro.addAll(buildPomodoro(2, List.of("work", "Company1", "Company2", "meeting")));
+        pomodoro.addAll(buildPomodoro(2, List.of("education", "English", "Friends", "tvSeries")));
+        pomodoro.addAll(buildPomodoro(1, List.of("education", "EduCompany", "html/css")));
+
+        List<TagDurationReportRowDto> actual = testee.buildReport(pomodoro);
+    }
+
     private List<PomodoroDto> buildPomodoro(int amount, List<String> tags) {
         List<PomodoroDto> mockedPomodoro = new ArrayList<>();
 

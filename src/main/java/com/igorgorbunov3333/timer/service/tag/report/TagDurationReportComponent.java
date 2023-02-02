@@ -225,6 +225,10 @@ public class TagDurationReportComponent {
             return new UpdatingResult(null, null, true);
         }
 
+        if (!childNotUpdated) {
+            return new UpdatingResult(null, null, true);
+        }
+
         boolean updated = false;
         for (TagDurationReportRowDto child : children) {
             UpdatingResult updatingResult = updateTree(child, pomodoroTagsToDurationsCopy, currentTag, rowTags, tagDurationList, leftOverTagsWithDuration);
