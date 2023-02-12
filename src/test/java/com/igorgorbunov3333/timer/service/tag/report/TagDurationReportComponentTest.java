@@ -223,6 +223,43 @@ class TagDurationReportComponentTest {
         pomodoro.addAll(buildPomodoro(1, List.of("education", "EduCompany", "html/css")));
 
         List<TagDurationReportRowDto> actual = testee.buildReport(pomodoro);
+
+        TagDurationReportRowDto workCompany_MeetingRowExpected = new TagDurationReportRowDto(
+                "meeting",
+                2_400L,
+                new ArrayList<>()
+        );
+        TagDurationReportRowDto workCompanyRowExpected = new TagDurationReportRowDto(
+                "work #Company1 #Company2",
+                13_200L,
+                new ArrayList<>(List.of(workCompany_MeetingRowExpected))
+        );
+
+        TagDurationReportRowDto education_englishFriendsTvSeries = new TagDurationReportRowDto(
+                "tvSeries #English #Friends",
+                2_400L,
+                new ArrayList<>()
+        );
+        TagDurationReportRowDto education_eduCompanyHtmlCss = new TagDurationReportRowDto(
+                "html/css #EduCompany",
+                1_200L,
+                new ArrayList<>()
+        );
+        TagDurationReportRowDto educationRowExpected = new TagDurationReportRowDto(
+                "education",
+                3_600L,
+                new ArrayList<>(List.of(education_englishFriendsTvSeries, education_eduCompanyHtmlCss))
+        );
+
+        TagDurationReportRowDto totalRowExpected = new TagDurationReportRowDto(
+                "Total",
+                16_800L,
+                new ArrayList<>()
+        );
+
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(
+                List.of(workCompanyRowExpected, educationRowExpected, totalRowExpected)
+        );
     }
 
     private List<PomodoroDto> buildPomodoro(int amount, List<String> tags) {
