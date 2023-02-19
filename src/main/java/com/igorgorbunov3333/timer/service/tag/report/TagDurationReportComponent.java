@@ -353,6 +353,10 @@ public class TagDurationReportComponent {
     }
 
     private void addNewRoot(List<TagDurationReportRowDto> rootRows, TagDuration tagDuration) {
+        if (tagDuration == null) {
+            return;
+        }
+
         TagDurationReportRowDto newRow = new TagDurationReportRowDto(
                 tagDuration.getTag(),
                 tagDuration.getDuration(),
