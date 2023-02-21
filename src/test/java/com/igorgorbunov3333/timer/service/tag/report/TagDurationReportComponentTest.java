@@ -285,7 +285,7 @@ class TagDurationReportComponentTest {
         );
 
         TagDurationReportRowDto backend_meetingPython = new TagDurationReportRowDto(
-                "meeting #Python",
+                "meeting #python",
                 3_600L,
                 new ArrayList<>()
         );
@@ -309,7 +309,7 @@ class TagDurationReportComponentTest {
         );
 
         TagDurationReportRowDto totalRow = new TagDurationReportRowDto(
-                "total",
+                "Total",
                 21_600L,
                 new ArrayList<>()
         );
