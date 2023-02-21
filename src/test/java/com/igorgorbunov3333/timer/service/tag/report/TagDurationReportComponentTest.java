@@ -262,6 +262,63 @@ class TagDurationReportComponentTest {
         );
     }
 
+    @Test
+    void buildReport_WhenReportBuild_ThenNoNestedLeftovers() {
+        List<PomodoroDto> pomodoro = new ArrayList<>();
+        pomodoro.addAll(buildPomodoro(5, List.of("design", "pomodoro", "ux/ui")));
+        pomodoro.addAll(buildPomodoro(9, List.of("design", "pomodoro", "ux/ui", "meeting")));
+        pomodoro.addAll(buildPomodoro(3, List.of("backend", "meeting", "pomodoro", "python")));
+        pomodoro.addAll(buildPomodoro(1, List.of("backend", "Java", "pomodoro")));
+
+        List<TagDurationReportRowDto> actual = testee.buildReport(pomodoro);
+
+        TagDurationReportRowDto designUxUi_meeting = new TagDurationReportRowDto(
+                "meeting",
+                10_800L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto pomodoro_designUxUi = new TagDurationReportRowDto(
+                "design #ux/ui",
+                16_800L,
+                new ArrayList<>(List.of(designUxUi_meeting))
+        );
+
+        TagDurationReportRowDto backend_meetingPython = new TagDurationReportRowDto(
+                "meeting #python",
+                3_600L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto backend_Java = new TagDurationReportRowDto(
+                "Java",
+                1_200L,
+                new ArrayList<>()
+        );
+
+        TagDurationReportRowDto pomodoro_backend = new TagDurationReportRowDto(
+                "backend",
+                4_800L,
+                new ArrayList<>(List.of(backend_meetingPython, backend_Java))
+        );
+
+        TagDurationReportRowDto pomodoroRow = new TagDurationReportRowDto(
+                "pomodoro",
+                21_600L,
+                new ArrayList<>(List.of(pomodoro_designUxUi, pomodoro_backend))
+        );
+
+        TagDurationReportRowDto totalRow = new TagDurationReportRowDto(
+                "Total",
+                21_600L,
+                new ArrayList<>()
+        );
+
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(
+                List.of(pomodoroRow, totalRow)
+        );
+    }
+
     private List<PomodoroDto> buildPomodoro(int amount, List<String> tags) {
         List<PomodoroDto> mockedPomodoro = new ArrayList<>();
 

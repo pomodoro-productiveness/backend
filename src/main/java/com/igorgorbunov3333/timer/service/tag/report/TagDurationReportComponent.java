@@ -94,7 +94,7 @@ public class TagDurationReportComponent {
             boolean updated = false;
             for (TagDurationReportRowDto rootRow : rootRows) {
                 Set<String> rootTags = mapToTagNames(rootRow);
-                UpdatingResult updatingResult = updateTree(rootRow, pomodoroTagsToDurations, tagDuration.getTag(), new HashSet<>(rootTags), tagDurationList, leftoverTags);
+                UpdatingResult updatingResult = updateTree(rootRow, null, pomodoroTagsToDurations, tagDuration.getTag(), new HashSet<>(rootTags), tagDurationList, leftoverTags);
 
                 if (updatingResult.getLeftoverTag() != null) {
                     leftoverTags.put(tagDuration.getTag(), updatingResult.getLeftoverDuration());
@@ -119,6 +119,7 @@ public class TagDurationReportComponent {
     }
 
     private UpdatingResult updateTree(TagDurationReportRowDto row,
+                                      TagDurationReportRowDto parent,
                                       Map<List<String>, Long> pomodoroTagsToDurations,
                                       String currentTag,
                                       Set<String> alreadyPassedTags,
@@ -155,6 +156,32 @@ public class TagDurationReportComponent {
         }
 
         long duration = calculateDuration(pomodoroTagsToDurationsForCalculation, currentTag, rowTags, tagsToRemove);
+
+        if (parent != null) {
+            boolean currentRowDurationMoreThenParent =
+                    isCurrentRowDurationMoreThanParent(parent, row, currentTag, duration);
+
+            if (currentRowDurationMoreThenParent) {
+                TagDurationReportRowDto currentRowSibling = parent.getChildren().stream()
+                        .filter(r -> r.getTag().equals(currentTag))
+                        .findFirst()
+                        .orElse(null);
+
+                long siblingDuration = currentRowSibling == null ? 0L : currentRowSibling.getDuration();
+
+                TagDurationReportRowDto newChild = new TagDurationReportRowDto(
+                        currentTag,
+                        row.getDuration() + siblingDuration,
+                        new ArrayList<>(List.of(row))
+                );
+
+                parent.getChildren().remove(currentRowSibling);
+                parent.addChild(newChild);
+                parent.getChildren().remove(row);
+
+                return new UpdatingResult(currentTag, siblingDuration, true);
+            }
+        }
 
         Map<List<String>, Long> pomodoroTagsToDurationsCopy = new HashMap<>(pomodoroTagsToDurations);
 
@@ -231,7 +258,7 @@ public class TagDurationReportComponent {
 
         boolean updated = false;
         for (TagDurationReportRowDto child : children) {
-            UpdatingResult updatingResult = updateTree(child, pomodoroTagsToDurationsCopy, currentTag, rowTags, tagDurationList, leftOverTagsWithDuration);
+            UpdatingResult updatingResult = updateTree(child, row, pomodoroTagsToDurationsCopy, currentTag, rowTags, tagDurationList, leftOverTagsWithDuration);
             String childLeftoverTag = updatingResult.getLeftoverTag();
 
             if (childLeftoverTag != null) {
@@ -257,6 +284,25 @@ public class TagDurationReportComponent {
         }
 
         return new UpdatingResult(null, null, result);
+    }
+
+    private boolean isCurrentRowDurationMoreThanParent(TagDurationReportRowDto parentRow,
+                                                       TagDurationReportRowDto row,
+                                                       String currentTag,
+                                                       long duration) {
+        List<TagDurationReportRowDto> children = parentRow.getChildren();
+
+        long rowRelatedDuration = children.stream()
+                .filter(r -> r.getTag().equals(row.getTag()))
+                .mapToLong(TagDurationReportRowDto::getDuration)
+                .sum();
+
+        long currentRowDuration = children.stream()
+                .filter(r -> r.getTag().equals(currentTag))
+                .mapToLong(TagDurationReportRowDto::getDuration)
+                .sum() + duration;
+
+        return currentRowDuration > rowRelatedDuration;
     }
 
     private long calculateDuration(Map<List<String>, Long> pomodoroTagsToDurations,
