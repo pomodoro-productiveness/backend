@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString(of = {"tag", "duration"})
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class TagDurationReportRowDto {
+public class TagDurationReportRowDto implements Comparable<TagDurationReportRowDto> {
 
     private String tag;
     private long duration;
@@ -46,9 +46,9 @@ public class TagDurationReportRowDto {
         }
     }
 
-    public boolean hasChild(@NonNull String tag) {
-        return getAllRows().stream()
-                .anyMatch(t -> t.getTag().equals(tag));
+    @Override
+    public int compareTo(TagDurationReportRowDto o) {
+        return this.getTag().compareTo(o.getTag());
     }
 
 }

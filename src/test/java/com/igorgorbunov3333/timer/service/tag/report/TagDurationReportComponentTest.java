@@ -7,14 +7,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -263,7 +267,7 @@ class TagDurationReportComponentTest {
     }
 
     @Test
-    void buildReport_WhenReportBuild_ThenNoNestedLeftovers() {
+    void buildReport_WhenReportBuild_ThenNoDuplicates() {
         List<PomodoroDto> pomodoro = new ArrayList<>();
         pomodoro.addAll(buildPomodoro(5, List.of("design", "pomodoro", "ux/ui")));
         pomodoro.addAll(buildPomodoro(9, List.of("design", "pomodoro", "ux/ui", "meeting")));
@@ -319,6 +323,57 @@ class TagDurationReportComponentTest {
         );
     }
 
+    @Test
+    void buildReport_WhenReportBuild_ThenNoLosses() {
+        List<PomodoroDto> pomodoro = new ArrayList<>();
+        pomodoro.addAll(buildPomodoro(1, List.of("meeting", "pomodoro")));
+        pomodoro.addAll(buildPomodoro(1, List.of("infra", "pomodoro")));
+        pomodoro.addAll(buildPomodoro(2, List.of("design", "pomodoro")));
+        pomodoro.addAll(buildPomodoro(4, List.of("backend", "Java", "pomodoro")));
+        pomodoro.addAll(buildPomodoro(3, List.of("meeting", "pomodoro", "ux/ui")));
+        pomodoro.addAll(buildPomodoro(2, List.of("backend", "pomodoro", "python", "review")));
+        pomodoro.addAll(buildPomodoro(5, List.of("design", "pomodoro", "ux/ui")));
+        pomodoro.addAll(buildPomodoro(13, List.of("design", "meeting", "pomodoro", "ux/ui")));
+        pomodoro.addAll(buildPomodoro(3, List.of("backend", "meeting", "pomodoro", "python")));
+        pomodoro.addAll(buildPomodoro(4, List.of("competitorsResearch", "pomodoro", "ux/ui")));
+
+        List<TagDurationReportRowDto> actual = testee.buildReport(pomodoro);
+        sort(actual);
+
+        TagDurationReportRowDto pomodoro_design = new TagDurationReportRowDto("design", 2_400L, List.of());
+
+        TagDurationReportRowDto pomodoro_infra = new TagDurationReportRowDto("infra", 1_200L, List.of());
+
+        TagDurationReportRowDto pomodoro_meeting = new TagDurationReportRowDto("meeting", 1_200L, List.of());
+
+        TagDurationReportRowDto pomodoro_backend_java = new TagDurationReportRowDto("Java", 4_800L, List.of());
+
+        TagDurationReportRowDto pomodoro_backend_python_review = new TagDurationReportRowDto("review", 2_400L, List.of());
+        TagDurationReportRowDto pomodoro_backend_python_meeting = new TagDurationReportRowDto("meeting", 3_600L, List.of());
+        TagDurationReportRowDto pomodoro_backend_python = new TagDurationReportRowDto("python", 6_000L, List.of(pomodoro_backend_python_meeting, pomodoro_backend_python_review));
+
+        TagDurationReportRowDto pomodoro_backend = new TagDurationReportRowDto("backend", 10_800L, List.of(pomodoro_backend_java, pomodoro_backend_python));
+
+        TagDurationReportRowDto pomodoro_uxUi_meeting = new TagDurationReportRowDto("meeting", 3_600L, List.of());
+
+        TagDurationReportRowDto pomodoro_uxUi_design_meeting = new TagDurationReportRowDto("meeting", 15_600L, List.of());
+        TagDurationReportRowDto pomodoro_uxUi_design = new TagDurationReportRowDto("design", 21_600L, List.of(pomodoro_uxUi_design_meeting));
+
+        TagDurationReportRowDto pomodoro_uxUi_competitorsResearch = new TagDurationReportRowDto("competitorsResearch", 4_800L, List.of());
+
+        TagDurationReportRowDto pomodoro_uxUi = new TagDurationReportRowDto(
+                "ux/ui", 30_000L, List.of(pomodoro_uxUi_competitorsResearch, pomodoro_uxUi_design, pomodoro_uxUi_meeting));
+
+        TagDurationReportRowDto pomodoroReportRow = new TagDurationReportRowDto(
+                "pomodoro", 45_600L, List.of(pomodoro_backend, pomodoro_design, pomodoro_infra, pomodoro_meeting, pomodoro_uxUi));
+
+        TagDurationReportRowDto totalReportRow = new TagDurationReportRowDto("Total", 45_600L, List.of());
+
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(
+                List.of(pomodoroReportRow, totalReportRow)
+        );
+    }
+
     private List<PomodoroDto> buildPomodoro(int amount, List<String> tags) {
         List<PomodoroDto> mockedPomodoro = new ArrayList<>();
 
@@ -347,6 +402,27 @@ class TagDurationReportComponentTest {
                 Collections.emptyList(),
                 pomodoroTags
         );
+    }
+
+    private void sort(List<TagDurationReportRowDto> rows) {
+        if (CollectionUtils.isEmpty(rows)) {
+            return;
+        }
+
+        for (TagDurationReportRowDto reportRow : rows) {
+            Set<String> tags = new TreeSet<>(mapToTagNames(reportRow));
+            reportRow.setTag(String.join(" #", tags));
+
+            List<TagDurationReportRowDto> children = reportRow.getChildren();
+            Collections.sort(children);
+            sort(children);
+        }
+    }
+
+    private Set<String> mapToTagNames(TagDurationReportRowDto mappedReportRow) {
+        return Arrays.stream(mappedReportRow.getTag().split(" "))
+                .map(name -> name.replace("#", ""))
+                .collect(Collectors.toSet());
     }
 
 }
